@@ -1,0 +1,23 @@
+Krado design (Krado is esparanto for lattice)
+
+Want to mostly have a data pipeline style calculation.
+
+An ExperimentSet defines how the simulations should be set up.  Conducts a sweep of experiments and analyzes them (e.g. wavelength sweep and )
+
+An Experiment is a class that contains all data needed for doing a complete calculation of a single lattice, and contains the "raw" final data as well as some calculated data.
+
+Experiment contains a Stack, an OrderSet, Planewave Array (incident), and Planewave Array (output)
+
+A Stack contains an Array of Layers and a Periodicity.
+
+A Convolution contains an Array of ConvolutionLayers.  A Stack is converted into a FourierStack, or modified individually by a
+
+An Orderset contains an Array of Orders to be used in the calculation.
+
+A Periodicity contains two Vectors of length 2.
+
+A Planewave contains k-Vector, and a complex electric field Vector.  Do I want multiple ways of describing the electric field vector?  (e.g. x,y,z vs s,p)
+
+A Layer defines the geometry and refractive index of a single layer.
+
+A ConvolutionLayer defines convolution of a layer.

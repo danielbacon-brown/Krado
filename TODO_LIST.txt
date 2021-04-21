@@ -1,0 +1,82 @@
+TODO LIST:
+
+TODO: Turn scattering matrix into a parametric type that can handle DistributedArrays, etc.
+
+TODO: Check to see if a inner conversion of TU2VectorInt -> T2VectorI just compiles away.  If so, just use that instead of another function.  It does compile away, so I should do that.
+
+TODO: Remove unnecessary type definitions.
+
+TODO: make MaterialDatabase (and Wavenumber etc) its own project?  
+
+
+TODO: Define "export" structs and functions
+
+TODO: Finish sweep tests
+
+TODO: Make Examples for folder. Start with just copied tests. Setup to just include or import Krado
+
+TODO: Set up auto-documentation.  Add docs for user-adjacent functions.  Add docs for other functions. STARTED.
+
+TODO: Split up "Miscellaneous" into smaller files with better names. 
+
+TODO: calculation of full kXYZset for a given layer
+
+TODO: Remove individual calcϵ or calcμ and replace with getting calcϵμ[EPSILON], calcϵμ[MU]
+
+TODO: Calculate the W₀ and V₀ only once! And what about Kx, Ky?
+TODO: Use the preallocated matrix data in scattering matrix calculation
+TODO: Use in-place operations in scattering matrix calculation
+
+TODO: Use @inbounds in scattering matrix calcs
+TODO: Use adjustable types in FreeSpaceParameters
+
+
+TODO: Calculation of fields inside of a patterned layer
+TODO: Functions for making tapers, turning a 3D function into a stack of layers, etc.
+TODO: Nested sweeps
+TODO: Plotting of results, e.g. transmission spectra
+
+DONE: Variable precision in scattering matrices
+TODO: Include more function-derived materials
+TODO: Add user-set rules for material extrapolations
+
+TODO: Measure and improve performance
+
+
+
+TODO: RunSimulation for calculating Es and Ep transmission/reflection
+TODO: RunSimulation for calculating Jones Matrix
+
+TODO: Remove harmonics set from g-vectors
+TODO: Use built-in Fourier transform method, FFT
+TODO: Use analytical Fourier transform method
+
+TODO: AnalysisDefinition for Tp, Ts, Rp, Rs
+TODO: AnalysisDefinition for Jones Matrix T and R
+
+TODO: import and export of Simulation and results data to YAML file
+        - also for sweeps.
+
+TODO: function defined shapes -- a shape with a lambda function check for is in x-y
+TODO: define 3D shapes - to automatically create layers for complex 3F geometries (Or maybe a recursive type scattering matrix calculations?)
+
+DONE: plotting of epsilon cross-section
+
+
+DONE: Move Material database and user to tests to an external file.  
+DONE: change TU2VectorReal to Real2Vector? etc
+DONE: replace positionListXY vector with it's own type
+DONE: Plotting of refractive index cross-section
+DONE: MAKE SURE IT WORKS WITH ABSORPTIVE MATERIALS 
+DONE: user favorite materials: a dict of function calls to import materials with a single name reference
+        -- a function that will try to grab the materialnames used in the layerstack
+DONE: add offset of lattice unit cell (to Lattice?) and grid positions
+DONE: Add wavelength limits to materials
+DONE: MAKE THIS WORK WITH DIAGONALS:
+function calcWᵢλᵢ(Ω²ᵢ::Array{ComplexF64, 2})  --ScatteringMatrixCalculations
+DONE: Replace stackedFieldsData2joinedFieldsData with FieldSetStackToXYZ - this might even be used
+DONE: Loading Permittivity and Permeability data from a database
+DONE: rename calcMagneticEigenvectorsFromQWλ to mention magnetic eigenvectors
+DONE: Plotting of geometry and fields
+        -including quivers for AOI, etc.
+DONE: Forget the InputByBoundaryDefinition from mode altogether? 
