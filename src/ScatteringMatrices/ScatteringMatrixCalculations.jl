@@ -502,11 +502,62 @@ function calcABsemiInfinite(prealloc::ScatteringMatrixAllocations{PrecisionType}
     A, B = calcAB_SemiInfinite(prealloc, W₀, W₀, V, V₀)
     return A, B
 end
+# function calcABsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+#
+#     # Get material data for layer
+#     # λ₀ = getλ₀(kVectorSet)
+#
+#     W₀ = calcW₀( numHarmonics(kVectorSet) )
+#     V₀ = calcV₀( kVectorSet )
+#
+#     P, Q = calcPQmatrix(prealloc, layer, kVectorSet, matCol)
+#
+#     Ω² = calcΩ²(prealloc, P, Q)
+#
+#     # kz = Diagonal( calckz(kVectorSet, layer, matCol, kVectorSet.wavenumber) )
+#     # TODO:
+#     # kz = Array(Diagonal( calckzBottom(kVectorSet, layer, matCol, kVectorSet.wavenumber) ))
+#     # λ = calcΛsemiInfiniteBottom(prealloc, kz, kVectorSet.wavenumber)
+#     # old:
+#     kz = Array(Diagonal( calckz(kVectorSet, layer, matCol, kVectorSet.wavenumber) ))
+#     λ = calcΛsemiInfinite(prealloc, kz, kVectorSet.wavenumber)
+#
+#     V = calcMagneticEigenvectorsFromQWλ(prealloc, Q,W₀,λ)
+#
+#     A, B = calcAB_SemiInfinite(prealloc, W₀, W₀, V, V₀)
+#     return A, B
+# end
+# function calcABsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+#
+#     # Get material data for layer
+#     # λ₀ = getλ₀(kVectorSet)
+#
+#     W₀ = calcW₀( numHarmonics(kVectorSet) )
+#     V₀ = calcV₀( kVectorSet )
+#
+#     P, Q = calcPQmatrix(prealloc, layer, kVectorSet, matCol)
+#
+#     Ω² = calcΩ²(prealloc, P, Q)
+#
+#     # kz = Diagonal( calckz(kVectorSet, layer, matCol, kVectorSet.wavenumber) )
+#     # TODO:
+#     # kz = Array(Diagonal( calckzTop(kVectorSet, layer, matCol, kVectorSet.wavenumber) ))
+#     # λ = calcΛsemiInfiniteTop(prealloc, kz, kVectorSet.wavenumber)
+#     # old
+#     kz = Array(Diagonal( calckz(kVectorSet, layer, matCol, kVectorSet.wavenumber) ))
+#     λ = calcΛsemiInfinite(prealloc, kz, kVectorSet.wavenumber)
+#
+#     V = calcMagneticEigenvectorsFromQWλ(prealloc, Q,W₀,λ)
+#
+#     A, B = calcAB_SemiInfinite(prealloc, W₀, W₀, V, V₀)
+#     return A, B
+# end
 
 
 # Calculates scattering matrix for the reflective layer
 function calcScatteringMatrixBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
 
+    # A, B = calcABsemiInfiniteBottom(prealloc, layer, matCol, kVectorSet)
     A, B = calcABsemiInfinite(prealloc, layer, matCol, kVectorSet)
     S = calcScatteringMatrixBottom_AB(prealloc, A,B)
     return S
@@ -515,6 +566,7 @@ end
 # Calculates scattering matrix for a transmissive layer
 function calcScatteringMatrixTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
 
+    # A, B = calcABsemiInfiniteTop(prealloc, layer, matCol, kVectorSet)
     A, B = calcABsemiInfinite(prealloc, layer, matCol, kVectorSet)
     S = calcScatteringMatrixTop_AB(prealloc, A,B)
     return S
@@ -561,6 +613,21 @@ function calcΛsemiInfinite(prealloc::ScatteringMatrixAllocations{PrecisionType}
     #            hcat(zeros(ComplexF64,size(kz)), -1im*kz) ) * -1 / getk₀(wavenumber) )
 end
 calcΛsemiInfinite(kz::LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}, wavenumber::Wavenumber) = calcΛsemiInfinite(Array(kz), wavenumber)
+
+# function calcΛsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::Array{T,2}, wavenumber::Wavenumber) where {T<:Number, PrecisionType<:Real}
+#     return vcat( hcat(-1im*kz, zeros(Complex{PrecisionType},size(kz)) ),
+#                hcat(zeros(Complex{PrecisionType},size(kz)), -1im*kz) ) * -1 / getk₀(wavenumber)
+#     # return Array(vcat( hcat(-1im*kz, zeros(ComplexF64,size(kz)) ),
+#     #            hcat(zeros(ComplexF64,size(kz)), -1im*kz) ) * -1 / getk₀(wavenumber) )
+# end
+# # calcΛsemiInfinite(kz::LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}, wavenumber::Wavenumber) = calcΛsemiInfinite(Array(kz), wavenumber)
+# function calcΛsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::Array{T,2}, wavenumber::Wavenumber) where {T<:Number, PrecisionType<:Real}
+#     return vcat( hcat(1im*kz, zeros(Complex{PrecisionType},size(kz)) ),
+#                hcat(zeros(Complex{PrecisionType},size(kz)), -1im*kz) ) * -1 / getk₀(wavenumber)
+#     # return Array(vcat( hcat(-1im*kz, zeros(ComplexF64,size(kz)) ),
+#     #            hcat(zeros(ComplexF64,size(kz)), -1im*kz) ) * -1 / getk₀(wavenumber) )
+# end
+# calcΛsemiInfinite(kz::LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}, wavenumber::Wavenumber) = calcΛsemiInfinite(Array(kz), wavenumber)
 
 
 

@@ -7,14 +7,14 @@ mutable struct DerivedParameters
     gVectorSet::GvectorSet
     kVectorSet::KVectorSet
     freeSpaceParameters::FreeSpaceParameters
-    
+
     # The z-components of k-vectors in the top and bottom layers
     kzBottom::Vector{ComplexF64}
     kzTop::Vector{ComplexF64}
-    
+
     function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, freeSpaceParameters::FreeSpaceParameters, kzBottom::Vector{ComplexF64}, kzTop::Vector{ComplexF64} )
         return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzBottom, kzTop )
-    end    
+    end
 end
 
 function DerivedParameters(simulationDefinition::SimulationDefinition)
@@ -22,12 +22,16 @@ function DerivedParameters(simulationDefinition::SimulationDefinition)
     harmonicsSet = calcHarmonicsSet( simulationDefinition.harmonicsTruncation )
     gVectorSet = GvectorSet( harmonicsSet, simulationDefinition.lattice )
     kVectorSet = createKVectorSet(simulationDefinition.boundaryDefinition.wavenumber, boundaryConditions.kXY₀, simulationDefinition.boundaryDefinition.mainHarmonicOrder, gVectorSet)
-    
+
+    # TODO:
+    # kzBottom = calckzBottom(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    # kzTop = calckzTop(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    #old:
     kzBottom = calckz(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
     kzTop = calckz(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
-    
+
     freeSpaceParameters = FreeSpaceParameters(kVectorSet)
-    
+
     return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzBottom, kzTop, )
 end
 

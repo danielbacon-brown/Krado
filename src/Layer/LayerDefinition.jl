@@ -160,7 +160,7 @@ end
 function calckz(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
     n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    @assert isapprox(n^2, ϵ*μ, rtol=1e-3)
+    @assert isapprox(n^2, ϵ*μ, rtol=1e-3)  # should be moved to a test.
 
     # Lecture 7B appears to take the conjugate of Kz
     # Kz = conj( sqrt(I-Kx^2-Ky^2))
@@ -173,22 +173,37 @@ function calckz(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matC
 
 end
 
-
-function calckzBottom(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
-    n = getn(layer, matCol, wavenumber)
-    ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    @assert isapprox(n^2, ϵ*μ, rtol=1e-3)
-
-    # Lecture 7B appears to take the conjugate of Kz
-    # Kz = conj( sqrt(I-Kx^2-Ky^2))
-    # This causes some tests to fail
-    #TODO
-    return -conj( ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ] )  #TODO
-
-    # old:
-    # return -ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
-
-end
+# only difference is that the bottom one has a negative value.
+# function calckzBottom(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
+#     n = getn(layer, matCol, wavenumber)
+#     ϵ,μ = getϵμ( layer, matCol, wavenumber)
+#     @assert isapprox(n^2, ϵ*μ, rtol=1e-3)
+#
+#     # Lecture 7B appears to take the conjugate of Kz
+#     # Kz = conj( sqrt(I-Kx^2-Ky^2))
+#     # This causes some tests to fail.  But seems to work when you also take the conjugate in the lambda calculation and
+#     #TODO
+#     return -conj( ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ] )  #TODO
+#
+#     # old:
+#     # return -ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
+#
+# end
+# function calckzTop(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
+#     n = getn(layer, matCol, wavenumber)
+#     ϵ,μ = getϵμ( layer, matCol, wavenumber)
+#     @assert isapprox(n^2, ϵ*μ, rtol=1e-3)
+#
+#     # Lecture 7B appears to take the conjugate of Kz
+#     # Kz = conj( sqrt(I-Kx^2-Ky^2))
+#     # This causes some tests to fail.  But seems to work when you also take the conjugate in the lambda calculation and
+#     #TODO
+#     return conj( ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ] )  #TODO
+#
+#     # old:
+#     # return -ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
+#
+# end
 
 function calc_ϵμ(layerDef::T1, matCol::MaterialCollection, kVectorSet::KVectorSet) where T1<:Union{UniformLayerDefinition, SemiInfiniteLayerDefinition}
     ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), kVectorSet.wavenumber)
