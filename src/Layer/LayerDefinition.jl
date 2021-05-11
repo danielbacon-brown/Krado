@@ -124,10 +124,16 @@ function calcConvolutionMatrices( layerDef::PatternedLayerDefinition, lattice::L
     return Cϵᵢⱼ, Cμᵢⱼ
 end
 
+# IS THIS USED?
 # Calculates the convolution matrices ⟦ϵ⟧  ⟦μ⟧ a the given layer and lattice with the corresponding harmonics and materials.  For an unpatterned layer, the convolution matrix is simply the a diagonal matrix with all components being equal to permittivity
 function calcConvolutionMatrices( layerDef::UniformLayerDefinition, lattice::Lattice, Gvectors::GvectorSet, matCol::MaterialCollection, wavenumber::Wavenumber )
 
     ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), wavenumber)
+
+    # @show ϵ
+    #TODO
+    ϵ = conj.(ϵ)
+    # @show ϵ
 
     numHarmonics = numGvectors(Gvectors)
     Cϵᵢⱼ = Matrix{ComplexF64}(ϵ*I, numHarmonics, numHarmonics)
@@ -168,7 +174,11 @@ function calckz(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matC
     #TODO
     # return conj( ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ] )  #TODO
 
-    # old:
+    # from edmundsj
+    #-conj(sqrt(conj(layer.er*layer.ur)*complexIdentity(kx.shape[0]) - kx @ kx - ky @ ky))
+    # based on edmundsj:
+    # return ComplexF64[ conj(sqrt(getk₀(kVectorSet)^2*conj(ϵ*μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
+    # # old:
     return ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
 
 end

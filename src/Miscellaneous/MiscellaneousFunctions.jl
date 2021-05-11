@@ -4,7 +4,7 @@
 pygui(true)
 
 # Generates a vector of evenly spaced values, starting at 0 and ending near (but not touching) 1.  Often used to uniformly sample a periodic function
-function range0to1exclusive(len)::Vector{Float64} 
+function range0to1exclusive(len)::Vector{Float64}
     @assert len > 0
     return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
 end
@@ -22,7 +22,7 @@ end
 #           (X₁,Y₂) (X₂,Y₂) ... (Xₙ,Y₂) ;
 #           ...
 #           (X₁,Yₙ) (X₂,Yₙ) ... (Xₙ,Yₙ) ]
-function getGridIndices(gridShape)::Array{Tuple{Int64,Int64},2} 
+function getGridIndices(gridShape)::Array{Tuple{Int64,Int64},2}
     indices = collect( Base.product(1:gridShape[1], 1:gridShape[2]) )
     return reshape(indices, Tuple(gridShape) )
 end
@@ -32,7 +32,7 @@ end
 #     return 𝐯/norm(𝐯)
 # end
 # unitize(𝐯)=unitize(_3VectorFloat(𝐯))
-# 
+#
 # function unitize(𝐯::_3VectorComplex)::_3VectorComplex
 #     return 𝐯/norm(𝐯)
 # end
@@ -92,7 +92,7 @@ function λ₀2k₀(λ₀)
     return 2*π/λ₀
 end
 # Convert vaccum wavenumber to vacuum wavelength
-function k₀2λ₀(k₀) 
+function k₀2λ₀(k₀)
     return 2*π/k₀
 end
 
@@ -359,7 +359,7 @@ function printFull(filename::String, arr::Array{T,2}) where T<:Complex
     file = open(filename,"w")
     for iy = 1:size(arr,1)
         for ix = 1:size(arr,2)
-            Printf.@printf(file, "'%.2f + %.2fi,", real(arr[ix,iy]), imag(arr[ix,iy]) ) 
+            Printf.@printf(file, "'%.2f + %.2fi,", real(arr[ix,iy]), imag(arr[ix,iy]) )
             print(file,'\t')
         end
         print(file,"\r\n")
@@ -413,11 +413,11 @@ end
 function fractionOfRange(x1::Real, minMaxX::Vector{<:Real})::Float64
     minX = minimum(minMaxX)
     maxX = maximum(minMaxX)
-    
+
     if x1 > maxX
         return 1.0
     elseif x1 < minX
         return 0.0
-    end 
+    end
     return (x1-minX) / (maxX-minX)
 end

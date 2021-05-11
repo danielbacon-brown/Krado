@@ -229,6 +229,11 @@ end
 # Calculate P, Q for uniform layers
 function calcPQmatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::Tlayer, kVectorSet::KVectorSet,  matCol::MaterialCollection) where { Tlayer<:Union{UniformLayerDefinition, SemiInfiniteLayerDefinition}, PrecisionType<:Real}
     ϵ, μ = calc_ϵμ(layer, matCol, kVectorSet)
+
+    # @show ϵ
+    # ϵ = conj.(ϵ)  # causes problems for Si as a uniform layer.  Even in visible spectrum
+    # @show ϵ
+
     P = calcPmatrixUnpatterned(prealloc, kVectorSet, ϵ, μ )
     Q = calcQmatrixUnpatterned(prealloc, P,ϵ,μ)
     return P, Q
@@ -343,8 +348,13 @@ end
 function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::UniformLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
 
     # Get material data for layer
-    mat = getMaterial(matCol, layer.backgroundMaterialName)
-    ϵ, μ = calc_ϵμ(mat, kVectorSet.wavenumber)
+    # mat = getMaterial(matCol, layer.backgroundMaterialName)
+    # ϵ, μ = calc_ϵμ(mat, kVectorSet.wavenumber)
+    #
+    # @show ϵ
+    # # TODO:
+    # ϵ = conj.(ϵ)   # Appears to change nothing
+    # @show ϵ
 
     W₀ = calcW₀( numHarmonics(kVectorSet) )
     V₀ = calcV₀( kVectorSet )
@@ -353,7 +363,10 @@ function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionTyp
     Ω² = calcΩ²(prealloc, P, Q)
 
     W, λ = calcWᵢλᵢ(prealloc,  Ω²)
-    V = calcEigenmodesForUniformLayer(prealloc, kVectorSet, layer, matCol)
+    # TODO:
+    V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, W, λ)  # Doesn't seem to make a difference
+    #old
+    # V = calcEigenmodesForUniformLayer(prealloc, kVectorSet, layer, matCol)
 
     A, B = calcAB(prealloc, W, W₀, V, V₀)
     X = calcX(prealloc, λ, kVectorSet.wavenumber, layer.thickness)

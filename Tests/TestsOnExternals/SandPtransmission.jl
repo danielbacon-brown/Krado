@@ -41,6 +41,11 @@ addMaterial!(matCol, "Air", Material(ConstantPermittivity(1)))
 addMaterial!(matCol, "SiO2", importYAMLmaterial(raw"c:\refractiveindex.info-database\database\data\main\SiO2\Gao.yml"))
 addMaterial!(matCol, "Si", importYAMLmaterial(raw"C:\refractiveindex.info-database\database\data\main\Si\Aspnes.yml"))
 
+nSi564nm = 4.042 + 0.032im  # doing a conjugate makes extra tests fail
+nSi302nm = 5.020 + 3.979im
+
+addMaterial!(matCol, "Si564nm", Material(ConstantPermittivity(convert_n2ϵ(nSi564nm))))
+addMaterial!(matCol, "Si302nm", Material(ConstantPermittivity(convert_n2ϵ(nSi302nm))))
 
 # Define lattice
 U̅ = [100*nm, 100*nm]
@@ -101,8 +106,8 @@ boundaryDefinitionNormal = InputByOrderBoundaryDefinition(wavenumber, θ, ϕ, BO
 # Define layers for Si.  Checking for absorptive material.
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAir = UniformLayerDefinition(1 * μm, "Air")
-uniformSi = UniformLayerDefinition(1 * μm, "Si")
-semiInfSi = SemiInfiniteLayerDefinition("Si")
+uniformSi = UniformLayerDefinition(1 * μm, "Si564nm")
+semiInfSi = SemiInfiniteLayerDefinition("Si564nm")
 
 layerStackSi = [semiInfAir, uniformAir, uniformSi, semiInfSi]
 
@@ -133,8 +138,8 @@ end
 numDivisions = [20,20]
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Air"))
-uniformSiPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Si"))
-semiInfSi = SemiInfiniteLayerDefinition("Si")
+uniformSiPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Si564nm"))
+semiInfSi = SemiInfiniteLayerDefinition("Si564nm")
 layerStackSiPatt = [semiInfAir, uniformAirPatt, uniformSiPatt, semiInfSi]
 
 
@@ -163,7 +168,7 @@ end
 #### Same but the substrate is air, and the film is very thick:
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPattThick = PatternedLayerDefinition(numDivisions, 1 * mm, LayerPattern("Air"))
-uniformSiPattThick = PatternedLayerDefinition(numDivisions, 1 * mm, LayerPattern("Si"))
+uniformSiPattThick = PatternedLayerDefinition(numDivisions, 1 * mm, LayerPattern("Si564nm"))
 layerStackSiPattThick = [semiInfAir, uniformAirPattThick, uniformSiPattThick, semiInfAir]
 
 
@@ -202,8 +207,8 @@ boundaryDefinitionNormal = InputByOrderBoundaryDefinition(wavenumber, θ, ϕ, BO
 # Define layers
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAir = UniformLayerDefinition(1 * μm, "Air")
-uniformSi = UniformLayerDefinition(1 * μm, "Si")
-semiInfSi = SemiInfiniteLayerDefinition("Si")
+uniformSi = UniformLayerDefinition(1 * μm, "Si302nm")
+semiInfSi = SemiInfiniteLayerDefinition("Si302nm")
 layerStackSi = [semiInfAir, uniformAir, uniformSi, semiInfSi]
 
 @testset "Si uniform - UV" begin
