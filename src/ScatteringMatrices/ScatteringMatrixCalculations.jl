@@ -187,9 +187,10 @@ end
 function calcWᵢλᵢ(prealloc::ScatteringMatrixAllocations{PrecisionType}, Ω²ᵢ::Array{<:Number, 2}) where {PrecisionType<:Real}
     λ²ᵢ, Wᵢ = eigen(Ω²ᵢ)
     λ²ᵢ = Diagonal( λ²ᵢ )
-    λᵢ = sqrt.(conj(λ²ᵢ)) # Based on Trave11er's RCWA.  # old
-    # TODO:
-    # λᵢ = sqrt.(λ²ᵢ) # EMpossible doesn't say to include a conjugate.  #TODO
+
+    # λᵢ = sqrt.(conj(λ²ᵢ)) # Based on Trave11er's RCWA.  # old
+    # lecture 7B:
+    λᵢ = sqrt.(λ²ᵢ) # EMpossible doesn't say to include a conjugate.  #TODO. lecture 7B  # makes Si stuff break.
     return ElectricEigenvectors{PrecisionType}(Wᵢ), Array(λᵢ)
 end
 
@@ -231,7 +232,7 @@ function calcPQmatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, laye
     ϵ, μ = calc_ϵμ(layer, matCol, kVectorSet)
 
     # @show ϵ
-    # ϵ = conj.(ϵ)  # causes problems for Si as a uniform layer.  Even in visible spectrum
+    # ϵ = conj.(ϵ) # FIXES SOME ERRORS IN SI UV AT NORMAL INCIDENCE# causes problems for Si as a uniform layer.  Even in visible spectrum.  FIXES FOR NORMAL INCIDENCE BUT NOT ANGLED.  # TODO Lecture 7B
     # @show ϵ
 
     P = calcPmatrixUnpatterned(prealloc, kVectorSet, ϵ, μ )

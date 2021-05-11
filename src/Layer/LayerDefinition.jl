@@ -124,15 +124,14 @@ function calcConvolutionMatrices( layerDef::PatternedLayerDefinition, lattice::L
     return Cϵᵢⱼ, Cμᵢⱼ
 end
 
-# IS THIS USED?
+# IS THIS USED? - only in IntegrationTest3
 # Calculates the convolution matrices ⟦ϵ⟧  ⟦μ⟧ a the given layer and lattice with the corresponding harmonics and materials.  For an unpatterned layer, the convolution matrix is simply the a diagonal matrix with all components being equal to permittivity
 function calcConvolutionMatrices( layerDef::UniformLayerDefinition, lattice::Lattice, Gvectors::GvectorSet, matCol::MaterialCollection, wavenumber::Wavenumber )
 
     ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), wavenumber)
 
     # @show ϵ
-    #TODO
-    ϵ = conj.(ϵ)
+    # ϵ = conj.(ϵ)  # DOESN'T MATTER FOR INTEGRATION TEST 3
     # @show ϵ
 
     numHarmonics = numGvectors(Gvectors)
@@ -166,13 +165,13 @@ end
 function calckz(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
     n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    @assert isapprox(n^2, ϵ*μ, rtol=1e-3)  # should be moved to a test.
+    # @assert isapprox(n^2, ϵ*μ, rtol=1e-3)  # should be moved to a test.
 
     # Lecture 7B appears to take the conjugate of Kz
     # Kz = conj( sqrt(I-Kx^2-Ky^2))
     # This causes some tests to fail
-    #TODO
-    # return conj( ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ] )  #TODO
+    # Lecture 7B:
+    # return ComplexF64[ conj(sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
 
     # from edmundsj
     #-conj(sqrt(conj(layer.er*layer.ur)*complexIdentity(kx.shape[0]) - kx @ kx - ky @ ky))
@@ -182,6 +181,15 @@ function calckz(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matC
     return ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
 
 end
+
+# K-NORM
+#Calculates the z-components k-vectors of the modes in the top or bottom layers.  Assumed real components are positive.
+# TODO: Figure out why n^2, and ϵ*μ works but not conj(ϵ)*conj(μ)
+# function calckzGap(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
+#     ϵ,μ  = 1.0,1.0
+#     # return ComplexF64[ conj(sqrt(conj(ϵ*μ)*I - kᵢ[X].^2 - kᵢ[Y].^2))
+#     return ComplexF64[ conj(sqrt(conj(ϵ*μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
+# end
 
 # only difference is that the bottom one has a negative value.
 # function calckzBottom(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
