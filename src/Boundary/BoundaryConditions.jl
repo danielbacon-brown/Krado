@@ -104,13 +104,15 @@ function calcInputFields(boundaryConditions::InputByOrderBoundaryConditions, har
 
     # Create fields in terms of SP
     modeFieldsSPbottom, modeFieldsSPtop = calcSPinputFields(boundaryConditions, harmonicsSet)
+    # @show modeFieldsSPbottom
 
     # Convert SP fields to xyz
     modeFieldsXYZbottom, modeFieldsXYZtop = convertSPinputFieldsToXYZ(modeFieldsSPbottom, modeFieldsSPtop, kVectorSet, layerStack, matCol, wavenumber)
-
+    # @show modeFieldsXYZbottom
     # Convert xyz fields to stacked fields
     inputFieldsBottom = convertFieldSetXYZtoStack(modeFieldsXYZbottom)
     inputFieldsTop = convertFieldSetXYZtoStack(modeFieldsXYZtop)
+    # @show inputFieldsBottom
 
     return InputFields(inputFieldsBottom, inputFieldsTop)
 end

@@ -37,8 +37,19 @@ function runSimulation(analysisDefinition::ZeroOrderModesAnalysisDefinition, sim
      # Propagate fields
      outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
 
+     # fieldSetXYZ =
+
      # Get output fields data
      outputFieldsXYZbottom, outputFieldsXYZtop, outputFieldsSPbottom, outputFieldsSPtop = analyzeOutputFields(outputFields, derivedParameters, simulationDefinition.layerStack, simulationDefinition.materialCollection, getWavenumber(simulationDefinition) )
+     # @show outputFieldsSPbottom.fields[S]
+     # @show outputFieldsSPbottom.fields[P]
+
+     # test:
+     inputFieldsXYZbottom, inputFieldsXYZtop, inputFieldsSPbottom, inputFieldsSPtop = analyzeInputFields(inputFields, derivedParameters, simulationDefinition.layerStack, simulationDefinition.materialCollection, getWavenumber(simulationDefinition) )
+     # @show inputFieldsSPbottom.fields[S]
+     # @show inputFieldsSPbottom.fields[P]
+
+
 
      # Get Zero order index
      zeroOrderIndex = getOrderIndex(derivedParameters.harmonicsSet, _2VectorInt(0,0))

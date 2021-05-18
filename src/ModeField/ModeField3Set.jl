@@ -1,40 +1,62 @@
-# Contains the 3-dimensional, XYZ fields values corresponding to modes travelling in a particular layer in a particular direction.  
+# Contains the 3-dimensional, XYZ fields values corresponding to modes travelling in a particular layer in a particular direction.
 mutable struct FieldSetXYZ
-    
+
     # Fields array is of size (# harmonics, 3)
     fields::Array{ComplexF64,2}
-    
+
     isForward::Bool
-    
+
     function FieldSetXYZ(fields::Array{ComplexF64,2}, isForward::Bool)
         return new(fields, isForward)
     end
-    
+
 end
 
+# old:
+# Calculates the XYZ field data based on the XY field data.
+# function convertFieldSetStackToFieldSetXYZ(fieldSetStack::FieldSetStack, kVectorSet::KVectorSet, kz::Vector{T}) where T<:Number
+#
+#     kzDirection = bool2posNeg(fieldSetStack.isForward) # Reverse value if backwards propagating
+#
+#     nHarmonics = numHarmonics(kVectorSet)
+#     fieldsXYZ = Array{ComplexF64,2}(undef, (nHarmonics,3))
+#
+#     fieldsXYZ[:,X] = fieldSetStack.modeFields[1:nHarmonics]
+#     fieldsXYZ[:,Y] = fieldSetStack.modeFields[ (nHarmonics+1):(2*nHarmonics)]
+#     fieldsXYZ[:,Z] = -inv(Diagonal(kz)*kzDirection)*(kVectorSet.Kx*fieldsXYZ[:,X] + kVectorSet.Ky*fieldsXYZ[:,Y])
+#     return FieldSetXYZ(fieldsXYZ, fieldSetStack.isForward)
+# end
+# KNORM
 # Calculates the XYZ field data based on the XY field data.
 function convertFieldSetStackToFieldSetXYZ(fieldSetStack::FieldSetStack, kVectorSet::KVectorSet, kz::Vector{T}) where T<:Number
-    
+
+    k₀ = getk₀(kVectorSet.wavenumber)
     kzDirection = bool2posNeg(fieldSetStack.isForward) # Reverse value if backwards propagating
-    
-    nHarmonics = numHarmonics(kVectorSet)    
+
+    nHarmonics = numHarmonics(kVectorSet)
     fieldsXYZ = Array{ComplexF64,2}(undef, (nHarmonics,3))
-    
+
     fieldsXYZ[:,X] = fieldSetStack.modeFields[1:nHarmonics]
     fieldsXYZ[:,Y] = fieldSetStack.modeFields[ (nHarmonics+1):(2*nHarmonics)]
-    fieldsXYZ[:,Z] = -inv(Diagonal(kz)*kzDirection)*(kVectorSet.Kx*fieldsXYZ[:,X] + kVectorSet.Ky*fieldsXYZ[:,Y])
+    # KNORM
+    fieldsXYZ[:,Z] = -inv(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y])
+    # fieldsXYZ[:,Z] = -inv(Diagonal(kz)*k₀)*(kVectorSet.KxNorm*k₀*fieldsXYZ[:,X] + kVectorSet.KyNorm*k₀*fieldsXYZ[:,Y])
+    #old
+    # fieldsXYZ[:,Z] = -inv(Diagonal(kz)*kzDirection)*(kVectorSet.KxNorm*k₀*fieldsXYZ[:,X] + kVectorSet.KyNorm*k₀*fieldsXYZ[:,Y])
     return FieldSetXYZ(fieldsXYZ, fieldSetStack.isForward)
 end
-    
+
 function calcE²(fieldSetXYZ::FieldSetXYZ)
     return abs.(fieldSetXYZ.fields[:,X]).^2 + abs.(fieldSetXYZ.fields[:,Y]).^2 + abs.(fieldSetXYZ.fields[:,Z]).^2
 end
-    
+
 
 function calcPowerFlux(fieldSetXYZ::FieldSetXYZ, kz::Vector{ComplexF64})
-    powerFluxes = c*ϵ₀/2 * (kz .* calcE²(fieldSetXYZ)) 
+    powerFluxes = c*ϵ₀/2 * (kz .* calcE²(fieldSetXYZ))
     return powerFluxes
 end
+
+
 
 
 

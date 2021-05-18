@@ -10,21 +10,22 @@ mutable struct DerivedParameters
 
     # The z-components of k-vectors in the top and bottom layers
     # old:
-    kzBottom::Vector{ComplexF64}
-    kzTop::Vector{ComplexF64}
+    # kzBottom::Vector{ComplexF64}
+    # kzTop::Vector{ComplexF64}
     # KNORM
-    # kzNormBottom::Vector{ComplexF64}
-    # kzNormTop::Vector{ComplexF64}
-    # kzNormGap::Vector{ComplexF64}
+    kzNormBottom::Vector{ComplexF64}
+    kzNormTop::Vector{ComplexF64}
+    kzNormGap::Vector{ComplexF64}
 
     # old
-    function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, freeSpaceParameters::FreeSpaceParameters, kzBottom::Vector{ComplexF64}, kzTop::Vector{ComplexF64} )
-        return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzBottom, kzTop )
-    end
+    # function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, freeSpaceParameters::FreeSpaceParameters, kzBottom::Vector{ComplexF64}, kzTop::Vector{ComplexF64} )
+    #     return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzBottom, kzTop )
+    # end
     # KNORM
     # function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, freeSpaceParameters::FreeSpaceParameters, kzNormBottom::Vector{ComplexF64}, kzNormTop::Vector{ComplexF64}, kzNormGap::Vector{ComplexF64} )
-    #     return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzNormBottom, kzNormTop, kzNormGap )
-    # end
+    function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, freeSpaceParameters::FreeSpaceParameters, kzNormBottom::Vector{<:Number}, kzNormTop::Vector{<:Number}, kzNormGap::Vector{<:Number} )
+        return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzNormBottom, kzNormTop, kzNormGap )
+    end
 end
 
 function DerivedParameters(simulationDefinition::SimulationDefinition)
@@ -36,19 +37,21 @@ function DerivedParameters(simulationDefinition::SimulationDefinition)
 
     # KNORM:
     # gapLayer = UniformLayerDefinition(1,1,1)
-    # kzNormBottom = calckzBottom(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
-    # kzNormTop = calckzTop(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
-    # kzNormGap = calckzGap(kVectorSet, gapLayer, simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    kzNormBottom = calckzBottom(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    kzNormTop = calckzTop(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    kzNormGap = diag( conj(sqrt(I - kVectorSet.KxNorm.^2 - kVectorSet.KyNorm.^2)) )
+    # kzNormGap = conj(sqrt(I - kVectorSet.KxNorm.^2 - kVectorSet.KyNorm.^2))
+
     # old:
-    kzBottom = calckz(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
-    kzTop = calckz(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    # kzBottom = calckz(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
+    # kzTop = calckz(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
 
     freeSpaceParameters = FreeSpaceParameters(kVectorSet)
 
     # KNORM:
-    # return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzNormBottom, kzNormTop, kzNormGap )
+    return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzNormBottom, kzNormTop, kzNormGap )
     # old:
-    return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzBottom, kzTop )
+    # return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzBottom, kzTop )
 end
 
 

@@ -3,6 +3,17 @@
 # Setting so that new plots get plotted in a standalone window.
 pygui(true)
 
+# calculate the Fresnel coefficients between interfaces
+function calcFresnelCoefficients(n₁, n₂, θ₁)
+    θᵢ = θ₁
+    θₜ = asin(n₁/n₂ * sin(θ₁))
+    rₛ = ( n₁*cos(θᵢ) - n₂*cos(θₜ) )/( n₁*cos(θᵢ) + n₂*cos(θₜ) )
+    rₚ = ( n₂*cos(θᵢ) - n₁*cos(θₜ) )/( n₂*cos(θᵢ) + n₁*cos(θₜ) )
+    tₛ = 2*n₁*cos(θᵢ) / (n₁*cos(θᵢ) + n₂*cos(θₜ))
+    tₚ = 2*n₁*cos(θᵢ) / (n₂*cos(θᵢ) + n₁*cos(θₜ))
+    return tₛ, tₚ, rₛ, rₚ
+end
+
 # Generates a vector of evenly spaced values, starting at 0 and ending near (but not touching) 1.  Often used to uniformly sample a periodic function
 function range0to1exclusive(len)::Vector{Float64}
     @assert len > 0
