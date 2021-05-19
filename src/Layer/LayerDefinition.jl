@@ -138,6 +138,7 @@ function calcConvolutionMatrices( layerDef::UniformLayerDefinition, lattice::Lat
     ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), wavenumber)
 
     # @show ϵ
+    # UNSURE
     # ϵ = conj.(ϵ)  # DOESN'T MATTER FOR INTEGRATION TEST 3
     # @show ϵ
 
@@ -166,80 +167,29 @@ function getϵμ(layer::layerT, matCol::MaterialCollection, wavenumber::Wavenumb
     return calc_ϵμ( getMaterial(matCol,layer.backgroundMaterialName), wavenumber)
 end
 
-
-#Calculates the z-components k-vectors of the modes in the top or bottom layers.  Assumed real components are positive.
-# TODO: Figure out why n^2, and ϵ*μ works but not conj(ϵ)*conj(μ)
-# function calckz(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
-#     n = getn(layer, matCol, wavenumber)
-#     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-#     # @assert isapprox(n^2, ϵ*μ, rtol=1e-3)  # should be moved to a test.
-#
-#     # Lecture 7B appears to take the conjugate of Kz
-#     # Kz = conj( sqrt(I-Kx^2-Ky^2))
-#     # This causes some tests to fail in INTEGRATION TEST 3
-#     # Lecture 7B:
-#     return ComplexF64[ conj(sqrt( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
-#
-#     # from edmundsj
-#     #-conj(sqrt(conj(layer.er*layer.ur)*complexIdentity(kx.shape[0]) - kx @ kx - ky @ ky))
-#     # based on edmundsj:
-#     # return ComplexF64[ conj(sqrt(getk₀(kVectorSet)^2*conj(ϵ*μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
-#     # # old:
-#     # return ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
-#
-# end
-# NORM
 function calckzNorm(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
     n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    # @assert isapprox(n^2, ϵ*μ, rtol=1e-3)  # should be moved to a test.
 
-    # Lecture 7B appears to take the conjugate of Kz
-    # Kz = conj( sqrt(I-Kx^2-Ky^2))
-    # This causes some tests to fail in INTEGRATION TEST 3
     # Lecture 7B:
+    # UNSURE
     return ComplexF64[ conj(sqrt( conj(ϵ)*conj(μ) - kᵢNorm[X]^2 - kᵢNorm[Y]^2))  for kᵢNorm in kVectorSet.kᵢNorm]
 
-    # from edmundsj
-    #-conj(sqrt(conj(layer.er*layer.ur)*complexIdentity(kx.shape[0]) - kx @ kx - ky @ ky))
-    # based on edmundsj:
-    # return ComplexF64[ conj(sqrt(getk₀(kVectorSet)^2*conj(ϵ*μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
-    # # old:
-    # return ComplexF64[ sqrt(getk₀(kVectorSet)^2*conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢ]
-
 end
-
-# K-NORM
-#Calculates the z-components k-vectors of the modes in the top or bottom layers.  Assumed real components are positive.
-# TODO: Figure out why n^2, and ϵ*μ works but not conj(ϵ)*conj(μ)
-# function calckzGap(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
-#     ϵ,μ  = 1.0,1.0
-#     # return ComplexF64[ conj(sqrt(conj(ϵ*μ)*I - kᵢ[X].^2 - kᵢ[Y].^2))
-#     return ComplexF64[ conj(sqrt(conj(ϵ*μ) - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ]
-# end
 
 # KNORM
 # only difference is that the bottom one has a negative value.
 function calckzBottom(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
     n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    # Lecture 7B appears to take the conjugate of Kz
-    # Kz = conj( sqrt(I-Kx^2-Ky^2))
-    # This causes some tests to fail.  But seems to work when you also take the conjugate in the lambda calculation and
-    #TODO
     # UNSURE
     # return ComplexF64[ -conj(sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2) )  for kᵢ in kVectorSet.kᵢNorm]  # Lecture 7B:
     return ComplexF64[ -sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢNorm]  # REMOVING CONJ from Kzᵦ.  Either the lecture or the benchmark is wrong.
-    #TODO
 end
 # KNORM
 function calckzTop(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
     n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    # Lecture 7B appears to take the conjugate of Kz
-    # Kz = conj( sqrt(I-Kx^2-Ky^2))
-    # This causes some tests to fail.  But seems to work when you also take the conjugate in the lambda calculation and
-    #TODO
     # UNSURE
     # return ComplexF64[ conj(sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2) )  for kᵢ in kVectorSet.kᵢNorm]  #TODO
     return ComplexF64[ sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢNorm]  # REMOVING CONJ from Kzᵦ.  Either the lecture or the benchmark is wrong.

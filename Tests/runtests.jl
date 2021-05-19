@@ -3,5 +3,5 @@
 include("UnitTests/TestSuite.jl")
 include("IntegrationTests/IntegrationTest3.jl")
 # include("TestsOnExternals/AngledReflectionFromSi.jl")
-# include("TestsOnExternals/SandPtransmission.jl")
+include("IntegrationTests/SandPtransmission.jl")
 # include("TestsOnExternals/MaterialDatabaseTests.jl")

@@ -1,5 +1,5 @@
 module SandPtransmission
-
+# TODO: Rename this file
 using Test
 
 
@@ -77,7 +77,6 @@ harmonicsTruncation = HarmonicsTruncationByRectangle(M,N)
 analysisDefinition = ZeroOrderModesAnalysisDefinition(FORWARD)
 
 @testset "SiO2 - visible" begin
-println("SiO2 - visible - angled incidence - thin")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
@@ -85,7 +84,6 @@ tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoeffici
 @test isapprox(abs(data.Rsp[S])^2, rₛBenchmark^2, rtol=1e-3)
 
 
-println("SiO2 - visible - angled incidence - thick")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thick, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
@@ -95,18 +93,15 @@ tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoeffici
 @test isapprox(abs(data.Tsp[S])^2, tₛBenchmark^2, rtol=1e-3)
 
 
-println("SiO2 - visible - angled incidence - just S")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngledJustS, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 @test isapprox(abs(data.Rsp[S])^2, rₛBenchmark^2, rtol=1e-3)
 @test isapprox(abs(data.Tsp[S])^2, tₛBenchmark^2, rtol=1e-3)
 
-println("SiO2 - visible - angled incidence - just P")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngledJustP, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 @test isapprox(abs(data.Tsp[P])^2, tₚBenchmark^2, rtol=1e-3)
 
-println("SiO2 - visible - normal incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 0*degrees)
@@ -118,7 +113,6 @@ end;
 
 
 @testset "SiO2 - visible - patterned - normal" begin
-println("SiO2 - visible - patterned - normal")
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPatt = UniformLayerDefinition(1 * nm, "Air")
 uniformSiO2Patt = UniformLayerDefinition(1 * nm, "SiO2_564nm")
@@ -157,20 +151,16 @@ semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAir = UniformLayerDefinition(1 * μm, "Air")
 uniformSi = UniformLayerDefinition(1 * μm, "Si564nm")
 semiInfSi = SemiInfiniteLayerDefinition("Si564nm")
-
 layerStackSi = [semiInfAir, uniformAir, uniformSi, semiInfSi]
-# layerStackSi = [semiInfAir, uniformAir,  semiInfSi]
-# layerStackSi = [semiInfAir, uniformSi,  semiInfSi]
+
 
 @testset "Si uniform - visible" begin
-println("Si uniform - visible - angled incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi564nm, 30*degrees)
 @test isapprox(abs(data.Rsp[P])^2, abs(rₚBenchmark)^2, rtol=1e-3)
 @test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 
-println("Si uniform - visible - normal incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi564nm, 0*degrees)
@@ -183,25 +173,21 @@ end;
 
 
 # Same but the film is a patterned layer
+ # Removing because we shouldn't have a patterned layer with no elements
 numDivisions = [20,20]
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Air"))
 uniformSiPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Si564nm"))
 semiInfSi = SemiInfiniteLayerDefinition("Si564nm")
-
 layerStackSiPatt = [semiInfAir, uniformAirPatt, uniformSiPatt, semiInfSi]
-# layerStackSiPatt = [semiInfAir, uniformAirPatt, semiInfSi]
-# layerStackSiPatt = [semiInfAir, uniformSiPatt, semiInfSi]
 
 @testset "Si patterned - visible" begin
-println("Si patterned - visible - angled incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiPatt, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi564nm, 30*degrees)
 @test isapprox(abs(data.Rsp[P])^2, abs(rₚBenchmark)^2, rtol=1e-3)
 @test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 
-println("Si patterned - visible - normal incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiPatt, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi564nm, 0*degrees)
@@ -209,10 +195,8 @@ tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoeffici
 @test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 end
 
-# error()
 
 @testset "Thick patt Si film wth air substrate - visible" begin
-println("Thick patt Si film wth air substrate - visible - angled incidence")
 #### Same but the substrate is air, and the film is very thick:
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPattThick = PatternedLayerDefinition(numDivisions, 1 * mm, LayerPattern("Air"))
@@ -222,20 +206,15 @@ layerStackSiPattThick = [semiInfAir, uniformAirPattThick, uniformSiPattThick, se
 
 simulationDefinition = SimulationDefinition(lattice, layerStackSiPattThick, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
+tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi564nm, 30*degrees)
+@test isapprox(abs(data.Rsp[P])^2, abs(rₚBenchmark)^2, rtol=1e-3)
+@test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 
-RpBenchmark = 0.31168
-RsBenchmark = 0.41586
-@test isapprox(abs(data.Rsp[P])^2, RpBenchmark, rtol=1e-3)
-@test isapprox(abs(data.Rsp[S])^2, RsBenchmark, rtol=1e-3)
-
-println("Thick patt Si film wth air substrate - visible - normal incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSiPattThick, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
-
-RpBenchmarkNormal = 0.36404
-RsBenchmarkNormal = 0.36404
-@test isapprox(abs(data.Rsp[P])^2, RpBenchmarkNormal, rtol=1e-3)
-@test isapprox(abs(data.Rsp[S])^2, RsBenchmarkNormal, rtol=1e-3)
+tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi564nm, 0*degrees)
+@test isapprox(abs(data.Rsp[P])^2, abs(rₚBenchmark)^2, rtol=1e-3)
+@test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 end;
 
 
@@ -259,7 +238,6 @@ semiInfSi = SemiInfiniteLayerDefinition("Si302nm")
 layerStackSi = [semiInfAir, uniformAir, uniformSi, semiInfSi]
 
 @testset "Si uniform - UV - angled incidence" begin
-println("Si uniform - UV - angled incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 30*degrees)
@@ -269,7 +247,6 @@ end;
 
 
 @testset "Si uniform - UV - normal incidence" begin
-println("Si uniform - UV - normal incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 0*degrees)
@@ -279,7 +256,6 @@ end;
 
 
 @testset " Very thick Si uniform - UV - angled incidence" begin
-println(" Very thick Si uniform - UV - angled incidence")
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirThick = UniformLayerDefinition(1 * mm, "Air")
 uniformSiThick = UniformLayerDefinition(1 * mm, "Si302nm")
@@ -295,7 +271,6 @@ end;
 
 
 @testset " Very thick Si uniform - UV - normal incidence" begin
-println(" Very thick Si uniform - UV - normal incidence")
 simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 0*degrees)

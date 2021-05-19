@@ -680,7 +680,7 @@ transmittances = real(transmittedPowerFlux) / totalInputPowerFlux
 reflectances = real(reflectedPowerFlux) / totalInputPowerFlux
 totalTransmittance = abs(sum(real(transmittances)))
 totalReflectance = abs(sum(real(reflectances)))
-@show totalInputPowerFlux
+# @show totalInputPowerFlux
 @test isapprox(abs.(reflectances), Rbenchmark, rtol=1e-2)
 @test isapprox(totalReflectance, 0.088768, rtol=1e-2)
 @test isapprox(transmittances, Tbenchmark, rtol=1e-2)

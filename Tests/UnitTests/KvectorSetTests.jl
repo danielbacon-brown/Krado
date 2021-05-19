@@ -4,7 +4,7 @@
     wavenumber = WavenumberByk₀(k₀)
     k₁ = [ _2VectorFloat(1,0), _2VectorFloat(1,2) ]
     kVectorSet = KVectorSet(wavenumber, k₁)
-    @test kVectorSet.Kx ≈ [1 0;
+    @test kVectorSet.KxNorm ≈ [1 0;
                             0 1]
 
     # Integration:
@@ -20,6 +20,6 @@
     k = _2VectorFloat(1.7,0)
     ϖ = _2VectorInt(1,0)
     kVectorSet = createKVectorSet(wavenumber, k, ϖ, Gvectors)
-    @test kVectorSet.kᵢ ≈ [[0.7, 0.0], [1.7, 0.0], [2.7, 0.0]]
+    @test kVectorSet.kᵢNorm ≈ [[0.7, 0.0], [1.7, 0.0], [2.7, 0.0]] / k₀
 
 end

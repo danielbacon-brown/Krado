@@ -80,13 +80,15 @@ end
 
 function calcFreeSpaceΛ( KzNorm::Array{ComplexF64,2}) ::Array{ComplexF64,2}
     # DOES 'j' mean +sqrt(-1) or -sqrt(-1)?  probably plus...
+
+    #UNSURE:
     # old
     return vcat( hcat( im*KzNorm, zeros(ComplexF64,size(KzNorm)) ),
              hcat( zeros(ComplexF64,size(KzNorm)), im*KzNorm) )
-
     # Lecture 7B test?
     # return vcat( hcat( 1im*conj(KzNorm), zeros(ComplexF64,size(KzNorm)) ),
     #          hcat( zeros(ComplexF64,size(KzNorm)), 1im*conj(KzNorm)) )  # FIXES PROBLEMS FOR Si in visible
+
     # return vcat( hcat( -1im*conj(KzNorm), zeros(ComplexF64,size(KzNorm)) ), #Breaks everything
     #          hcat( zeros(ComplexF64,size(KzNorm)), -1im*conj(KzNorm)) )
     # return vcat( hcat( -1im*KzNorm, zeros(ComplexF64,size(KzNorm)) ), #Breaks everything
