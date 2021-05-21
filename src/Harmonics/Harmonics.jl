@@ -48,7 +48,6 @@ function HarmonicsSet(mnᵢ)
     indᵢ_mn = Dict( mnᵢ .=> 1:length(mnᵢ))
     return HarmonicsSet(mnᵢ, indᵢ_mn)
 end
-# HarmonicsSet(mnᵢ) = HarmonicsSet(convert(Vector{_2VectorInt},mnᵢ) )
 
 function numHarmonics(harmonicsSet::HarmonicsSet)
     return length(harmonicsSet.mnᵢ)
@@ -70,4 +69,3 @@ function getOrderIndex(harmonicsSet::HarmonicsSet, ϖ::_2VectorInt)
     end
     return index
 end
-# getOrderIndex(harmonicsSet::HarmonicsSet, ϖ) = getOrderIndex(harmonicsSet, _2VectorInt(ϖ))

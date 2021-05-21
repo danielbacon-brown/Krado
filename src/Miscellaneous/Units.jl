@@ -35,7 +35,7 @@ const global μm = 1e-6
 const global nm = 1e-9
 const global Å = 1e-10
 
-const global LENGTHLABEL = Dict{Float64,String}(  
+const global LENGTHLABEL = Dict{Float64,String}(
    [ (1.0, "m"),
    (1e-2, "cm"),
    (1e-3, "mm"),
@@ -73,12 +73,9 @@ const global KVECTORCOLOR = [0.0, 0.0, 0.0]
 const global KVECTORREALLINESTYLE = "-"
 const global KVECTORIMAGLINESTYLE = "--"
 const global KVECTORWIDTH = 1e-8
-# const global KVECTORHEADWIDTH = 0.06
-# const global KVECTORHEADWIDTH = 6
 const global PVECTORCOLOR = [0.0, 0.5, 0.0]
 const global PVECTORREALLINESTYLE = "-"
 const global PVECTORIMAGLINESTYLE = "dashed"
-# const global PVECTORIMAGLINESTYLE = "--"
 const global PVECTORWIDTH = 0.5e-8
 
 # Defining syntactic sugar for small vectors types

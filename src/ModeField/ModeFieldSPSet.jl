@@ -44,10 +44,7 @@ function convertFieldSetSPtoXYZ( fieldSetSP::FieldSetSP, kVectorSet::KVectorSet,
     fieldsXYZ = Array{ComplexF64,2}(undef,(nHarmonics,3))
 
     for ϖindex in 1:nHarmonics
-        # norm
         kXY = getkXYnorm(kVectorSet, ϖindex) * getk₀(kVectorSet.wavenumber)
-        # old
-        # kXY = getkXY(kVectorSet, ϖindex)
         kXYZ = kXYtokXYZ(kXY, n, wavenumber, isForward)
         fieldSP = fieldSetSP.fields[ϖindex,:]
         fieldsXYZ[ϖindex,:] = fieldSPtoFieldXYZ(kXYZ, fieldSP)
@@ -68,14 +65,11 @@ function convertFieldSetXYZtoSP( fieldSetXYZ::FieldSetXYZ, kVectorSet::KVectorSe
     fieldsSP = Array{ComplexF64,2}(undef,(nHarmonics,2))
 
     for ϖindex in 1:nHarmonics
-        # kXY = getkXY(kVectorSet, ϖindex)
         kXYnorm = getkXYnorm(kVectorSet, ϖindex)
         kXY = kXYnorm * getk₀(wavenumber)
         kXYZ = kXYtokXYZ(kXY, n, wavenumber, isForward)
-        # @show kXYZ
         fieldXYZ = fieldSetXYZ.fields[ϖindex,:]
         fieldsSP[ϖindex,:] = fieldXYZtoFieldSP(kXYZ, fieldXYZ)
-        # @show fieldsSP[ϖindex,:]
     end
 
     return FieldSetSP(fieldsSP, isForward)
@@ -97,24 +91,3 @@ function convertFieldSetXYZtoStack(fieldSetXYZ::FieldSetXYZ )
 
     return FieldSetStack(fieldStack, fieldSetXYZ.isForward)
 end
-
-# THIS IS IMPLEMENTED UNDER ModeField3Set.jl:
-# MOVE?
-# Converts the fieldSet in XY in a stacked format to XYZ.
-# function convertFieldSetStacktoXYZ(fieldSetStack::FieldSetStack )
-#
-#     nHarmonics = numHarmonics(fieldSetXYZ)
-#
-#     fieldXYZ = Array{ComplexF64}(undef, (nHarmonics,3) )
-#
-#     for ϖindex = 1:nHarmonics
-#         Px = fieldSetStack[ϖindex]
-#         Py = fieldSetStack[nHarmonics+ϖindex]
-#
-#         # Pxy = getXY(fieldSetXYZ.fields[ϖindex,:])
-#         # fieldStack[ϖindex] = Pxy[X]
-#         # fieldStack[nHarmonics+ϖindex] = Pxy[Y]
-#     end
-#
-#     return FieldSetXYZ(fieldStack, fieldSetStack.isForward)
-# end

@@ -47,7 +47,6 @@ function getMaterialAtPosition( spat::LayerPattern, points::Array{_2VectorFloat,
     points = convert(Array{_2VectorFloat,N},points)
     return map(point -> getMaterialAtPosition(spat,point), points)
 end
-# getMaterialAtPosition( spat::LayerPattern, points ) = getMaterialAtPosition( spat, convert(Array{_2VectorFloat,N},points))
 
 
 
@@ -79,4 +78,3 @@ function getϵμAtPosition( spat::LayerPattern, positions, materials::MaterialCo
     positions = convert(Array{_2VectorFloat,N},positions)
     return map( position -> getϵμAtPosition( spat, position, materials, wavenumber), positions )
 end
-# getϵμAtPosition( spat::LayerPattern, positions, materials::MaterialCollection, wavenumber::Wavenumber) = getϵμAtPosition( spat, convert(Array{_2VectorFloat,N},positions), materials, wavenumber) 

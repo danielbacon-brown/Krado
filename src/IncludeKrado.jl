@@ -2,13 +2,11 @@ using LinearAlgebra
 using StaticArrays
 using PyCall
 using PyPlot
-# using Plots
 using Printf
 using DelimitedFiles
 using Interpolations
 using YAML
 # using TimerOutputs
-# using pyimport
 
 # const global DIR = @__DIR__
 
@@ -21,7 +19,7 @@ include("Miscellaneous\\Units.jl")
 include("Miscellaneous\\Wavenumber.jl")
 include("Miscellaneous\\MiscellaneousFunctions.jl")
 
-include("ModeField\\Mode.jl")
+# include("ModeField\\Mode.jl")
 
 
 
@@ -47,8 +45,7 @@ include("Layer\\LayerPattern.jl")
 include("Layer\\GridLayerPattern.jl")
 include("Layer\\LayerDefinition.jl")
 
-include("Materials\\FavoriteMaterials.jl")
-# include("..\\UserMaterials\\UserMaterialImporters.jl")  # This has been moved outside the package.  The user must now include the functions according to the location of their files.
+include("Materials\\UserMaterials.jl")
 
 include("ModeField\\ModeCoefficientSet.jl")
 include("ModeField\\ModeFieldSet.jl")

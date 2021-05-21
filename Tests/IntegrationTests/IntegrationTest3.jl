@@ -143,7 +143,7 @@ derivedParameters = DerivedParameters(simulationDefinition)
 @test derivedParameters.harmonicsSet.indᵢ_mn == Dict(_2VectorInt(1, 1)=>1, _2VectorInt(0,1)=>2, _2VectorInt(-1, 1)=>3, _2VectorInt(1,0)=>4, _2VectorInt(0, 0)=>5, _2VectorInt(-1,0)=>6, _2VectorInt(1, -1)=>7, _2VectorInt(0,-1)=>8, _2VectorInt(-1, -1)=>9)
 
 # k-vector of boundary conditions
-@test isapprox(derivedParameters.boundaryConditions.kXY₀/getk₀(simulationDefinition), kBenchmark[X:Y], rtol=1e-3)
+@test isapprox(derivedParameters.boundaryConditions.kXY₀/getk₀(getWavenumber(simulationDefinition)), kBenchmark[X:Y], rtol=1e-3)
 
 # 0-order kXY-vector
 #old:
@@ -354,17 +354,18 @@ Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, lattice, Gvectors, mat
 @test Cμᵢⱼ1 ≈ Array{ComplexF64,2}(I,(9,9))
 @test isapprox(Cϵᵢⱼ1, Cϵᵢⱼ1benchmark, rtol=1e-1)
 
-Cϵᵢⱼ2, Cμᵢⱼ2 = calcConvolutionMatrices( layer2, lattice, Gvectors, matCol, wavenumber )
-@test Cϵᵢⱼ2[1,1] ≈ Complex(6,0)
-@test Cμᵢⱼ2[1,1] ≈ Complex(1,0)
-@test Cϵᵢⱼ2 ≈ 6*Array{ComplexF64,2}(I,(9,9))
-@test Cμᵢⱼ2 ≈ Array{ComplexF64,2}(I,(9,9))
+# No need to calculate convolution matricese for uniform layer:
+# Cϵᵢⱼ2, Cμᵢⱼ2 = calcConvolutionMatrices( layer2, lattice, Gvectors, matCol, wavenumber )
+# @test Cϵᵢⱼ2[1,1] ≈ Complex(6,0)
+# @test Cμᵢⱼ2[1,1] ≈ Complex(1,0)
+# @test Cϵᵢⱼ2 ≈ 6*Array{ComplexF64,2}(I,(9,9))
+# @test Cμᵢⱼ2 ≈ Array{ComplexF64,2}(I,(9,9))
 
-#Calculate inverse convolution matrices for each layer
+# #Calculate inverse convolution matrices for each layer
 Cϵᵢⱼ⁻¹1 = inv(Cϵᵢⱼ1)
 Cμᵢⱼ⁻¹1 = inv(Cμᵢⱼ1)
-Cϵᵢⱼ⁻¹2 = inv(Cϵᵢⱼ2)
-Cμᵢⱼ⁻¹2 = inv(Cμᵢⱼ2)
+# Cϵᵢⱼ⁻¹2 = inv(Cϵᵢⱼ2)
+# Cμᵢⱼ⁻¹2 = inv(Cμᵢⱼ2)
 
 
 
@@ -443,8 +444,7 @@ V₂ = calcMagneticEigenvectorsFromQWλ(prealloc, Q₂,W₂,λ₂)
 V₂ = calcEigenmodesForUniformLayer(prealloc, kVectorSet, layer2, matCol)
 
 # Common components of scattering matrix
-A₂ = calcA(prealloc, W₂, derivedParameters.freeSpaceParameters.W₀, V₂, derivedParameters.freeSpaceParameters.V₀)
-B₂ = calcB(prealloc, W₂, derivedParameters.freeSpaceParameters.W₀, V₂, derivedParameters.freeSpaceParameters.V₀)
+A₂, B₂ = calcAB(prealloc, W₂, derivedParameters.freeSpaceParameters.W₀, V₂, derivedParameters.freeSpaceParameters.V₀)
 X₂ = calcX(prealloc, λ₂, kVectorSet.wavenumber, layer2.thickness)
 
 S₂ = calcScatteringMatrix_ABX(prealloc, A₂, B₂, X₂)

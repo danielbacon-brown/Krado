@@ -2,8 +2,6 @@
 mutable struct GlobalScatteringMatrix{PrecisionType<:Real}
 
     # Size = (4*nHarmonics) x (4*nHarmonics)
-    # matrix::Array{ComplexF64,2}
-    # matrix::A
     matrix::Array{Complex{PrecisionType},2}
 
     function GlobalScatteringMatrix{PrecisionType}(matrix::Array{Complex{PrecisionType},2}) where {PrecisionType<:Real}
@@ -41,23 +39,9 @@ function initializeGlobalScatteringMatrix( PrecisionType, nHarmonics::Integer )
 
     return GlobalScatteringMatrix{PrecisionType}(Sglobal)
 end
-# function initializeGlobalScatteringMatrix( nHarmonics::Integer )
-#
-#     Sglobal = zeros( ComplexF64, (4*nHarmonics, 4*nHarmonics) )
-#     _1, _2 = getQuadrantSlices(Sglobal)
-#     S₁₂ = Array{ComplexF64,2}(I,(2*nHarmonics,2*nHarmonics))
-#     Sglobal[_1,_2] = S₁₂
-#     Sglobal[_2,_1] = S₁₂
-#
-#     return GlobalScatteringMatrix{Array{ComplexF64,2}}(Sglobal)
-# end
-
-# function preallocateScatteringMatrix(nHarmonics::Int64)
-#     return zeros(ComplexF64, (4*nHarmonics, 4*nHarmonics) )
-# end
 
 
-# TODO: Make this more memore efficient
+# TODO: Make this more memory efficient
 # Calculate global scattering matrix for a stack of layers
 # The first layer and last layers must be a SemiInfiniteLayerDefinition
 function calcGlobalScatteringMatrix(layerStack::Vector{T}, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice, PrecisionType::DataType) where T<:LayerDefinition
@@ -89,65 +73,6 @@ function calcGlobalScatteringMatrix(layerStack::Vector{T}, matCol::MaterialColle
 
     RedhefferStarProduct!( Sassembled, Stop )
 
-    # @show Sassembled.matrix
-
-    return GlobalScatteringMatrix(Sassembled)
-end
-
-
-# Calculate global scattering matrix for a stack of layers
-# The first layer and last layers must be a SemiInfiniteLayerDefinition
-# function calcGlobalScatteringMatrixLowMemory(layerStack::Vector{T}, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice) where T<:LayerDefinition
-#
-#     @assert first(layerStack) isa SemiInfiniteLayerDefinition
-#     @assert last(layerStack) isa SemiInfiniteLayerDefinition
-#
-#     nHarmonics = numHarmonics(kVectorSet)
-#
-#     # Sbottom = calcScatteringMatrixBottom(layerStack[1], matCol, kVectorSet)
-#
-#     Sassembled = calcScatteringMatrixBottom(first(layerStack), matCol, kVectorSet)
-#     preallocatedMatrix = preallocateScatteringMatrix(nHarmonics)
-#     # preallocatedMatrix = zeros(ComplexF64, (4*nHarmonics, 4*nHarmonics) )
-#
-#     for iLayer = 2:(length(layerStack)-1)
-#         Sassembled = Sassembled ⊗ calcScatteringMatrix!(preallocatedMatrix, layerStack[iLayer], matCol, kVectorSet, gVectorSet, lattice)
-#     end
-#     Stop = calcScatteringMatrixTop(last(layerStack), matCol, kVectorSet)
-#
-#     Sassembled = Sassembled ⊗ Stop
-#
-#     return GlobalScatteringMatrix(Sassembled)
-# end
-
-
-# Timing several steps in the calculation of the global scattering matrix
-function calcGlobalScatteringMatrixTimed(layerStack::Vector{T}, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice) where T<:LayerDefinition
-
-    @assert layerStack[1] isa SemiInfiniteLayerDefinition
-    @assert layerStack[end] isa SemiInfiniteLayerDefinition
-
-    println()
-    println("Running bottom layer")
-    # @timeit timerOutput "Bottom layer" Sbottom = calcScatteringMatrixBottom(layerStack[1], matCol, kVectorSet)
-    Sbottom = calcScatteringMatrixBottom(layerStack[1], matCol, kVectorSet)
-    println("Running top layer")
-    # @timeit timerOutput "Top layer" Stop = calcScatteringMatrixTop(layerStack[end], matCol, kVectorSet)
-    Stop = calcScatteringMatrixTop(layerStack[end], matCol, kVectorSet)
-
-    Sassembled = Sbottom
-    for iLayer = 2:(length(layerStack)-1)
-        println("Running layer "*string(iLayer))
-        sectionName = "S matrix layer "*string(iLayer)
-        # @timeit timerOutput sectionName Snew = calcScatteringMatrixTimed(layerStack[iLayer], matCol, kVectorSet, gVectorSet, lattice)
-        Snew = calcScatteringMatrixTimed(layerStack[iLayer], matCol, kVectorSet, gVectorSet, lattice)
-        sectionName = "Multiply layer "*string(iLayer)
-        # @timeit timerOutput sectionName Sassembled = Sassembled ⊗ Snew
-        Sassembled = Sassembled ⊗ Snew
-        # Sassembled = Sassembled ⊗ calcScatteringMatrix(layerStack[iLayer], matCol, kVectorSet, gVectorSet, lattice)
-    end
-    Sassembled = Sassembled ⊗ Stop
-
     return GlobalScatteringMatrix(Sassembled)
 end
 
@@ -175,7 +100,6 @@ function propagateModeCoeff(Sglobal::GlobalScatteringMatrix, inputCoefficients::
 end
 
 
-# function propagateFields( Sglobal::GlobalScatteringMatrix, inputFields::InputFields, W₀::ElectricEigenvectors )
 function propagateFields( Sglobal::GlobalScatteringMatrix, inputFields::InputFields, derivedParameters::DerivedParameters )
 
     inputCoeff = inputFields2InputCoefficients(inputFields, derivedParameters.freeSpaceParameters.W₀)

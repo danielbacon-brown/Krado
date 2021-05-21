@@ -123,7 +123,7 @@ include("../../src/IncludeKrado.jl")
     addMaterial!(matCol,"Ag", Material( ConstantPermittivity(0.5 + 3.9im) ) )
 
 
-    # Define Harmonics.  
+    # Define Harmonics.
     M, N = 3, 3
     # M,N = 10,10
     harmonicsTruncation = HarmonicsTruncationByRectangle(M, N)
@@ -216,7 +216,7 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot 3d k-vectors and polarization vectors
-    # plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = Escale) 
+    # plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = Escale)
 
     # Plot a 3D structure.
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
@@ -240,20 +240,27 @@ include("../../src/IncludeKrado.jl")
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
     # add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=μm, Escale = 0.3 )
 
-
+    # Plot structure with 1D
     UVstart = [0, 0]
     UVstop = [1, 1]
     numDivisions = 20
     XYstart = convertUVtoXY(lattice, UVstart)
     XYstop = convertUVtoXY(lattice, UVstop)
-    
     plotCrossSection(simulationDefinition, XYstart, XYstop, numDivisions, materialPlottingParameters; scale=μm)
+
+
+
 
     numDivisionsXY = 20
     numDivisionsZ = 30
     positionLineXY = PositionGridXYbyMidpoint( XYstart, XYstop, numDivisionsXY)
     plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
     plotCrossSectionϵbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
+
+
+
+
+    # plotCrossSection(simulationDefinition, numDivisions, materialPlottingParameters; scale=μm)
 
 
 end

@@ -2,14 +2,13 @@
 mutable struct LayerScatteringMatrix{PrecisionType<:Real}
 
     # Size = (4*nHarmonics) x (4*nHarmonics)
-    # matrix::A
     matrix::Array{Complex{PrecisionType},2}
-    
+
     function LayerScatteringMatrix{PrecisionType}(matrix::Array{Complex{PrecisionType}}) where {PrecisionType<:Real}
         @assert isSquare(matrix)
         return new(matrix)
     end
-    
+
 end
 
 function LayerScatteringMatrix(matrix::Array{Complex{PrecisionType}}) where {PrecisionType<:Real}
@@ -17,7 +16,6 @@ function LayerScatteringMatrix(matrix::Array{Complex{PrecisionType}}) where {Pre
     return LayerScatteringMatrix{PrecisionType}(matrix)
 end
 
-# import Base.size
 function Base.size(sm::LayerScatteringMatrix)
     return size(sm.matrix)
 end
@@ -26,7 +24,7 @@ function numHarmonics(layerScatteringMatrix::LayerScatteringMatrix)
     return quarter(size(layerScatteringMatrix,1))
 end
 
-function getQuadrantSlices(sm::LayerScatteringMatrix) 
+function getQuadrantSlices(sm::LayerScatteringMatrix)
     return getQuadrantSlices(sm.matrix)
 end
 
@@ -56,20 +54,20 @@ end
 #
 # Note that each section's calculation does not depend on a section that was previously calculated.  This means each section can be stored as an in-place operation A->AB.
 function RedhefferStarProduct!( AscatteringMatrix::LayerScatteringMatrix, BscatteringMatrix::LayerScatteringMatrix)
-    
-    @inbounds begin    
+
+    @inbounds begin
         A₁₁, A₁₂, A₂₁, A₂₂ = getQuadViews(AscatteringMatrix.matrix)
         B₁₁, B₁₂, B₂₁, B₂₂ = getQuadViews(BscatteringMatrix.matrix)
-        
+
         A₁₂_ImB₁₁A₂₂⁻¹ = A₁₂ * inv(I - (B₁₁ * A₂₂))  # TODO: preallocate
         B₂₁_ImA₂₂B₁₁⁻¹ = B₂₁ * inv(I - (A₂₂ * B₁₁))
-        
+
         A₁₁[:,:] = A₁₁ .+ A₁₂_ImB₁₁A₂₂⁻¹ * B₁₁ * A₂₁
         A₁₂[:,:] = A₁₂_ImB₁₁A₂₂⁻¹ * B₁₂
         A₂₁[:,:] = B₂₁_ImA₂₂B₁₁⁻¹ * A₂₁
         A₂₂[:,:] = B₂₂ .+ B₂₁_ImA₂₂B₁₁⁻¹ * A₂₂ * B₁₂
     end;
-        
+
     return nothing
 end
 
@@ -82,7 +80,7 @@ end
 # AB₁₂ = A₁₂*inv(I - (B₁₁*A₁₂))*B₁₂
 # AB₂₁ = B₂₁*inv(I - (A[_2,_2]*B₁₁))*A₂₁
 # AB₂₂ = B₂₂ + (B₂₁ * inv(I - (A₂₂ * B₁₁)) *A₂₂*B₁₂)
-function RedhefferStarProduct(AscatteringMatrix::LayerScatteringMatrix, BscatteringMatrix::LayerScatteringMatrix)::LayerScatteringMatrix 
+function RedhefferStarProduct(AscatteringMatrix::LayerScatteringMatrix, BscatteringMatrix::LayerScatteringMatrix)::LayerScatteringMatrix
     A = AscatteringMatrix.matrix
     B = BscatteringMatrix.matrix
 
@@ -100,6 +98,6 @@ end
 function ⊗(A::LayerScatteringMatrix, B::LayerScatteringMatrix)::LayerScatteringMatrix
     return RedhefferStarProduct(A, B)
 end
-function ⊗(A, B) 
+function ⊗(A, B)
     return RedhefferStarProduct(A, B)
 end

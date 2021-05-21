@@ -12,10 +12,10 @@
 
 
 mutable struct ElectricEigenvectors
-    
+
     # Array that is used to convert between mode fields and coefficients
     eigenvectors::Array{Float64,2}
-    
+
     function ElectricEigenvectors(eigenvectors::Array{Float64,2})
         return new(eigenvectors)
     end
@@ -24,11 +24,11 @@ end
 # Convert mode fields to mode coefficients
 function FieldSetStack2CoefficientSet(FieldSetStack::FieldSetStack, W::ElectricEigenvectors)::ModeCoefficientSet
     coefficients = inv(W.eigenvectors) * FieldSetStack.modeFields
-    return ModeCoefficientSet(coefficients, FieldSetStack.isForward) 
+    return ModeCoefficientSet(coefficients, FieldSetStack.isForward)
 end
 
 # Convert mode coefficients to mode fields
 function modeCoefficientSet2FieldSet(modeCoefficientSet::ModeCoefficientSet, W::ElectricEigenvectors)
-    fields = W.eigenvectors * modeCoefficientSet.modeCoefficients    
+    fields = W.eigenvectors * modeCoefficientSet.modeCoefficients
     return FieldSetStack(fields, modeCoefficientSet.isForward)
 end

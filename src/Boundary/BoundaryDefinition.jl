@@ -2,7 +2,7 @@
 abstract type BoundaryDefinition end
 
 mutable struct InputByOrderBoundaryDefinition <:BoundaryDefinition
-    
+
     # Define the characteristics of the incident light
     # The azimuthal and zenith angles defining the direction of incidence.  The light is travelling at this angle within the substrate or superstrate material.
     wavenumber::Wavenumber
@@ -13,20 +13,20 @@ mutable struct InputByOrderBoundaryDefinition <:BoundaryDefinition
 
     # Dictionary defining the mode amplitudes, A, for each integer harmonic order, ϖ
     # Amplitudes are essentially Jones vectors [Aₛ, Aₚ]
-    Abyϖbottom::Dict{_2VectorInt, _2VectorComplex} 
-    Abyϖtop::Dict{_2VectorInt, _2VectorComplex} 
+    Abyϖbottom::Dict{_2VectorInt, _2VectorComplex}
+    Abyϖtop::Dict{_2VectorInt, _2VectorComplex}
 
     function InputByOrderBoundaryDefinition(wavenumber::Wavenumber, θ::Real, ϕ::Real, mainHarmonicOrder::_2VectorInt, isTop::Bool, Abyϖbottom::Dict{_2VectorInt,_2VectorComplex}, Abyϖtop::Dict{_2VectorInt,_2VectorComplex})
-        
+
+        # No longer necessary with algorithm updates:
         # If the incidence angle is exactly normal or very close to it, the A-matrix of a uniform Air layer can become singular.  Set the angle so this doesn't happen.
-        if -1e-6 < θ < 1e-6
-            θ = (θ==0) ? 1e-6 : 1e-6*sign(θ)
-        end
-        if -1e-6 < ϕ < 1e-6
-            # ϕ = 1e-6*sign(ϕ)
-            ϕ = (ϕ==0) ? 1e-6 : 1e-6*sign(ϕ)
-        end
-        
+        # if -1e-6 < θ < 1e-6
+        #     θ = (θ==0) ? 1e-6 : 1e-6*sign(θ)
+        # end
+        # if -1e-6 < ϕ < 1e-6
+        #     ϕ = (ϕ==0) ? 1e-6 : 1e-6*sign(ϕ)
+        # end
+
         return new(wavenumber, Float64(θ), Float64(ϕ), mainHarmonicOrder, isTop, Abyϖbottom, Abyϖtop)
     end
 end
@@ -45,7 +45,7 @@ function InputByOrderBoundaryDefinition(wavenumber::Wavenumber, θ::Real, ϕ::Re
 end
 
 
-    
+
 function getWavenumber(inputByOrderBoundaryDefinition::InputByOrderBoundaryDefinition)
     return inputByOrderBoundaryDefinition.wavenumber
 end

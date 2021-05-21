@@ -12,12 +12,10 @@ abstract type PermeabilityModel end
 function calc_ϵ(permittivity::PermittivityModel, wavenumber::Wavenumber, position)
     return calc_ϵ(permittivity, wavenumber)
 end
-# calc_ϵ(permittivity::PermittivityModel, wavenumber::Wavenumber, position) = calc_ϵ(permittivity, wavenumber, _2VectorFloat(position) )
 
 function calc_μ(permeability::PermeabilityModel, wavenumber::Wavenumber, position)
     return calc_μ(permeability, wavenumber)
 end
-# calc_μ(permittivity::PermittivityModel, wavenumber::Wavenumber, position) = calc_μ(permittivity, wavenumber, _2VectorFloat(position) )
 
 
 
@@ -78,21 +76,7 @@ end
 function calc_ϵ(permittivity::SpatialFunctionPermittivity, wavenumber::Wavenumber, position)
     return permittivity.ϵfunction(wavenumber, position)
 end
-# calc_ϵ(permittivity::SpatialFunctionPermittivity, wavenumber::Wavenumber, position) = calc_ϵ(permittivity, wavenumber, _2VectorFloat(position))
 
-
-
-# struct InterpolatedPermittivity <: PermittivityModel
-#     interpolation::Interpolations.Extrapolation
-#     function InterpolatedPermittivity(interpolation::Interpolations.Extrapolation)
-#         return new(interpolation)
-#     end
-# end
-# 
-# function calc_ϵ(permittivity::InterpolatedPermittivity, wavenumber::Wavenumber)
-#     itp = permittivity.interpolation
-#     return itp( getλ₀(wavenumber) )
-# end
 
 
 const global WAVENUMBERLIMITSDEFAULT = (WavenumberByk₀(floatmax(Float64)), WavenumberByk₀(floatmin(Float64)))
@@ -104,7 +88,7 @@ mutable struct Material <: AbstractMaterial
     function Material(ϵᵢ::PermittivityModel, μᵢ::PermeabilityModel = ConstantPermeability(1.0); wavenumberRange = WAVENUMBERLIMITSDEFAULT)
         @assert length(wavenumberRange) == 2
         wavenumberRange = (wavenumberRange[1], wavenumberRange[2]) # convert to tuple
-        
+
         return new(ϵᵢ, μᵢ, wavenumberRange)
     end
 end
@@ -144,9 +128,6 @@ end
 function calc_ϵμ(material::Material, wavenumber::Wavenumber, position)
     return calc_ϵ(material, wavenumber, position), calc_μ(material, wavenumber, position)
 end
-# calc_ϵ(material::Material, wavenumber::Wavenumber, position::TU2VectorReal) = calc_ϵ(material, wavenumber, _2VectorFloat(position))
-# calc_μ(material::Material, wavenumber::Wavenumber, position::TU2VectorReal) = calc_μ(material, wavenumber, _2VectorFloat(position))
-# calc_ϵμ(material::Material, wavenumber::Wavenumber, position::TU2VectorReal) = calc_ϵμ(material, wavenumber, _2VectorFloat(position))
 
 # Syntactic sugar for getting n, z
 # Returns the complex refractive index
@@ -154,7 +135,6 @@ function calc_n(material::AbstractMaterial, wavenumber::Wavenumber, position)
     ϵ, μ = calc_ϵμ(material, wavenumber, position)
     return convert_ϵμ2n(ϵ, μ)
 end
-# calc_n(material::AbstractMaterial, wavenumber::Wavenumber, position::TU2VectorReal) = calc_n(material, wavenumber, _2VectorFloat(position))
 
 # Returns the complex refractive index
 function calc_n(material::AbstractMaterial, wavenumber::Wavenumber)
@@ -167,7 +147,6 @@ function calc_z(material::AbstractMaterial, wavenumber::Wavenumber, position)
     ϵ, μ = calc_ϵμ(material, wavenumber, position)
     return convert_ϵμ2z(ϵ, μ)
 end
-# calc_z(material::AbstractMaterial, wavenumber::Wavenumber, position::TU2VectorReal) = calc_z(material, wavenumber, _2VectorFloat(position) )
 
 # Returns the complex impedance
 function calc_z(material::AbstractMaterial, wavenumber::Wavenumber)::ComplexF64
@@ -178,7 +157,7 @@ end
 
 # Calculates the ϵ and μ for each position in a grid of materials
 # This is not very efficient, but that probably doesn't matter.
-function calc_ϵμ(gridMaterials, wavenumber::Wavenumber) 
+function calc_ϵμ(gridMaterials, wavenumber::Wavenumber)
     gridϵ = map( mat -> calc_ϵ(mat, wavenumber), gridMaterials)
     gridμ = map( mat -> calc_μ(mat, wavenumber), gridMaterials)
     return gridϵ, gridμ

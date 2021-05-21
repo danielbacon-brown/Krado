@@ -1,24 +1,12 @@
-# Creates a dictionary of: name => material import function
-# function getFavoriteMaterialImporters(path::String)
-# 
-#     favorites = Dict{String,Function}()
-# 
-#     include(DIR*"\\"*path)
-# 
-#     # push!(favorites, "Ag"=> () -> importλnkTextMaterial("UserMaterials\\Ag_Johnson_and_Christy.txt"; scale=μm, skipRows=1, delimiter="\t"))
-#     # push!(favorites, "Air"=> () -> importYAMLmaterial("MaterialDatabase\\data\\other\\mixed gases\\air\\Ciddor.yml"))
-# 
-#     return favorites
-# end
 
 # Import a single material from favorites
-function importFavoriteMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, name::String)
+function importUserMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, name::String)
     if name in keys(materialImporters)
         addMaterial!(matCol,name, materialImporters[name]() )
     end
 end
 # If there is no input MaterialCollection, create one.
-function importFavoriteMaterial(materialImporters::Dict{<:Any,<:Any}, name::String)
+function importUserMaterial(materialImporters::Dict{<:Any,<:Any}, name::String)
     matCol = MaterialCollection()
     if name in keys(materialImporters)
         addMaterial!(matCol,name, materialImporters[name]() )
@@ -28,15 +16,15 @@ end
 
 # Import a series of materials from favorites
 # names must be set-like and iterable
-function importFavoriteMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, names)
+function importUserMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, names)
     for name in names
-        importFavoriteMaterial!(matCol, materialImporters, name)
+        importUserMaterial!(matCol, materialImporters, name)
     end
 end
 # If there is no material collection, create one
-function importFavoriteMaterial(materialImporters::Dict{<:Any,<:Any}, names)
+function importUserMaterial(materialImporters::Dict{<:Any,<:Any}, names)
     matCol = MaterialCollection()
-    importFavoriteMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, names)
+    importUserMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, names)
     return matCol
 end
 

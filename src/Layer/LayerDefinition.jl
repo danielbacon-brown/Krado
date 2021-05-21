@@ -61,8 +61,6 @@ function calc∫xexp𝐆𝐫(valueGrid, positionGrid::PositionGridXY, G::_2Vecto
         end
     end
 
-    # UNSURE
-    # total = conj(total)
 
     return total / (gridSize[1]*gridSize[2])
 end
@@ -87,8 +85,6 @@ end
 # Iterate over every combination of G-vectors and grab appropriate value from dict
 function assembleConvolutionMatrix( valuesByΔϖ::Dict{_2VectorInt,ComplexF64}, harmonicsSet::HarmonicsSet  )
 
-    # TODO: Replace w nHarmonics
-
     # Refers to either Cϵ, ⟦ϵ⟧  or Cμ, ⟦μ⟧
     Cϵᵢⱼ = Array{ComplexF64,2}(undef, (numHarmonics(harmonicsSet), numHarmonics(harmonicsSet)) )
 
@@ -109,7 +105,6 @@ end
 
 
 function getPositionϵμGrids( layerDef::PatternedLayerDefinition, lattice::Lattice, matCol::MaterialCollection, wavenumber::Wavenumber)
-    # posGrid = calcUniformGridPositions(lattice, layerDef.numDivisions)
     positionGrid = PositionGridXYleftAligned(lattice, layerDef.numDivisions)
     ϵGrid = getϵAtPosition( layerDef.layerPattern, positionGrid, matCol, wavenumber)
     μGrid = getμAtPosition( layerDef.layerPattern, positionGrid, matCol, wavenumber)
@@ -121,7 +116,7 @@ function calcConvolutionMatrices( layerDef::PatternedLayerDefinition, lattice::L
 
     positionGrid, ϵGrid, μGrid = getPositionϵμGrids(layerDef, lattice, matCol, wavenumber)
 
-    # UNSURE - For some reason this is necessary.  Does not affect IntegrationTest3 but is needed for absorptive films
+    # UNSURE - For some reason taking the conjugate is necessary.  Does not affect IntegrationTest3 but is needed for absorptive films
     ϵGrid = conj.(ϵGrid)
     μGrid = conj.(μGrid)
 
@@ -130,26 +125,6 @@ function calcConvolutionMatrices( layerDef::PatternedLayerDefinition, lattice::L
 
     return Cϵᵢⱼ, Cμᵢⱼ
 end
-
-# IS THIS USED? - only in IntegrationTest3
-# Calculates the convolution matrices ⟦ϵ⟧  ⟦μ⟧ a the given layer and lattice with the corresponding harmonics and materials.  For an unpatterned layer, the convolution matrix is simply the a diagonal matrix with all components being equal to permittivity
-function calcConvolutionMatrices( layerDef::UniformLayerDefinition, lattice::Lattice, Gvectors::GvectorSet, matCol::MaterialCollection, wavenumber::Wavenumber )
-
-    ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), wavenumber)
-
-    # @show ϵ
-    # UNSURE
-    # ϵ = conj.(ϵ)  # DOESN'T MATTER FOR INTEGRATION TEST 3
-    # @show ϵ
-
-    numHarmonics = numGvectors(Gvectors)
-    Cϵᵢⱼ = Matrix{ComplexF64}(ϵ*I, numHarmonics, numHarmonics)
-    Cμᵢⱼ = Matrix{ComplexF64}(μ*I, numHarmonics, numHarmonics)
-
-    return Cϵᵢⱼ, Cμᵢⱼ
-end
-
-
 
 
 # Returns the position grid Array{_2VectorFloat(X,Y),2}
@@ -167,31 +142,13 @@ function getϵμ(layer::layerT, matCol::MaterialCollection, wavenumber::Wavenumb
     return calc_ϵμ( getMaterial(matCol,layer.backgroundMaterialName), wavenumber)
 end
 
-function calckzNorm(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
-    n = getn(layer, matCol, wavenumber)
-    ϵ,μ = getϵμ( layer, matCol, wavenumber)
-
-    # Lecture 7B:
-    # UNSURE
-    return ComplexF64[ conj(sqrt( conj(ϵ)*conj(μ) - kᵢNorm[X]^2 - kᵢNorm[Y]^2))  for kᵢNorm in kVectorSet.kᵢNorm]
-
-end
-
-# KNORM
-# only difference is that the bottom one has a negative value.
 function calckzBottom(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
-    n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    # UNSURE
-    # return ComplexF64[ -conj(sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2) )  for kᵢ in kVectorSet.kᵢNorm]  # Lecture 7B:
     return ComplexF64[ -sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢNorm]  # REMOVING CONJ from Kzᵦ.  Either the lecture or the benchmark is wrong.
 end
-# KNORM
+
 function calckzTop(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, wavenumber::Wavenumber)
-    n = getn(layer, matCol, wavenumber)
     ϵ,μ = getϵμ( layer, matCol, wavenumber)
-    # UNSURE
-    # return ComplexF64[ conj(sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2) )  for kᵢ in kVectorSet.kᵢNorm]  #TODO
     return ComplexF64[ sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢNorm]  # REMOVING CONJ from Kzᵦ.  Either the lecture or the benchmark is wrong.
 end
 

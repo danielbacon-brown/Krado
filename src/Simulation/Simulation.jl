@@ -24,15 +24,15 @@ abstract type AnalysisDefinition end
 # Should also have "analysis" constituent that governs what kind of data is returned from this simulation when it is run
 """
     SimulationDefinition
-    
+
 SimulationDefinition(::Lattice, ::Vector{T2}, ::HarmonicsTruncation, ::BoundaryDefinition, ::MaterialCollection, ::AnalysisDefinition; PrecisionType=Float64) where T2<:LayerDefinition
 
 SimulationDefinition is a structure that contains all of the parameters needed to define a single "experiment", e.g. a single geometry, wavelength, angle of incidence, etc.  It does not include any results or derived parameters.
 """
 mutable struct SimulationDefinition
-        
+
     lattice::Lattice
-        
+
     layerStack::Vector{T} where T<:LayerDefinition # Stack of layers defining the structure.  First layer is reflection layer (the layer in which light is injected).  Last layer is the transmission layer.  First and last layers must be of type UniformLayerDefinition
 
     harmonicsTruncation::HarmonicsTruncation  # Defines how the set of harmonics to use should be defined
@@ -59,7 +59,6 @@ function getWavenumber(simulationDefinition::SimulationDefinition)
     return simulationDefinition.boundaryDefinition.wavenumber
 end
 
-# Is this needed?
-function getk₀(simulationDefinition::SimulationDefinition)
-    return getk₀(getWavenumber(simulationDefinition))
-end
+# function getk₀(simulationDefinition::SimulationDefinition)
+#     return getk₀(getWavenumber(simulationDefinition))
+# end

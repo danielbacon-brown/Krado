@@ -10,7 +10,7 @@ mutable struct PositionGridXY{N}
     stopV::_2VectorFloat
     stopUV::_2VectorFloat
     positions::Array{_2VectorFloat,N}
-    
+
     function PositionGridXY(start::_2VectorFloat, stopU::_2VectorFloat, stopV::_2VectorFloat, stopUV::_2VectorFloat, positions::Array{_2VectorFloat,N}) where N
         return new{N}(start, stopU, stopV, stopUV, positions)
     end
@@ -20,7 +20,7 @@ mutable struct PositionGridZ
     start::Float64
     stop::Float64
     positions::Vector{Float64}
-    
+
     function PositionGridZ(start::Float64, stop::Float64, positions::Vector{Float64})
         return new(start, stop, positions)
     end
@@ -30,10 +30,10 @@ end
 # Returns a sequence of coordinates at evenly spaced midpoints between xyStart to xyStop.
 # Linear
 function PositionGridXYbyMidpoint( start, stop, numDivisions::Integer)
-    
+
     start = convert(_2VectorFloat, start)
     stop = convert(_2VectorFloat, stop)
-    
+
     totalLength = norm(start.-stop)
     pixelLength = totalLength / numDivisions
     fractionalLength = range0to1exclusiveMidpoint(numDivisions)
@@ -55,15 +55,15 @@ end
 function PositionGridXYleftAligned( lattice::Lattice, numDivisions::AbstractArray{<:Any})
 
     # Fractional distances along U, V vectors
-    Ufractions = range0to1exclusive(numDivisions[U]) 
+    Ufractions = range0to1exclusive(numDivisions[U])
     Vfractions = range0to1exclusive(numDivisions[V])
-     
+
     gridUVfractions = collect( Base.product(Ufractions, Vfractions) )
     gridUVfractions = reshape(gridUVfractions, Tuple(numDivisions) )
 
     xyPositions = map( uv -> convertUVtoXY(lattice, _2VectorFloat(uv)), gridUVfractions)
 
-    
+
     start = convertUVtoXY(lattice, _2VectorFloat(0,0))
     stopU = convertUVtoXY(lattice, _2VectorFloat(1,0))
     stopV = convertUVtoXY(lattice, _2VectorFloat(0,1))
@@ -71,7 +71,6 @@ function PositionGridXYleftAligned( lattice::Lattice, numDivisions::AbstractArra
 
     return PositionGridXY(start, stopU, stopV, stopUV, xyPositions)
 end
-# PositionGridXYleftAligned( lattice::Lattice, numDivisions) = PositionGridXYleftAligned( lattice, _2VectorInt(numDivisions))
 
 # For 1D lattice
 function PositionGridXYleftAligned( lattice::Lattice, numDivisions::Integer)
@@ -95,8 +94,6 @@ function totalDistance(positionGridXY::PositionGridXY{1})
     return norm(positionGridXY.start .- positionGridXY.stopU)
 end
 
-function relativeDistances(positionGrid::PositionGridXY) 
-# function relativeDistances(positionGrid::PositionGridXY{N})::Array{Float64,N} where N
-    return [norm(positionGrid.positions[i] - positionGrid.start) for i in 1:length(positionGrid)]    
-    # return norm.(positionGrid.positions .- positionGrid.start)   
+function relativeDistances(positionGrid::PositionGridXY)
+    return [norm(positionGrid.positions[i] - positionGrid.start) for i in 1:length(positionGrid)]
 end

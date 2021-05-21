@@ -4,13 +4,13 @@ mutable struct PlottingParameters
     color  # may be a vector or string
     alpha::Float64
     shade::Bool
-    # edges
+    # edges:
     lineColor # may be a vector or string
     lineWidth::Float64
     lineStyle::String
-    # vertex
+    # vertex:
     marker::String
-    
+
     function PlottingParameters(; color="gray", alpha=0.8, shade=true, lineColor="black", lineWidth=0.5, lineStyle="-", marker="," )
         return new(
             color,
@@ -28,7 +28,7 @@ end
 
 
 # OLD
-
+# IS THIS USED?
 # Plot grid of reals
 function plotGrid(aGrid::Array{T,2}, titleStr::String, xLabel::String, yLabel::String) where T<:Real
 

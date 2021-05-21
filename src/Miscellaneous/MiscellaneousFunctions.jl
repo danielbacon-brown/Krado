@@ -38,27 +38,11 @@ function getGridIndices(gridShape)::Array{Tuple{Int64,Int64},2}
     return reshape(indices, Tuple(gridShape) )
 end
 
-# Returns the unit vector in the same direction as the given vector
-# function unitize(𝐯::_3VectorFloat)::_3VectorFloat
-#     return 𝐯/norm(𝐯)
-# end
-# unitize(𝐯)=unitize(_3VectorFloat(𝐯))
-#
-# function unitize(𝐯::_3VectorComplex)::_3VectorComplex
-#     return 𝐯/norm(𝐯)
-# end
-# unitize(𝐯)=unitize(_3VectorComplex(𝐯))
-
 function unitize(𝐯)
     return 𝐯/norm(𝐯)
 end
 
 
-# Returns the unit vector in the same direction as the given vector
-# function unitize(𝐯::_2VectorFloat)::_2VectorFloat
-#     return 𝐯/norm(𝐯)
-# end
-# unitize(𝐯::TU2VectorReal)=unitize(_2VectorFloat(𝐯))
 
 # Returns a 2D vector that has the same direction as L, but with an inverse length
 function vectorInverse(v::_2VectorFloat)
@@ -110,30 +94,21 @@ end
 
 # k must be 3-vector.  A must be 2-vector
 function fieldSPtoFieldXYZ(k, A)
-# function fieldSPtoFieldXYZ(k::_3VectorFloat, A::_2VectorComplex)
     @assert length(k) == 3
     @assert length(A) == 2
     ŝ,p̂ = calcŝp̂(k)
     return ŝ*A[S] + p̂*A[P]
 end
-# fieldSPtoFieldXYZ(k, A) = fieldSPtoFieldXYZ(_3VectorFloat(k), _2VectorComplex(A))
-# function fieldSPtoFieldXYZ(k::_3VectorComplex, A::_2VectorComplex)::_3VectorComplex
-#     ŝ,p̂ = calcŝp̂(k)
-#     return ŝ*A[S] + p̂*A[P]
-# end
-# fieldSPtoFieldXYZ(k, A) = fieldSPtoFieldXYZ(_3VectorComplex(k), _2VectorComplex(A))
 
 
 function fieldXYZtoFieldSP(k, E)
-# function fieldXYZtoFieldSP(k::_3VectorComplex, E::_3VectorComplex)::_2VectorComplex
     @assert length(k) == 3
     @assert length(E) == 3
     ŝ,p̂ = calcŝp̂(k)
     return _2VectorComplex(ŝ ⋅ E, p̂ ⋅ E)
 end
-# fieldXYZtoFieldSP(k, E) = fieldXYZtoFieldSP(_3VectorComplex(k), _3VectorComplex(E))
 
-# TODO: COMBINE THIS AND THE ONE ABOVE
+# TODO: combine this with above function
 function Exyz2Esp(k::_3VectorFloat, E::_3VectorComplex)
     ŝ,p̂ = calcŝp̂(k)
     return _2VectorComplex(ŝ ⋅ E, p̂ ⋅ E)
@@ -142,7 +117,6 @@ Exyz2Esp(k::TU3VectorReal, E::TU3VectorComplex) = Exyz2Esp(_3VectorFloat(k), _3V
 
 # Creates a float 3-vector corresponding to wavelength perpendicular to the surface.  Usually then rotated using rotateVector functions
 function normalIncidenceKvector(wavenumber::Wavenumber)::_3VectorFloat
-    # @assert k₀ != 0.0
     return _3VectorFloat(0,0,getk₀(wavenumber))
 end
 
@@ -165,7 +139,6 @@ function rotateVector(k, θ::Real, ϕ::Real)::_3VectorFloat
             0           0           1]
     return rotZ * (rotY * k)
 end
-# rotateVector(k::TU3VectorReal, θ::Real, ϕ::Real) =   rotateVector(_3VectorFloat(k), θ, ϕ )
 rotateVectorDegrees(k, θ::Real, ϕ::Real) = rotateVector(k, deg2rad(θ), deg2rad(ϕ))
 
 
@@ -257,7 +230,7 @@ calcŝp̂(k::TU3VectorComplex) = calcŝp̂(_3VectorComplex(k))
 
 
 # Takes a grid of positions and returns a vector of x-coordinates and a paired vector of y-coordinates. In the vectors, X changes more frequently.
-function linearizePositionGrid(posGrid::Array{_2VectorFloat,2})              ::Tuple{ Vector{Float64}, Vector{Float64}}
+function linearizePositionGrid(posGrid::Array{_2VectorFloat,2})::Tuple{ Vector{Float64}, Vector{Float64}}
 
     gridSize = size(posGrid)
     numElements = prod(gridSize)

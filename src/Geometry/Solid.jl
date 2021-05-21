@@ -15,7 +15,6 @@ end
 function containsXY( solid::Solid, point)::Bool
     return containsXY( solid.shape, point )
 end
-# containsXY( solid::Solid, point) = containsXY( solid, _2VectorFloat(point) )
 
 # Establish sorting by priorty:
 function isless(solid1::Solid, solid2::Solid)::Bool

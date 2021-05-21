@@ -35,7 +35,6 @@ Circle( center, radius) = Circle(_2VectorFloat(center), Float64(radius) )
 function containsXY(circ::Circle, testPoint)::Bool
     return sum( (testPoint-circ.center).^2 ) < circ.radius^2
 end
-# containsXY(circ::Circle, testPoint) = containsXY(circ, _2VectorFloat(testPoint))
 
 
 mutable struct Polygon <: Shape
@@ -94,7 +93,6 @@ function rayIntersectsSegment(vert1, vert2, test)::Bool
     return slopeTest > slopeVert
 
 end
-# rayIntersectsSegment(vert1, vert2, vert3) = rayIntersectsSegment(_2VectorFloat(vert1), _2VectorFloat(vert2), _2VectorFloat(vert3))
 
 
 
@@ -117,7 +115,6 @@ function containsXY(poly::Polygon, testPoint)::Bool
     end
     return isodd(numIntersections)
 end
-# containsXY(poly::Polygon, testPoint) = containsXY(poly, _2VectorFloat(testPoint))
 
 
 
@@ -175,7 +172,7 @@ function IntersectionShape(shape::Shape)
     return IntersectionShape([shape])
 end
 
-function containsXY(intersectionShape::IntersectionShape, testPoint::_2VectorFloat)::Bool 
+function containsXY(intersectionShape::IntersectionShape, testPoint::_2VectorFloat)::Bool
     return all([containsXY(shape, testPoint) for shape in intersectionShape.shapes])
 end
 containsXY(intersectionShape::IntersectionShape, testPoint) = containsXY(intersectionShape, _2VectorFloat(testPoint) )
@@ -205,7 +202,6 @@ function containsXY(subtractionShape::SubtractionShape, testPoint)::Bool
     inRest::Bool = any([containsXY(shape, testPoint) for shape in subtractionShape.shapes])
     return  inBase && !inRest
 end
-# containsXY(subtractionShape::SubtractionShape, testPoint) = containsXY(subtractionShape, _2VectorFloat(testPoint))
 
 
 # The intersection of a set of shapes, that functions as a shape itself.
@@ -228,4 +224,3 @@ end
 function containsXY(differenceShape::DifferenceShape, testPoint)::Bool
     return sum([containsXY(shape, testPoint) for shape in differenceShape.shapes]) == true
 end
-# containsXY(differenceShape::DifferenceShape, testPoint) = containsXY(differenceShape::DifferenceShape, _2VectorFloat(testPoint) )

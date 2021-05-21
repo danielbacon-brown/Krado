@@ -37,19 +37,10 @@ function runSimulation(analysisDefinition::ZeroOrderModesAnalysisDefinition, sim
      # Propagate fields
      outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
 
-     # fieldSetXYZ =
-
      # Get output fields data
      outputFieldsXYZbottom, outputFieldsXYZtop, outputFieldsSPbottom, outputFieldsSPtop = analyzeOutputFields(outputFields, derivedParameters, simulationDefinition.layerStack, simulationDefinition.materialCollection, getWavenumber(simulationDefinition) )
-     # @show outputFieldsSPbottom.fields[S]
-     # @show outputFieldsSPbottom.fields[P]
-
-     # test:
+     # Get input fields data
      inputFieldsXYZbottom, inputFieldsXYZtop, inputFieldsSPbottom, inputFieldsSPtop = analyzeInputFields(inputFields, derivedParameters, simulationDefinition.layerStack, simulationDefinition.materialCollection, getWavenumber(simulationDefinition) )
-     # @show inputFieldsSPbottom.fields[S]
-     # @show inputFieldsSPbottom.fields[P]
-
-
 
      # Get Zero order index
      zeroOrderIndex = getOrderIndex(derivedParameters.harmonicsSet, _2VectorInt(0,0))
@@ -214,13 +205,5 @@ function runSimulation(analysisDefinition::TransmittanceReflectanceAnalysisDefin
      # Output data as a named tuple
      data = (totalTransmittance = totalTransmittance, totalReflectance = totalReflectance, totalAbsorbance = totalAbsorbance)
 
-     # println(timerOutput)
-
-      # Output data as a named tuple
-      # data = timerOutput
-
-      # print(timerOutput)
-
-
-      return data
+     return data
   end

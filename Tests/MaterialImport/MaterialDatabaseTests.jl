@@ -5,20 +5,18 @@ using Test
 include("../../src/IncludeKrado.jl")
 
 @testset "MaterialDatabase" begin
-# NOTE: Not including this test in the TestSuite, because it depends on presence of files external to the package.
 
 matCol = MaterialCollection()
 
-materialDatabasePath = "..\\..\\MaterialDatabase\\"
-userMaterialPath = "..\\..\\..\\UserMaterials\\"
+materialDatabasePath = "Tests/MaterialImport/MaterialDatabasePiece/"
 
-include(userMaterialPath * "UserMaterialImporters.jl")
+include( "UserMaterialImportFunctions.jl")
 
 # Import a tabulated nk text file
-path = userMaterialPath * "Ag_Johnson_and_Christy.txt"
+path = "Tests/MaterialImport/Ag_JohnsonAndChristy1972.txt"
 name = "Ag_JandC"
 addMaterial!(matCol, name, importλnkTextMaterial(path; scale=μm, skipRows=1, delimiter="\t"))
-wavenumber = WavenumberByλ₀(0.2119*μm) 
+wavenumber = WavenumberByλ₀(0.2119*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.2, rtol=1e-3)
 @test isapprox(imag(n), 1.325, rtol=1e-3)
@@ -26,10 +24,10 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 
 # Import YAML files
 # tabulated nk
-path = materialDatabasePath * "data\\main\\Ag\\Babar.yml"
+path = materialDatabasePath * "data/main/Ag/Babar.yml"
 name = "Ag"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(1.033*μm) 
+wavenumber = WavenumberByλ₀(1.033*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 0.07286, rtol=1e-3)
 @test isapprox(imag(n), 7.412, rtol=1e-3)
@@ -47,21 +45,20 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # tabulated n (no k)
-path = materialDatabasePath * "\\data\\main\\Al2O3\\Boidin.yml"
-# path = "MaterialDatabase\\data\\main\\Al2O3\\Boidin.yml"
+path = materialDatabasePath * "data/main/Al2O3/Boidin.yml"
 name = "Al2O3_Boidin"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.6798, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # tabulated n
-path = materialDatabasePath * "data\\glass\\lzos\\CTK8.yml"
+path = materialDatabasePath * "data/glass/lzos/CTK8.yml"
 name = "CTK8"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.7031, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
@@ -69,10 +66,10 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 
 
 # formula 1
-path = materialDatabasePath * "data\\main\\Al2O3\\Malitson.yml"
+path = materialDatabasePath * "data/main/Al2O3/Malitson.yml"
 name = "Al2O3_Malitson"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(1*μm) 
+wavenumber = WavenumberByλ₀(1*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.7557, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
@@ -80,60 +77,60 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 
 
 # formula 2
-path = materialDatabasePath * "data\\glass\\Schott\\N-BK7.yml"
+path = materialDatabasePath * "data/glass/Schott/N-BK7.yml"
 name = "BK7"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.5168, rtol=1e-3)
 @test isapprox(imag(n), 9.7525e-9, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # formula 3
-path = materialDatabasePath * "data\\glass\\cdgm\\BAF2.yml"
+path = materialDatabasePath * "data/glass/cdgm/BAF2.yml"
 name = "BAF2"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.5697, rtol=1e-3)
 @test isapprox(imag(n), 1.4049e-8, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # formula 4
-path = materialDatabasePath * "data\\organic\\CH4N2O - urea\\Rosker-o.yml"
+path = materialDatabasePath * "data/organic/CH4N2O - urea/Rosker-o.yml"
 name = "Urea-no"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.4906, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # formula 5
-path = materialDatabasePath * "data\\organic\\C2H6 - ethane\\Loria.yml"
+path = materialDatabasePath * "data/organic/C2H6 - ethane/Loria.yml"
 name = "Ethane"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.523*μm) 
+wavenumber = WavenumberByλ₀(0.523*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.00075794, rtol=1e-5)
 @test isapprox(imag(n), 0, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # formula 6
-path = materialDatabasePath * "data\\main\\N2\\Griesmann.yml"
+path = materialDatabasePath * "data/main/N2/Griesmann.yml"
 name = "N2_Griesmann"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.15*μm) 
+wavenumber = WavenumberByλ₀(0.15*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.00039622, rtol=1e-6)
 @test isapprox(imag(n), 0, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # formula 7
-path = materialDatabasePath * "data\\main\\Si\\Edwards.yml"
+path = materialDatabasePath * "data/main/Si/Edwards.yml"
 name = "Si_Edwards"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(2.4373*μm) 
+wavenumber = WavenumberByλ₀(2.4373*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 3.4434, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
@@ -141,20 +138,20 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 
 
 # formula 8
-path = materialDatabasePath * "data\\main\\AgBr\\Schroter.yml"
+path = materialDatabasePath * "data/main/AgBr/Schroter.yml"
 name = "AgBr"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 2.2579, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
 @test_throws DomainError calc_ϵμ( getMaterial(matCol,name), WavenumberByλ₀(1000*μm)  )
 
 # formula 9
-path = materialDatabasePath * "data\\organic\\CH4N2O - urea\\Rosker-e.yml"
+path = materialDatabasePath * "data/organic/CH4N2O - urea/Rosker-e.yml"
 name = "Urea -ne"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.6065, rtol=1e-3)
 @test isapprox(imag(n), 0, rtol=1e-3)
@@ -162,10 +159,10 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 
 
 # Air
-path = materialDatabasePath * "data\\other\\mixed gases\\air\\Ciddor.yml"
+path = materialDatabasePath * "data/other/mixed gases/air/Ciddor.yml"
 name = "Air_Ciddor"
 addMaterial!(matCol, name, importYAMLmaterial(path))
-wavenumber = WavenumberByλ₀(0.5876*μm) 
+wavenumber = WavenumberByλ₀(0.5876*μm)
 n = calc_n( getMaterial(matCol,name), wavenumber )
 @test isapprox(real(n), 1.00027717, rtol=1e-5)
 @test isapprox(imag(n), 0, rtol=1e-3)
@@ -188,11 +185,10 @@ n = calc_n( getMaterial(matCol,name), wavenumber )
 
 
 # Test the one-word import of materials
-favoriteMaterialImporters = getFavoriteMaterialImporters()
-# addMaterial!(matCol,"Ag", favoriteMaterialImporters["Ag"]() )
+userMaterialImportFunctions = getUserMaterialImportFunctions()
 matCol= MaterialCollection()
-importFavoriteMaterial!(matCol, favoriteMaterialImporters, "Ag_J&C")
-wavenumber = WavenumberByλ₀(0.2119*μm) 
+importUserMaterial!(matCol, userMaterialImportFunctions, "Ag_J&C")
+wavenumber = WavenumberByλ₀(0.2119*μm)
 n = calc_n( getMaterial(matCol,"Ag_J&C"), wavenumber )
 @test isapprox(real(n), 1.2, rtol=1e-3)
 @test isapprox(imag(n), 1.325, rtol=1e-3)
@@ -215,16 +211,15 @@ materialsUsed = getMaterialsUsed(layerStack)
 
 # Test importing of getMaterialsUsed list
 matCol = MaterialCollection()
-favoriteMaterialImporters = getFavoriteMaterialImporters()
-importFavoriteMaterial!(matCol,  favoriteMaterialImporters, getMaterialsUsed(layerStack))
+userMaterialImportFunctions = getUserMaterialImportFunctions()
+importUserMaterial!(matCol,  userMaterialImportFunctions, getMaterialsUsed(layerStack))
 n = calc_n( getMaterial(matCol,"Ag_J&C"), wavenumber )
 @test isapprox(real(n), 1.2, rtol=1e-3)
 @test isapprox(imag(n), 1.325, rtol=1e-3)
 
 # Test one-line importing of getMaterialsUsed list
-matCol = importFavoriteMaterial( getFavoriteMaterialImporters(), getMaterialsUsed(layerStack))
+matCol = importUserMaterial( getUserMaterialImportFunctions(), getMaterialsUsed(layerStack))
 @test contains(matCol,"Vacuum")  == false  # Not included because it was not in the simulation
-# @test "Al2O3" in keys(matCol) == false  # Not included because it was not in the simulation
 n = calc_n( getMaterial(matCol,"Ag_J&C"), wavenumber )
 @test isapprox(real(n), 1.2, rtol=1e-3)
 @test isapprox(imag(n), 1.325, rtol=1e-3)
