@@ -1,7 +1,5 @@
 @testset "Miscellaneous" begin
     # Evenly spaced values within unit cell
-    # @test range0to1exclusive(2) == [0.0, 0.5]
-    # @test range0to1exclusive(5) == [0.0, 0.2, 0.4, 0.6, 0.8]
     @test unitLinspace(LEFTALIGNMENT, 2) ≈ [0.0, 0.5]
     @test unitLinspace(LEFTALIGNMENT, 5) ≈ [0.0, 0.2, 0.4, 0.6, 0.8]
     @test unitLinspace(CENTERALIGNMENT, 2) ≈ [0.25, 0.75]
@@ -20,8 +18,6 @@
     v = _2VectorFloat([1,0])
     @test vectorInverse(v) ≈ [1,0]
     v = _2VectorFloat([0,2])
-    # @show unitize(v)
-    # @show norm(v)
     @test vectorInverse(v) ≈ [0,0.5]
 
 end;

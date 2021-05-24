@@ -27,28 +27,11 @@ mutable struct PositionGridZ
 end
 
 
-# Returns a sequence of coordinates at evenly spaced midpoints between xyStart to xyStop.
-# Linear
-# function PositionGridXYbyMidpoint( start, stop, numDivisions::Integer)
-function PositionGridXY( gridAlignment::CenterAlignment, start, stop, numDivisions::Integer)
-
-    start = convert(_2VectorFloat, start)
-    stop = convert(_2VectorFloat, stop)
-
-    totalLength = norm(start.-stop)
-    pixelLength = totalLength / numDivisions
-    # fractionalLength = range0to1exclusiveMidpoint(numDivisions)
-    fractionalLength = UnitLinspace(gridAlignment, numDivisions)
-    xyPositions = [ start + (stop-start).*fractionalLength[i] for i in 1:numDivisions]
-    return PositionGridXY(start, stop, start, stop, xyPositions)
-end
-
 # Returns a sequence of coordinates at evenly spaced midpoints between zStart to zStop.
 function PositionGridZbyMidpoint( zStart::Real, zStop::Real, numDivisions::Integer)
 
     totalLength = abs(zStart-zStop)
     pixelLength = totalLength / numDivisions
-    # fractionalLength = range0to1exclusiveMidpoint(numDivisions)
     fractionalLength = UnitLinspace(CENTERALIGNMENT, numDivisions)
     zPositions = [ zStart + (zStop-zStart).*fractionalLength[i] for i in 1:numDivisions]
     return PositionGridZ( zStart, zStop, zPositions)
@@ -60,33 +43,10 @@ function PositionGridXY(lattice::Lattice, numDivisions)
 end
 
 # 2D lattice
-# function PositionGridXYleftAligned( lattice::Lattice, numDivisions::AbstractArray{<:Any})
-function PositionGridXY( gridAlignment::LeftAlignment, lattice::Lattice, numDivisions::AbstractArray{<:Any})
+
+function PositionGridXY( gridAlignment::GridAlignment, lattice::Lattice, numDivisions::AbstractArray{<:Any})
 
     # Fractional distances along U, V vectors
-    # Ufractions = range0to1exclusive(numDivisions[U])
-    # Vfractions = range0to1exclusive(numDivisions[V])
-    Ufractions = unitLinspace(gridAlignment, numDivisions[U])
-    Vfractions = unitLinspace(gridAlignment, numDivisions[V])
-
-    gridUVfractions = collect( Base.product(Ufractions, Vfractions) )
-    gridUVfractions = reshape(gridUVfractions, Tuple(numDivisions) )
-
-    xyPositions = map( uv -> convertUVtoXY(lattice, _2VectorFloat(uv)), gridUVfractions)
-
-    start = convertUVtoXY(lattice, _2VectorFloat(0,0))
-    stopU = convertUVtoXY(lattice, _2VectorFloat(1,0))
-    stopV = convertUVtoXY(lattice, _2VectorFloat(0,1))
-    stopUV = convertUVtoXY(lattice, _2VectorFloat(1,1))
-
-    return PositionGridXY(start, stopU, stopV, stopUV, xyPositions)
-end
-
-function PositionGridXY( gridAlignment::CenterAlignment, lattice::Lattice, numDivisions::AbstractArray{<:Any})
-
-    # Fractional distances along U, V vectors
-    # Ufractions = range0to1exclusiveMidpoint(numDivisions[U])
-    # Vfractions = range0to1exclusiveMidpoint(numDivisions[V])
     Ufractions = unitLinspace(gridAlignment, numDivisions[U])
     Vfractions = unitLinspace(gridAlignment, numDivisions[V])
 
@@ -109,8 +69,6 @@ function PositionGridXY( gridAlignment::LeftAlignment, lattice::Lattice, numDivi
     @assert(is1D(lattice))
     return PositionGridXY( gridAlignment, lattice, _2VectorInt(numDivisions,1))
 end
-
-
 
 
 

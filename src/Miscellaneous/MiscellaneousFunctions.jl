@@ -25,19 +25,6 @@ function calcFresnelCoefficients(n₁, n₂, θ₁)
     return tₛ, tₚ, rₛ, rₚ
 end
 
-# Generates a vector of evenly spaced values, starting at 0 and ending near (but not touching) 1.  Often used to uniformly sample a periodic function
-# function range0to1exclusive(len)::Vector{Float64}
-#     @assert len > 0
-#     return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
-# end
-
-# Generates a vector of evenly spaced values, starting just above zero and just below 1.  Often used to uniformly sample a periodic function
-# function range0to1exclusiveMidpoint(len)::Vector{Float64}
-#     return range0to1exclusive(len) .+ 0.5/len
-#     # @assert len > 0
-#     # return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
-# end
-
 # Generates a vector of evenly spaced values between 0 and 1.  Used to uniformly sample a periodic function.  "LeftAlignment" starts at zero
 function unitLinspaceLeft(len::Integer)::Vector{Float64}
     @assert len > 0
@@ -106,7 +93,6 @@ end
 function getXY(v::_3VectorInt)::_2VectorInt
     return _2VectorInt(v[X:Y])
 end
-# getXY(v::TU3VectorReal) = getXY(_3VectorInt(v))
 getXY(v) = v[X:Y]
 
 # Convert vacuum wavelength to vacuum wavenumber
