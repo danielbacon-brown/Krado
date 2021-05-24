@@ -2,17 +2,19 @@
 
     # Testing calculation of coordinate grid across lattice
     divisions = [2,2]
-    lattice2D = Lattice([1.0, 0], [0.5, 2])
+    lattice2D = Lattice([1.0, 0], [0.5, 2]; gridAlignment=LEFTALIGNMENT)
     # grid2D = calcUniformGridPositions(lattice2D, divisions)
-    grid2D = PositionGridXYleftAligned(lattice2D, divisions)
+    # grid2D = PositionGridXYleftAligned(lattice2D, divisions)
+    grid2D = PositionGridXY(lattice2D, divisions)
     @test grid2D.positions ≈ [ [_2VectorFloat(0.0,0.0)] [_2VectorFloat(0.25, 1.0)];
                     [_2VectorFloat(0.5,0.0)] [_2VectorFloat(0.75, 1.0)] ]
     # Testing calculation of coordinate grid across 2D lattice
     divisions1D = 4
-    lattice1D = Lattice([0.4, 0.2])
+    lattice1D = Lattice([0.4, 0.2]; gridAlignment=LEFTALIGNMENT)
     # gridX, gridY = calcUniformGridPositions(lattice1D, divisions1D)
     # grid1D = calcUniformGridPositions(lattice1D, divisions1D)
-    grid1D = PositionGridXYleftAligned(lattice1D, divisions1D)
+    # grid1D = PositionGridXYleftAligned(lattice1D, divisions1D)
+    grid1D = PositionGridXY(lattice1D, divisions1D)
     @test grid1D.positions ≈ reshape( [ [_2VectorFloat(0.0,0.0)]; [_2VectorFloat(0.1, 0.05)];
                     [_2VectorFloat(0.2,0.1)]; [_2VectorFloat(0.3, 0.15)] ], (4,1) )
     # Testing calculation of material names across coordinate grid
@@ -68,7 +70,7 @@
     matDict = Dict{String,AbstractMaterial}()
     addMaterial!(matCol,"material1", Material(ConstantPermittivity(1)) )
     addMaterial!(matCol,"material2", Material(ConstantPermittivity(2)) )
-    lattice = Lattice([0.4, 0.2])
+    lattice = Lattice([0.4, 0.2], gridAlignment=LEFTALIGNMENT)
     rectSolid = Solid(Rectangle([0,0],[0.5,0.5]),"material1")
     spatialPermCalc = LayerPattern([rectSolid],"material2")
     divisions = 4

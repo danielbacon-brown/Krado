@@ -44,7 +44,6 @@ include("../../src/IncludeKrado.jl")
         Abyϖbottom,
         Abyϖtop,
     )
-    # boundaryDefinition = InputByOrderBoundaryDefinition(wavenumber, θ, ϕ, BOTTOM, inputAmplitudes)
 
 
     # Define lattice
@@ -52,7 +51,6 @@ include("../../src/IncludeKrado.jl")
     U̅ = [pitch, 0]
     V̅ = [pitch / 2, pitch * sqrt(3) / 2]
     lattice = Lattice(U̅, V̅; originOffsetUV = [-0.5, -0.5])
-    # lattice = Lattice(U̅, V̅; originOffset=[-0.5,-0.5])
 
     # Define stack
     layer1 = UniformLayerDefinition(100 * nm, "Ag")
@@ -115,8 +113,6 @@ include("../../src/IncludeKrado.jl")
 
 
     # Import materials:
-    # matCol =
-        # importFavoriteMaterial(getFavoriteMaterialImporters(), getMaterialsUsed(layerStack))
     matCol = MaterialCollection()
     addMaterial!(matCol,"Air", Material( ConstantPermittivity(1) ) )
     addMaterial!(matCol,"Al2O3", Material( ConstantPermittivity(1.7) ) )
@@ -140,8 +136,6 @@ include("../../src/IncludeKrado.jl")
         matCol,
         analysisDefinition,
     )
-
-    # data = runSimulation(simulationDefinition)
 
 
     # Define what materials correspond to what color
@@ -180,36 +174,36 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot HarmonicsSet:
-    # plotHarmonicsSet(simulationDefinition)
+    plotHarmonicsSet(simulationDefinition)
 
     # Plot G-vectorSet:
-    # plotGvectorSet(simulationDefinition; scale=μm)
+    plotGvectorSet(simulationDefinition; scale=μm)
 
     # Plot x,y components of k-vectors
-    # plotkXYVectors(simulationDefinition; scale=μm)
+    plotkXYVectors(simulationDefinition; scale=μm)
 
     # Plot lattice:
-    # plotLatticeUnit(lattice; scale=μm)
-    # plotLatticeUnit(lattice; scale=nm)
+    plotLatticeUnit(lattice; scale=μm)
+    plotLatticeUnit(lattice; scale=nm)
 
     # Plot reciprocal lattice
-    # plotReciprocalLatticeUnit(lattice; scale=μm)
+    plotReciprocalLatticeUnit(lattice; scale=μm)
 
     # Plot the coordinates that are sampled for the convolution matrix
-    # plotLayerPositionGrid(layer2, simulationDefinition; scale=μm)
+    plotLayerPositionGrid(layer2, simulationDefinition; scale=μm)
 
     # Plot the material distribution by color.
-    # plotLayerMaterialsDistribution(layer2, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer3, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer4, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer5, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer6, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer7, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer8, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer2, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer3, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer4, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer5, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer6, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer7, simulationDefinition, materialPlottingParameters; scale=μm)
+    plotLayerMaterialsDistribution(layer8, simulationDefinition, materialPlottingParameters; scale=μm)
 
 
     # Plot x,y components of the zero-order k-vector.
-    # plot2DZeroOrderKVector(simulationDefinition; scale=μm)
+    plot2DZeroOrderKVector(simulationDefinition; scale=μm)
 
     # Plot x,y components of the injected k-vectors.
     # # # plot2DinjectedKVectors(simulationDefinition; scale=μm) # Not doing these anymore.  Should just use the E field set separately.

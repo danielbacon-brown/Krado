@@ -7,9 +7,9 @@ using Test
 # using Printf
 
 
-println()
-println()
-println("Start:")
+# println()
+# println()
+# println("Start:")
 
 @testset "IntegrationTest3" begin
 include("IntegrationTest3BenchmarkData.jl")
@@ -60,7 +60,8 @@ Lx = 1.75 * cm
 Ly = 1.5 * cm
 U̅ = [Lx, 0]
 V̅ = [0, Ly]
-lattice = Lattice(U̅, V̅)
+# lattice = Lattice(U̅, V̅)
+lattice = Lattice(U̅, V̅; gridAlignment=LEFTALIGNMENT)
 
 ######## DEFINE LAYERS #############################################################################
 # Define layers.  Layer 1 contains triangle
@@ -125,10 +126,10 @@ simResults = runSimulation(simulationDefinition)
 totalTransmittance = sum(real(simResults[:outputTopRelativeFlux]))
 totalReflectance = sum(real(simResults[:outputBottomRelativeFlux]))
 
-# @test isapprox(simResults[:outputBottomRelativeFlux], Rbenchmark, rtol=1e-2)
-# @test isapprox(totalReflectance, 0.088768, rtol=1e-2)
-# @test isapprox(simResults[:outputTopRelativeFlux], Tbenchmark, rtol=1e-2)
-# @test isapprox(totalTransmittance, 0.91123, rtol=1e-2)
+@test isapprox(simResults[:outputBottomRelativeFlux], Rbenchmark, rtol=1e-2)
+@test isapprox(totalReflectance, 0.088768, rtol=1e-2)
+@test isapprox(simResults[:outputTopRelativeFlux], Tbenchmark, rtol=1e-2)
+@test isapprox(totalTransmittance, 0.91123, rtol=1e-2)
 
 ######## END OF SHORTEST SIMULATION ############################################################
 

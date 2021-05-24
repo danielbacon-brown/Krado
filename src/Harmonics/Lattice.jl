@@ -3,6 +3,13 @@
 export Lattice
 
 
+# Used to determine how the points are positioned in the unit cell.
+abstract type GridAlignment end
+mutable struct LeftAlignment <: GridAlignment end
+mutable struct CenterAlignment <: GridAlignment end
+const global LEFTALIGNMENT = LeftAlignment()
+const global CENTERALIGNMENT = CenterAlignment()
+
 
 abstract type AbstractLattice end
 
@@ -43,6 +50,8 @@ mutable struct Lattice <: AbstractLattice
     transformationUVtoXY::Array{Float64,2}
     transformationXYtoUV::Array{Float64,2}
 
+    gridAlignment::GridAlignment
+
 
     """
         Lattice (L₁::_2VectorFloat, L₂::_2VectorFloat, G₁::_2VectorFloat, G₂::_2VectorFloat; originOffsetUV = [], originOffsetXY = [] )
@@ -50,7 +59,7 @@ mutable struct Lattice <: AbstractLattice
     Returns a lattice object taking in both real-space and reciprocal space vectors.
     If only one originOffset parameter has been set, that values is used to calculate the other one.  If neither originOffset parameter has been set, both are [0,0].
     """
-    function Lattice(L₁::_2VectorFloat, L₂::_2VectorFloat, G₁::_2VectorFloat, G₂::_2VectorFloat; originOffsetUV = [], originOffsetXY = [] )
+    function Lattice(L₁::_2VectorFloat, L₂::_2VectorFloat, G₁::_2VectorFloat, G₂::_2VectorFloat; originOffsetUV = [], originOffsetXY = [], gridAlignment = CENTERALIGNMENT )
 
 
         # Calc coordinate transformation matrices
@@ -79,7 +88,7 @@ mutable struct Lattice <: AbstractLattice
         end
 
 
-        return new(L₁,L₂,G₁,G₂, _2VectorFloat(originOffsetUV), _2VectorFloat(originOffsetXY), transformationUVtoXY, transformationXYtoUV)
+        return new(L₁,L₂,G₁,G₂, _2VectorFloat(originOffsetUV), _2VectorFloat(originOffsetXY), transformationUVtoXY, transformationXYtoUV, gridAlignment)
     end
 end
 
@@ -91,11 +100,11 @@ Returns a Lattice object with the periodicity of the L₁, L₂ lattice vectors.
 
 If only one originOffset parameter has been set, that values is used to calculate the other one.  If neither originOffset parameter has been set, both are [0,0].
 """
-function Lattice(L₁,L₂;originOffsetUV=[],originOffsetXY=[])
+function Lattice(L₁,L₂;originOffsetUV=[],originOffsetXY=[], gridAlignment = CENTERALIGNMENT)
     L₁ = convert(_2VectorFloat,L₁)
     L₂ = convert(_2VectorFloat,L₂)
     G₁, G₂ = calcReciprocals(L₁, L₂)
-    return Lattice(L₁,L₂,G₁,G₂; originOffsetUV=originOffsetUV, originOffsetXY=originOffsetXY)
+    return Lattice(L₁,L₂,G₁,G₂; originOffsetUV=originOffsetUV, originOffsetXY=originOffsetXY, gridAlignment=gridAlignment)
 end
 
 export calcReciprocals
@@ -127,12 +136,12 @@ Returns a Lattice object with the periodicity of the L₁ lattice vectors.  The 
 
 If only one originOffset parameter has been set, that values is used to calculate the other one.  If neither originOffset parameter has been set, both are [0,0].
 """
-function Lattice(L₁; originOffsetUV = [], originOffsetXY = [])
+function Lattice(L₁; originOffsetUV = [], originOffsetXY = [], gridAlignment = CENTERALIGNMENT)
     L₁ = convert(_2VectorFloat, L₁)
     G₁ = calcReciprocals( L₁ )
     L₂ = _2VectorFloat(0,0)
     G₂ = _2VectorFloat(0,0)
-    return Lattice( L₁, L₂, G₁, G₂; originOffsetUV=originOffsetUV, originOffsetXY=originOffsetXY )
+    return Lattice( L₁, L₂, G₁, G₂; originOffsetUV=originOffsetUV, originOffsetXY=originOffsetXY, gridAlignment )
 end
 
 # If only given a scalar, assume that is a 1D lattice only in x-direction
@@ -142,7 +151,7 @@ Returns a Lattice object with the equal to L. The L₁ lattice vector is [L,0]. 
 
 If only one originOffset parameter has been set, that values is used to calculate the other one.  If neither originOffset parameter has been set, both are [0,0].
 """
-function Lattice(l₁::Real; originOffsetUV = [], originOffsetXY = [])
+function Lattice(l₁::Real; originOffsetUV = [], originOffsetXY = [], gridAlignment = CENTERALIGNMENT)
     return Lattice( _2VectorFloat(l₁,0); originOffsetUV=originOffsetUV, originOffsetXY=originOffsetXY )
 end
 

@@ -1,12 +1,14 @@
 TODO LIST:
 
+TODO: Make a patterned layer act like an uniform layer if there is no variation in the film.
+
 TODO: Turn scattering matrix into a parametric type that can handle DistributedArrays, etc.
 
 TODO: Check to see if a inner conversion of TU2VectorInt -> T2VectorI just compiles away.  If so, just use that instead of another function.  It does compile away, so I should do that.
 
 TODO: Remove unnecessary type definitions.
 
-TODO: make MaterialDatabase (and Wavenumber etc) its own project?  
+TODO: make MaterialDatabase (and Wavenumber etc) its own project?
 
 
 TODO: Define "export" structs and functions
@@ -17,7 +19,7 @@ TODO: Make Examples for folder. Start with just copied tests. Setup to just incl
 
 TODO: Set up auto-documentation.  Add docs for user-adjacent functions.  Add docs for other functions. STARTED.
 
-TODO: Split up "Miscellaneous" into smaller files with better names. 
+TODO: Split up "Miscellaneous" into smaller files with better names.
 
 TODO: calculation of full kXYZset for a given layer
 
@@ -63,11 +65,11 @@ TODO: define 3D shapes - to automatically create layers for complex 3F geometrie
 DONE: plotting of epsilon cross-section
 
 
-DONE: Move Material database and user to tests to an external file.  
+DONE: Move Material database and user to tests to an external file.
 DONE: change TU2VectorReal to Real2Vector? etc
 DONE: replace positionListXY vector with it's own type
 DONE: Plotting of refractive index cross-section
-DONE: MAKE SURE IT WORKS WITH ABSORPTIVE MATERIALS 
+DONE: MAKE SURE IT WORKS WITH ABSORPTIVE MATERIALS
 DONE: user favorite materials: a dict of function calls to import materials with a single name reference
         -- a function that will try to grab the materialnames used in the layerstack
 DONE: add offset of lattice unit cell (to Lattice?) and grid positions
@@ -79,4 +81,4 @@ DONE: Loading Permittivity and Permeability data from a database
 DONE: rename calcMagneticEigenvectorsFromQWλ to mention magnetic eigenvectors
 DONE: Plotting of geometry and fields
         -including quivers for AOI, etc.
-DONE: Forget the InputByBoundaryDefinition from mode altogether? 
+DONE: Forget the InputByBoundaryDefinition from mode altogether?

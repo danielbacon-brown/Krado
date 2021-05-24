@@ -1,20 +1,11 @@
-module SandPtransmission
-# TODO: Rename this file
+module FresnelCoefficientsTest
 using Test
 
 
-println()
-println("Start:")
-
-@testset "S and P polarization through Si and SiO2" begin
-
-println()
-println("Including Krado")
+println("Fresnel Coefficients - Si and SiO2")
+@testset "Fresnel Coefficients - Si and SiO2" begin
 
 include("../../src/IncludeKrado.jl")
-
-
-println("Beginning test")
 
 # Incident wavevector
 λ₀ = 0.5*μm
@@ -69,9 +60,8 @@ layerStackSiO2Thin = [semiInfAir, uniformAirThin, uniformSiO2Thin, semiInfSiO2]
 layerStackSiO2Thick = [semiInfAir, uniformAirThick, uniformSiO2Thick, semiInfSiO2]
 
 
-# Define Harmonics.  # TODO: SOLVE PROBLEM WITH M,N = 4,4 or higher
+# Define Harmonics.
 M,N = 0,0
-# M,N = 4,4
 harmonicsTruncation = HarmonicsTruncationByRectangle(M,N)
 
 analysisDefinition = ZeroOrderModesAnalysisDefinition(FORWARD)
@@ -132,17 +122,13 @@ end;
 
 ### SI:
 
-
 λ₀ = 0.5636*μm
 wavenumber = WavenumberByλ₀(λ₀)
-θ = 0.001*degrees
-# θ = 0*degrees  # Doesn't appear to make a difference
+θ = 0*degrees  # Doesn't appear to make a difference
 ϕ = 30*degrees
 boundaryDefinitionAngled = InputByOrderBoundaryDefinition(wavenumber, θ, ϕ, BOTTOM, inputAmplitudes)
-θ = 0.001*degrees
-ϕ = 0.001*degrees
-# θ = 0*degrees
-# ϕ = 0*degrees
+θ = 0*degrees
+ϕ = 0*degrees
 boundaryDefinitionNormal = InputByOrderBoundaryDefinition(wavenumber, θ, ϕ, BOTTOM, inputAmplitudes)
 
 
@@ -173,7 +159,7 @@ end;
 
 
 # Same but the film is a patterned layer
- # Removing because we shouldn't have a patterned layer with no elements
+ # This leads to an error when using more than M,N=0,0.  But this should only be a problem for "uniform" films using a patterned geometry
 numDivisions = [20,20]
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Air"))

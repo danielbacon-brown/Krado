@@ -3,6 +3,14 @@
 
 abstract type LayerDefinition end
 
+# # Used to determine how the points are positioned in the unit cell.
+# abstract type GridAlignment end
+# mutable struct LeftAlignment <: GridAlignment end
+# mutable struct CenterAlignment <: GridAlignment end
+# const global LEFTALIGNMENT = LeftAlignment()
+# const global CENTERALIGNMENT = CenterAlignment()
+
+
 # Describes a layer that is uniform in the x,y directions.  Contains no patterns/shapes
 mutable struct UniformLayerDefinition <: LayerDefinition
     thickness::Float64
@@ -30,11 +38,18 @@ mutable struct PatternedLayerDefinition <: LayerDefinition
     numDivisions::_2VectorInt  # length == 2
     thickness::Float64
     layerPattern::AbstractLayerPattern
+    # gridAlignment::GridAlignment
 
     function PatternedLayerDefinition(numDivisions::_2VectorInt, thickness::Real, layerPattern::AbstractLayerPattern)
         return new(convert(_2VectorInt,numDivisions), convert(Float64,thickness), layerPattern)
     end
+    # function PatternedLayerDefinition(numDivisions::_2VectorInt, thickness::Real, layerPattern::AbstractLayerPattern, gridAlignment::GridAlignment)
+    #     return new(convert(_2VectorInt,numDivisions), convert(Float64,thickness), layerPattern, gridAlignment)
+    # end
 end
+# function PatternedLayerDefinition(numDivisions::_2VectorInt, thickness::Real, layerPattern::AbstractLayerPattern; gridAlignment::GridAlignment = CENTERALIGNMENT )
+#     return new(convert(_2VectorInt,numDivisions), convert(Float64,thickness), layerPattern, gridAlignment)
+# end
 PatternedLayerDefinition(numDivisions, thickness::Real, layerPattern::AbstractLayerPattern) = PatternedLayerDefinition(_2VectorInt(numDivisions), thickness, layerPattern)
 
 
@@ -104,12 +119,16 @@ function calcConvolutionMatrix( xGrid, positionGrid::PositionGridXY, Gvectors::G
 end
 
 
+
+
 function getPositionϵμGrids( layerDef::PatternedLayerDefinition, lattice::Lattice, matCol::MaterialCollection, wavenumber::Wavenumber)
-    positionGrid = PositionGridXYleftAligned(lattice, layerDef.numDivisions)
+    # positionGrid = PositionGridXYleftAligned(lattice, layerDef.numDivisions)
+    positionGrid = PositionGridXY(lattice, layerDef.numDivisions)
     ϵGrid = getϵAtPosition( layerDef.layerPattern, positionGrid, matCol, wavenumber)
     μGrid = getμAtPosition( layerDef.layerPattern, positionGrid, matCol, wavenumber)
     return positionGrid, ϵGrid, μGrid
 end
+
 
 # Calculates the convolution matrices ⟦ϵ⟧  ⟦μ⟧ a the given layer and lattice with the corresponding harmonics and materials
 function calcConvolutionMatrices( layerDef::PatternedLayerDefinition, lattice::Lattice, Gvectors::GvectorSet, matCol::MaterialCollection, wavenumber::Wavenumber )
