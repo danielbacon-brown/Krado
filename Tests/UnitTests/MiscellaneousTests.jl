@@ -1,7 +1,14 @@
 @testset "Miscellaneous" begin
     # Evenly spaced values within unit cell
-    @test range0to1exclusive(2) == [0.0, 0.5]
-    @test range0to1exclusive(5) == [0.0, 0.2, 0.4, 0.6, 0.8]
+    # @test range0to1exclusive(2) == [0.0, 0.5]
+    # @test range0to1exclusive(5) == [0.0, 0.2, 0.4, 0.6, 0.8]
+    @test unitLinspace(LEFTALIGNMENT, 2) ≈ [0.0, 0.5]
+    @test unitLinspace(LEFTALIGNMENT, 5) ≈ [0.0, 0.2, 0.4, 0.6, 0.8]
+    @test unitLinspace(CENTERALIGNMENT, 2) ≈ [0.25, 0.75]
+    @test unitLinspace(CENTERALIGNMENT, 5) ≈ [0.1, 0.3, 0.5, 0.7, 0.9]
+    @test unitLinspace(RIGHTALIGNMENT, 2) ≈ [0.50, 1.0]
+    @test unitLinspace(RIGHTALIGNMENT, 5) ≈ [0.2, 0.4, 0.6, 0.8, 1.0]
+
 
     # Create a grid of tuples used for coordinates.  Similar to meshgrid in Matlab, but for indices.  Used with map() for iteration across arrays.
     grid1 = [ 1 2; 3 4]
@@ -58,7 +65,7 @@ end;
     @test ŝ ≈ _3VectorFloat(0,1,0)
     @test p̂ ≈ unitize( _3VectorFloat(2,0,-1) )
 
-    
+
     # Computing polarization vector
     k = [0,0,1]
     A = _2VectorComplex(1, 1im)
@@ -66,13 +73,13 @@ end;
     @test isapprox(Exyz, [1, 1im, 0], rtol=1e-3)
     Esp = Exyz2Esp(k,Exyz)
     @test isapprox(Esp, A, rtol=1e-3)
-    
+
     k2 = [0, 0.00001, 1]
     Exyz2 = fieldSPtoFieldXYZ(k2, A)
     @test isapprox(Exyz2, [1, 1im, 0], rtol=1e-3)
     Esp2 = Exyz2Esp(k2,Exyz2)
     @test isapprox(Esp2, A, rtol=1e-3)
-    
+
     k3 = [0, -0.00001, 1]
     Exyz3 = fieldSPtoFieldXYZ(k3, A)
     @test isapprox(Exyz3, [-1, -1im, 0], rtol=1e-3)
@@ -122,18 +129,18 @@ end;
     μ = 1
     @test convert_ϵμ2n(ϵ, μ) == ComplexF64(2,1)
     @test convert_ϵμ2z(ϵ, μ) ≈ ComplexF64(2/5, -1/5)
-    
+
     ϵ = ComplexF64(3, 4)
     μ = 4
     @test convert_ϵμ2n(ϵ, μ) == ComplexF64(4,2)
     @test convert_ϵμ2z(ϵ, μ) ≈ ComplexF64(4/5, -2/5)
-    
+
     # arrays of ϵ,μ
     ϵs = [ ComplexF64(3, 4),  ComplexF64(3, 4) ]
     μs = [ 1, 4 ]
     @test convert_ϵμ2n.(ϵs, μs) ≈ [ ComplexF64(2,1), ComplexF64(4,2) ]
     @test convert_ϵμ2z.(ϵs, μs) ≈ [ ComplexF64(2/5, -1/5), ComplexF64(4/5, -2/5) ]
-    
+
     # @test convert_ϵμ2z.(ϵ, μ) ≈ ComplexF64(2/5, -1/5)
 
 end;
@@ -146,7 +153,7 @@ end;
     @test ρ ≈ sqrt(2)
     @test θ ≈ 0
     @test ϕ ≈ π/4
-    
+
     kXYZ = spherical2CartesianCoordinates(ρ, θ, ϕ)
     @test kXYZ ≈ [1, 0, 1]
 

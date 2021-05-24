@@ -37,7 +37,8 @@ function PositionGridXY( gridAlignment::CenterAlignment, start, stop, numDivisio
 
     totalLength = norm(start.-stop)
     pixelLength = totalLength / numDivisions
-    fractionalLength = range0to1exclusiveMidpoint(numDivisions)
+    # fractionalLength = range0to1exclusiveMidpoint(numDivisions)
+    fractionalLength = UnitLinspace(gridAlignment, numDivisions)
     xyPositions = [ start + (stop-start).*fractionalLength[i] for i in 1:numDivisions]
     return PositionGridXY(start, stop, start, stop, xyPositions)
 end
@@ -47,7 +48,8 @@ function PositionGridZbyMidpoint( zStart::Real, zStop::Real, numDivisions::Integ
 
     totalLength = abs(zStart-zStop)
     pixelLength = totalLength / numDivisions
-    fractionalLength = range0to1exclusiveMidpoint(numDivisions)
+    # fractionalLength = range0to1exclusiveMidpoint(numDivisions)
+    fractionalLength = UnitLinspace(CENTERALIGNMENT, numDivisions)
     zPositions = [ zStart + (zStop-zStart).*fractionalLength[i] for i in 1:numDivisions]
     return PositionGridZ( zStart, zStop, zPositions)
 end
@@ -62,8 +64,10 @@ end
 function PositionGridXY( gridAlignment::LeftAlignment, lattice::Lattice, numDivisions::AbstractArray{<:Any})
 
     # Fractional distances along U, V vectors
-    Ufractions = range0to1exclusive(numDivisions[U])
-    Vfractions = range0to1exclusive(numDivisions[V])
+    # Ufractions = range0to1exclusive(numDivisions[U])
+    # Vfractions = range0to1exclusive(numDivisions[V])
+    Ufractions = unitLinspace(gridAlignment, numDivisions[U])
+    Vfractions = unitLinspace(gridAlignment, numDivisions[V])
 
     gridUVfractions = collect( Base.product(Ufractions, Vfractions) )
     gridUVfractions = reshape(gridUVfractions, Tuple(numDivisions) )
@@ -81,8 +85,10 @@ end
 function PositionGridXY( gridAlignment::CenterAlignment, lattice::Lattice, numDivisions::AbstractArray{<:Any})
 
     # Fractional distances along U, V vectors
-    Ufractions = range0to1exclusiveMidpoint(numDivisions[U])
-    Vfractions = range0to1exclusiveMidpoint(numDivisions[V])
+    # Ufractions = range0to1exclusiveMidpoint(numDivisions[U])
+    # Vfractions = range0to1exclusiveMidpoint(numDivisions[V])
+    Ufractions = unitLinspace(gridAlignment, numDivisions[U])
+    Vfractions = unitLinspace(gridAlignment, numDivisions[V])
 
     gridUVfractions = collect( Base.product(Ufractions, Vfractions) )
     gridUVfractions = reshape(gridUVfractions, Tuple(numDivisions) )

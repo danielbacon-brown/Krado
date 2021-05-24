@@ -3,6 +3,17 @@
 # Setting so that new plots get plotted in a standalone window.
 pygui(true)
 
+
+# Used to determine how the points are positioned in the unit cell.
+abstract type GridAlignment end
+mutable struct LeftAlignment <: GridAlignment end
+mutable struct CenterAlignment <: GridAlignment end
+mutable struct RightAlignment <: GridAlignment end
+const global LEFTALIGNMENT = LeftAlignment()
+const global CENTERALIGNMENT = CenterAlignment()
+const global RIGHTALIGNMENT = RightAlignment()
+
+
 # calculate the Fresnel coefficients between interfaces
 function calcFresnelCoefficients(n₁, n₂, θ₁)
     θᵢ = θ₁
@@ -15,17 +26,33 @@ function calcFresnelCoefficients(n₁, n₂, θ₁)
 end
 
 # Generates a vector of evenly spaced values, starting at 0 and ending near (but not touching) 1.  Often used to uniformly sample a periodic function
-function range0to1exclusive(len)::Vector{Float64}
+# function range0to1exclusive(len)::Vector{Float64}
+#     @assert len > 0
+#     return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
+# end
+
+# Generates a vector of evenly spaced values, starting just above zero and just below 1.  Often used to uniformly sample a periodic function
+# function range0to1exclusiveMidpoint(len)::Vector{Float64}
+#     return range0to1exclusive(len) .+ 0.5/len
+#     # @assert len > 0
+#     # return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
+# end
+
+# Generates a vector of evenly spaced values between 0 and 1.  Used to uniformly sample a periodic function.  "LeftAlignment" starts at zero
+function unitLinspaceLeft(len::Integer)::Vector{Float64}
     @assert len > 0
     return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
 end
-
-# Generates a vector of evenly spaced values, starting just above zero and just below 1.  Often used to uniformly sample a periodic function
-function range0to1exclusiveMidpoint(len)::Vector{Float64}
-    return range0to1exclusive(len) .+ 0.5/len
-    # @assert len > 0
-    # return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
+function unitLinspace(gridAlignment::LeftAlignment, len::Integer)::Vector{Float64}
+    return unitLinspaceLeft(len)
 end
+function unitLinspace(gridAlignment::CenterAlignment, len::Integer)::Vector{Float64}
+    return unitLinspaceLeft(len) .+ 0.5/len
+end
+function unitLinspace(gridAlignment::RightAlignment, len::Integer)::Vector{Float64}
+    return unitLinspaceLeft(len) .+ 1/len
+end
+
 
 # Creates a grid of tuples for every position on a grid with the given shape.
 # INPUT: (int X, int Y) or _2VectorInt(X,Y)

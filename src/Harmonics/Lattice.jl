@@ -3,14 +3,6 @@
 export Lattice
 
 
-# Used to determine how the points are positioned in the unit cell.
-abstract type GridAlignment end
-mutable struct LeftAlignment <: GridAlignment end
-mutable struct CenterAlignment <: GridAlignment end
-const global LEFTALIGNMENT = LeftAlignment()
-const global CENTERALIGNMENT = CenterAlignment()
-
-
 abstract type AbstractLattice end
 
 # Vectors defining the real space and reciprocal space periodicity vectors [x,y] defining the lattice.
