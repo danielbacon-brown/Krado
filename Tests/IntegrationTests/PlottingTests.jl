@@ -174,36 +174,35 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot HarmonicsSet:
-    plotHarmonicsSet(simulationDefinition)
+    # plotHarmonicsSet(simulationDefinition)
 
     # Plot G-vectorSet:
-    plotGvectorSet(simulationDefinition; scale=μm)
+    # plotGvectorSet(simulationDefinition; scale=μm)
 
     # Plot x,y components of k-vectors
-    plotkXYVectors(simulationDefinition; scale=μm)
+    # plotkXYVectors(simulationDefinition; scale=μm)
 
     # Plot lattice:
-    plotLatticeUnit(lattice; scale=μm)
-    plotLatticeUnit(lattice; scale=nm)
+    # plotLatticeUnit(lattice; scale=μm)
 
     # Plot reciprocal lattice
-    plotReciprocalLatticeUnit(lattice; scale=μm)
+    # plotReciprocalLatticeUnit(lattice; scale=μm)
 
     # Plot the coordinates that are sampled for the convolution matrix
-    plotLayerPositionGrid(layer2, simulationDefinition; scale=μm)
+    # plotLayerPositionGrid(layer2, simulationDefinition; scale=μm)
 
     # Plot the material distribution by color.
     plotLayerMaterialsDistribution(layer2, simulationDefinition, materialPlottingParameters; scale=μm)
     plotLayerMaterialsDistribution(layer3, simulationDefinition, materialPlottingParameters; scale=μm)
     plotLayerMaterialsDistribution(layer4, simulationDefinition, materialPlottingParameters; scale=μm)
-    plotLayerMaterialsDistribution(layer5, simulationDefinition, materialPlottingParameters; scale=μm)
-    plotLayerMaterialsDistribution(layer6, simulationDefinition, materialPlottingParameters; scale=μm)
-    plotLayerMaterialsDistribution(layer7, simulationDefinition, materialPlottingParameters; scale=μm)
-    plotLayerMaterialsDistribution(layer8, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer5, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer6, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer7, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer8, simulationDefinition, materialPlottingParameters; scale=μm)
 
 
     # Plot x,y components of the zero-order k-vector.
-    plot2DZeroOrderKVector(simulationDefinition; scale=μm)
+    # plot2DZeroOrderKVector(simulationDefinition; scale=μm)
 
     # Plot x,y components of the injected k-vectors.
     # # # plot2DinjectedKVectors(simulationDefinition; scale=μm) # Not doing these anymore.  Should just use the E field set separately.
@@ -235,21 +234,21 @@ include("../../src/IncludeKrado.jl")
     # add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=μm, Escale = 0.3 )
 
     # Plot structure with 1D
-    UVstart = [0, 0]
-    UVstop = [1, 1]
-    numDivisions = 20
-    XYstart = convertUVtoXY(lattice, UVstart)
-    XYstop = convertUVtoXY(lattice, UVstop)
-    plotCrossSection(simulationDefinition, XYstart, XYstop, numDivisions, materialPlottingParameters; scale=μm)
+    # UVstart = [0, 0]
+    # UVstop = [1, 1]
+    # numDivisions = 20
+    # XYstart = convertUVtoXY(lattice, UVstart)
+    # XYstop = convertUVtoXY(lattice, UVstop)
+    # plotCrossSection(simulationDefinition, XYstart, XYstop, numDivisions, materialPlottingParameters; scale=μm)
 
 
 
 
-    numDivisionsXY = 20
-    numDivisionsZ = 30
-    positionLineXY = PositionGridXYbyMidpoint( XYstart, XYstop, numDivisionsXY)
-    plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
-    plotCrossSectionϵbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
+    # numDivisionsXY = 20
+    # numDivisionsZ = 30
+    # positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisionsXY)
+    # plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
+    # plotCrossSectionϵbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
 
 
 

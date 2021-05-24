@@ -32,7 +32,7 @@ function PositionGridZbyMidpoint( zStart::Real, zStop::Real, numDivisions::Integ
 
     totalLength = abs(zStart-zStop)
     pixelLength = totalLength / numDivisions
-    fractionalLength = UnitLinspace(CENTERALIGNMENT, numDivisions)
+    fractionalLength = unitLinspace(CENTERALIGNMENT, numDivisions)
     zPositions = [ zStart + (zStop-zStart).*fractionalLength[i] for i in 1:numDivisions]
     return PositionGridZ( zStart, zStop, zPositions)
 end
@@ -44,7 +44,32 @@ end
 
 # 2D lattice
 
-function PositionGridXY( gridAlignment::GridAlignment, lattice::Lattice, numDivisions::AbstractArray{<:Any})
+function PositionGridXY( gridAlignment::GridAlignment, XYstart, XYstop, numDivisions::Integer)
+
+    # Fractional distances along U, V vectors
+    # Ufractions = unitLinspace(gridAlignment, numDivisions[U])
+    # Vfractions = unitLinspace(gridAlignment, numDivisions[V])
+
+    # gridUVfractions = collect( Base.product(Ufractions, Vfractions) )
+    # gridUVfractions = reshape(gridUVfractions, Tuple(numDivisions) )
+
+    # xyPositions = map( uv -> convertUVtoXY(lattice, _2VectorFloat(uv)), gridUVfractions)
+    totalLength = norm(XYstart .- XYstop)
+    pixelLength = totalLength / numDivisions
+    fractionalLength = unitLinspace(CENTERALIGNMENT, numDivisions)
+    XYpositions = [ XYstart .+ (XYstop .- XYstart).*fractionalLength[i] for i in 1:numDivisions]
+    # return PositionGridZ( zStart, zStop, zPositions)
+
+    # start = convertUVtoXY(lattice, _2VectorFloat(0,0))
+    # stopU = convertUVtoXY(lattice, _2VectorFloat(1,0))
+    # stopV = convertUVtoXY(lattice, _2VectorFloat(0,1))
+    # stopUV = convertUVtoXY(lattice, _2VectorFloat(1,1))
+
+    return PositionGridXY(XYstart, XYstop, XYstart, XYstop, XYpositions)
+end
+
+# Using XY coordinate limits instead of lattice.  Used for plotting cross-sections.
+function PositionGridXY( gridAlignment::GridAlignment, lattice::Lattice,  numDivisions::AbstractArray{<:Any})
 
     # Fractional distances along U, V vectors
     Ufractions = unitLinspace(gridAlignment, numDivisions[U])
@@ -62,6 +87,8 @@ function PositionGridXY( gridAlignment::GridAlignment, lattice::Lattice, numDivi
 
     return PositionGridXY(start, stopU, stopV, stopUV, xyPositions)
 end
+
+
 
 # For 1D lattice
 # function PositionGridXYleftAligned( lattice::Lattice, numDivisions::Integer)
@@ -86,4 +113,68 @@ end
 
 function relativeDistances(positionGrid::PositionGridXY)
     return [norm(positionGrid.positions[i] - positionGrid.start) for i in 1:length(positionGrid)]
+end
+
+
+# Takes a grid of positions and returns a vector of x-coordinates and a paired vector of y-coordinates. In the vectors, X changes more frequently.
+# function linearizePositionGrid(posGrid::Array{_2VectorFloat,2})::Tuple{ Vector{Float64}, Vector{Float64}}
+#
+#     gridSize = size(posGrid)
+#     numElements = prod(gridSize)
+#     xCoords = Vector{Float64}(undef, numElements)
+#     yCoords = Vector{Float64}(undef, numElements)
+#
+#     for i_x = 1:gridSize[X]
+#         for i_y = 1:gridSize[Y]
+#             xCoords[i_x + (i_y-1)*gridSize[X]] = posGrid[i_x,i_y][X]
+#             yCoords[i_x + (i_y-1)*gridSize[X]] = posGrid[i_x,i_y][Y]
+#         end
+#     end
+#     return xCoords, yCoords
+# end
+function linearizePositionGrid(posGrid::PositionGridXY)::Tuple{ Vector{Float64}, Vector{Float64}}
+
+    gridSize = size(posGrid.positions)
+    numElements = prod(gridSize)
+    xCoords = Vector{Float64}(undef, numElements)
+    yCoords = Vector{Float64}(undef, numElements)
+
+    for i_x = 1:gridSize[X]
+        for i_y = 1:gridSize[Y]
+            xCoords[i_x + (i_y-1)*gridSize[X]] = posGrid.positions[i_x,i_y][X]
+            yCoords[i_x + (i_y-1)*gridSize[X]] = posGrid.positions[i_x,i_y][Y]
+        end
+    end
+    return xCoords, yCoords
+end
+
+
+# Takes a grid of positions and returns a grid of x-coord and y-coord
+# function extractPositionGridComponents(posGrid::Array{_2VectorFloat,2}) ::Tuple{Array{Float64,2},Array{Float64,2}}
+#     gridSize = size(posGrid)
+#     xGrid = Array{Float64,2}(undef, gridSize)
+#     yGrid = Array{Float64,2}(undef, gridSize)
+#
+#     for i_x = 1:gridSize[X]
+#         for i_y = 1:gridSize[Y]
+#             xGrid[i_x, i_y] = posGrid[i_x, i_y][X]
+#             yGrid[i_x, i_y] = posGrid[i_x, i_y][Y]
+#         end
+#     end
+#
+#     return xGrid, yGrid
+# end
+function extractPositionGridComponents(posGrid::PositionGridXY) ::Tuple{Array{Float64,2},Array{Float64,2}}
+    gridSize = size(posGrid.positions)
+    xGrid = Array{Float64,2}(undef, gridSize)
+    yGrid = Array{Float64,2}(undef, gridSize)
+
+    for i_x = 1:gridSize[X]
+        for i_y = 1:gridSize[Y]
+            xGrid[i_x, i_y] = posGrid.positions[i_x, i_y][X]
+            yGrid[i_x, i_y] = posGrid.positions[i_x, i_y][Y]
+        end
+    end
+
+    return xGrid, yGrid
 end

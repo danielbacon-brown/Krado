@@ -213,7 +213,8 @@ function plotCrossSectionLayer(ax, layer::PatternedLayerDefinition, xyStart::TU2
     linearXYinterval = linearXYdistance / numDivisions
     xLimits = [0, linearXYdistance]
 
-    positionGrid = PositionGridXYbyMidpoint( xyStart, xyStop, numDivisions)
+    # positionGrid = PositionGridXYbyMidpoint( xyStart, xyStop, numDivisions)
+    positionGrid = PositionGridXY( CENTERALIGNMENT, xyStart, xyStop, numDivisions)
 
     xyDistances = relativeDistances(positionGrid)
     materialNameGrid = getMaterialAtPosition( layer.layerPattern, positionGrid )
@@ -314,7 +315,9 @@ function plotCrossSectionNlayer(ax, layer::PatternedLayerDefinition,  Nvalues::V
     linearXYinterval = linearXYdistance / numDivisions
     xLimits = [0, linearXYdistance]
 
-    posGrid = calcUniformGridPositionsLineMidpoint( xyStart, xyStop, numDivisions)
+    # posGrid = calcUniformGridPositionsLineMidpoint( xyStart, xyStop, numDivisions)
+    posGrid = PositionGridXY(simulationDef.lattice, layerDef.numDivisions)
+
 
     xyDistances = [norm(posGrid[i]-xyStart) for i in 1:numDivisions]
     # @show xyDistances

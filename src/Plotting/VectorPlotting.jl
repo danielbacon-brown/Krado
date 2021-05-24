@@ -34,7 +34,7 @@ function addZeroOrderKVectorToPlot(kVectorSet::KVectorSet, harmonicsSet::Harmoni
     latticeCenter = getLatticeCenterCoordinates(lattice)
 
     zeroOrderIndex = getOrderIndex(harmonicsSet,_2VectorInt(0,0))
-    zeroOrderKvector = kVectorSet.kᵢ[zeroOrderIndex]
+    zeroOrderKvector = kVectorSet.kᵢNorm[zeroOrderIndex] * getk₀(kVectorSet.wavenumber)
 
     # Convert to a plottable scale.  Length should be equal to wavelength.
     λ₀ = getλ₀(kVectorSet.wavenumber)
@@ -75,18 +75,18 @@ function scaleKVectorToWavelength(k::TU3VectorComplex, wavenumber::Wavenumber)
 end
 
 # TODO: is this used?
-function addKVectorToPlot(k::TU3VectorComplex, kVectorOrigin::TU3VectorReal, wavenumber::Wavenumber; scale=μm)
-    # Scale k-vector so that the length is equal to the wavelength
-    scaledKvector = scaleKVectorToWavelength(k, wavenumber)
-    scaledKvectorReal = real(scaledKvector)
-    scaledKvectorImag = imag(scaledKvector)
-    @show k
-    @show scaledKvector
-
-    # Add to current figure
-    quiver(kVectorOrigin[X]/scale, kVectorOrigin[Y]/scale, kVectorOrigin[Z]/scale, scaledKvectorReal[X]/scale, scaledKvectorReal[Y]/scale, scaledKvectorReal[Z]/scale, color=PVECTORCOLOR, linestyle=PVECTORREALLINESTYLE)
-    quiver(kVectorOrigin[X]/scale, kVectorOrigin[Y]/scale, kVectorOrigin[Z]/scale, scaledKvectorImag[X]/scale, scaledKvectorImag[Y]/scale, scaledKvectorImag[Z]/scale, color=PVECTORCOLOR, linestyle=PVECTORIMAGLINESTYLE)
-end
+# function addKVectorToPlot(k::TU3VectorComplex, kVectorOrigin::TU3VectorReal, wavenumber::Wavenumber; scale=μm)
+#     # Scale k-vector so that the length is equal to the wavelength
+#     scaledKvector = scaleKVectorToWavelength(k, wavenumber)
+#     scaledKvectorReal = real(scaledKvector)
+#     scaledKvectorImag = imag(scaledKvector)
+#     # @show k
+#     # @show scaledKvector
+#
+#     # Add to current figure
+#     quiver(kVectorOrigin[X]/scale, kVectorOrigin[Y]/scale, kVectorOrigin[Z]/scale, scaledKvectorReal[X]/scale, scaledKvectorReal[Y]/scale, scaledKvectorReal[Z]/scale, color=PVECTORCOLOR, linestyle=PVECTORREALLINESTYLE)
+#     quiver(kVectorOrigin[X]/scale, kVectorOrigin[Y]/scale, kVectorOrigin[Z]/scale, scaledKvectorImag[X]/scale, scaledKvectorImag[Y]/scale, scaledKvectorImag[Z]/scale, color=PVECTORCOLOR, linestyle=PVECTORIMAGLINESTYLE)
+# end
 
 function add3DKandPVectorToPlot(k::TU3VectorComplex, P::TU3VectorComplex, kVectorOrigin::TU3VectorReal, wavenumber::Wavenumber; scale=μm, Escale=1)
 

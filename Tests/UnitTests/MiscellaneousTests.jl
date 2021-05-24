@@ -91,14 +91,17 @@ end;
 
 
 @testset "Miscellaneous: PositionGrid Conversions" begin
-    posGrid = [ [_2VectorFloat(0.0,0.0)] [_2VectorFloat(2.0,0.0)]; [_2VectorFloat(0.0,5.0)] [_2VectorFloat(2.0,5.0)] ]
+    lattice = Lattice([4.0,0], [0,10.0], gridAlignment = LEFTALIGNMENT)
+    numDivisions = [2,2]
+    # posGrid = [ [_2VectorFloat(0.0,0.0)] [_2VectorFloat(2.0,0.0)]; [_2VectorFloat(0.0,5.0)] [_2VectorFloat(2.0,5.0)] ]
+    posGrid = PositionGridXY(lattice, numDivisions)
     xCoords, yCoords = linearizePositionGrid(posGrid)
-    @test xCoords == [0.0, 0.0, 2.0, 2.0]
-    @test yCoords == [0.0, 5.0, 0.0, 5.0]
+    @test xCoords == [0.0, 2.0, 0.0, 2.0]
+    @test yCoords == [0.0, 0, 5.0, 5.0]
 
     xGrid, yGrid = extractPositionGridComponents(posGrid)
-    @test xGrid == [0.0 2.0; 0.0 2.0]
-    @test yGrid == [0.0 0.0; 5.0 5.0]
+    @test xGrid == [0.0 0.0; 2.0 2.0]
+    @test yGrid == [0.0 5.0; 0.0 5.0]
 
 
 end;

@@ -53,7 +53,6 @@ mutable struct Lattice <: AbstractLattice
     """
     function Lattice(L₁::_2VectorFloat, L₂::_2VectorFloat, G₁::_2VectorFloat, G₂::_2VectorFloat; originOffsetUV = [], originOffsetXY = [], gridAlignment = CENTERALIGNMENT )
 
-
         # Calc coordinate transformation matrices
         transformationUVtoXY = [L₁[X] L₂[X]; L₁[Y] L₂[Y]]
         #Under certain symmetry, a singular exception occurs, so neec to offset just away from symmetry.

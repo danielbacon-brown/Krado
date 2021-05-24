@@ -147,9 +147,9 @@ end
 
 
 # Returns the position grid Array{_2VectorFloat(X,Y),2}
-function calcUniformGridPositions(lattice::Lattice, layerDef::PatternedLayerDefinition)
-    return calcUniformGridPositions(lattice, layerDef.numDivisions)
-end
+# function calcUniformGridPositions(lattice::Lattice, layerDef::PatternedLayerDefinition)
+#     return calcUniformGridPositions(lattice, layerDef.numDivisions)
+# end
 
 
 #shorthand for gettign the refractive index of a uniform layer

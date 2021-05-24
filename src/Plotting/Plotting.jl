@@ -78,8 +78,9 @@ end
 
 # Scatterplot of position grid of the given layer
 function plotPositionScatter(layerDef::LayerDefinition, lattice::Lattice)
-    posGrid = calcUniformGridPositions(lattice, layerDef)
-    return plotPositionScatter(posGrid, "Layer Positions", "X", "Y")
+    # posGrid = calcUniformGridPositions(lattice, layerDef)
+    posGrid = PositionGridXY(simulationDef.lattice, layerDef.numDivisions)
+    return plotPositionScatter(posGrid.values, "Layer Positions", "X", "Y")
 end
 
 

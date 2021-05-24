@@ -25,7 +25,7 @@ function calcFresnelCoefficients(n₁, n₂, θ₁)
     return tₛ, tₚ, rₛ, rₚ
 end
 
-# Generates a vector of evenly spaced values between 0 and 1.  Used to uniformly sample a periodic function.  "LeftAlignment" starts at zero
+# Generates a vector of evenly spaced values between 0 and 1.  The limits are "exclusive", meaning that both ends can't be in the list.  Used to uniformly sample a periodic function.  "LeftAlignment" starts at zero.  "RightAlignment" ends at 1.  "CenterAlignment" uses the middle points.
 function unitLinspaceLeft(len::Integer)::Vector{Float64}
     @assert len > 0
     return convert(Vector{Float64}, range(0, 1, length=len+1)[1:end-1] )
@@ -242,22 +242,7 @@ end
 calcŝp̂(k::TU3VectorComplex) = calcŝp̂(_3VectorComplex(k))
 
 
-# Takes a grid of positions and returns a vector of x-coordinates and a paired vector of y-coordinates. In the vectors, X changes more frequently.
-function linearizePositionGrid(posGrid::Array{_2VectorFloat,2})::Tuple{ Vector{Float64}, Vector{Float64}}
 
-    gridSize = size(posGrid)
-    numElements = prod(gridSize)
-    xCoords = Vector{Float64}(undef, numElements)
-    yCoords = Vector{Float64}(undef, numElements)
-
-    for i_x = 1:gridSize[X]
-        for i_y = 1:gridSize[Y]
-            xCoords[i_x + (i_y-1)*gridSize[X]] = posGrid[i_x,i_y][X]
-            yCoords[i_x + (i_y-1)*gridSize[X]] = posGrid[i_x,i_y][Y]
-        end
-    end
-    return xCoords, yCoords
-end
 
 # Takes a grid of strings referring to materialNames and reshapes to a vector. Designed to match linearizePositionGrid().
 function linearizeMaterialNameGrid(materialNameGrid::Array{String,2})::Vector{String}
@@ -273,22 +258,6 @@ function linearizeMaterialNameGrid(materialNameGrid::Array{String,2})::Vector{St
         end
     end
     return materialNames
-end
-
-# Takes a grid of positions and returns a grid of x-coord and y-coord
-function extractPositionGridComponents(posGrid::Array{_2VectorFloat,2}) ::Tuple{Array{Float64,2},Array{Float64,2}}
-    gridSize = size(posGrid)
-    xGrid = Array{Float64,2}(undef, gridSize)
-    yGrid = Array{Float64,2}(undef, gridSize)
-
-    for i_x = 1:gridSize[X]
-        for i_y = 1:gridSize[Y]
-            xGrid[i_x, i_y] = posGrid[i_x, i_y][X]
-            yGrid[i_x, i_y] = posGrid[i_x, i_y][Y]
-        end
-    end
-
-    return xGrid, yGrid
 end
 
 
