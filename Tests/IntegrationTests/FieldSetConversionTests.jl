@@ -1,4 +1,4 @@
-module FieldSetConversions
+# module FieldSetConversions
 using Test
 include("../../src/IncludeKrado.jl")
 
@@ -81,8 +81,8 @@ fieldSetXYZbottomB, fieldSetXYZtopB = convertSPinputFieldsToXYZ( fieldSetSPbotto
 # fig, ax = plot3Dlattice(simulationDefinitionB.lattice, simulationDefinitionB.layerStack; scale=1.0, title = "fieldSetXYZbottomB 1")
 # fig = figure(title, figsize=(5,5))
 # ax = Axes3D(fig)
-@show fieldSetXYZbottomB.fields[1,:]
-@test (kXYZ ⋅ fieldSetXYZbottomB.fields[1,:]) ≈ 0
+# @show fieldSetXYZbottomB.fields[1,:]
+@test isapprox( (kXYZ ⋅ fieldSetXYZbottomB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
 # add3DKandPVectorToPlot(kXYZ, fieldSetXYZbottomB.fields[1,:], [0,0,0], wavenumber; scale=μm, Escale=1)
 
 # Convert xyz fields to stacked fields
@@ -95,14 +95,14 @@ inputFieldStackTopB = convertFieldSetXYZtoStack(fieldSetXYZtopB)
 
 # Convert stacked fields back to xyz fields
 # kzNormBottom = derivedParametersA.kzNormBottom
-fieldSetXYZbottomA = convertFieldSetStackToXYZ(inputFieldStackBottomA, kVectorSet, derivedParametersA.kzNormBottom)
-fieldSetXYZbottomB = convertFieldSetStackToXYZ(inputFieldStackBottomB, kVectorSet, derivedParametersB.kzNormBottom)
+fieldSetXYZbottomA = convertFieldSetStackToXYZ(inputFieldStackBottomA, kVectorSet, -derivedParametersA.kzNormBottom)
+fieldSetXYZbottomB = convertFieldSetStackToXYZ(inputFieldStackBottomB, kVectorSet, -derivedParametersB.kzNormBottom)
 # @show fieldsXYZbottom
 @test isapprox( fieldSetXYZbottomA.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
 @test fieldSetXYZbottomA.isForward == true
 # @show kXYZ/k₀
-@show fieldSetXYZbottomB.fields[1,:]
-@test (kXYZ ⋅ fieldSetXYZbottomB.fields[1,:]) ≈ 0
+# @show fieldSetXYZbottomB.fields[1,:]
+@test isapprox( (kXYZ ⋅ fieldSetXYZbottomB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
 # fig, ax = plot3Dlattice(simulationDefinitionB.lattice, simulationDefinitionB.layerStack; scale=1.0, title = "fieldSetXYZbottomB 2")
 # add3DKandPVectorToPlot(kXYZ, fieldSetXYZbottomB.fields[1,:], [0,0,0], wavenumber; scale=μm, Escale=1)
 
@@ -124,85 +124,130 @@ inputFieldsB = InputFields(inputFieldStackBottomB, inputFieldStackTopB)
 
 # Done in vector plotting:
 # Convert stacked fields back to xyz fields
-inputFieldSetXYZbottomA = convertFieldSetStackToXYZ(inputFieldsA.bottom, kVectorSet, derivedParametersA.kzNormBottom)
-inputFieldSetXYZbottomB = convertFieldSetStackToXYZ(inputFieldsB.bottom, kVectorSet, derivedParametersB.kzNormBottom)
+inputFieldSetXYZbottomA = convertFieldSetStackToXYZ(inputFieldsA.bottom, kVectorSet, -derivedParametersA.kzNormBottom)
+inputFieldSetXYZbottomB = convertFieldSetStackToXYZ(inputFieldsB.bottom, kVectorSet, -derivedParametersB.kzNormBottom)
 @test isapprox( inputFieldSetXYZbottomA.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
 @test inputFieldSetXYZbottomA.isForward == true
-@test isapprox( inputFieldSetXYZbottomB.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
+@test isapprox( inputFieldSetXYZbottomB.fields[1,:], [1/sqrt(2)*1im, -1, -1/sqrt(2)*1im], rtol=1e-3, atol=1e-5)
 @test inputFieldSetXYZbottomB.isForward == true
-
-
-
-
-
-# Testing only relative values:
-# wavenumber = WavenumberByλ₀(0.532*μm)
-# k₀ = getk₀(wavenumber)
-# θ = 1e-6
-# ϕ = 45*degrees
-# A = [ 1, 1im ]
-# # A = [ 1, 0 ]
-# mainHarmonicOrder = [0,0]
-# isTop = false
-# Abyϖbottom = Dict{_2VectorInt,_2VectorComplex}()
-# Abyϖtop = Dict{_2VectorInt,_2VectorComplex}()
-# Abyϖbottom[_2VectorInt(0,0)] = A
-# boundaryDefinition = InputByOrderBoundaryDefinition(wavenumber, θ, ϕ, mainHarmonicOrder, isTop, Abyϖbottom, Abyϖtop)
-#
-# simulationDefinition = SimulationDefinition(lattice, layerStack, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition)
-#
-# derivedParameters = DerivedParameters(simulationDefinition)
-# kVectorSet = derivedParameters.kVectorSet
-#
-#
-#
-#
-#
-# # Done with add3DinjectedKandPVectorsToPlot
-# fieldSetSPbottom, fieldSetSPtop = calcSPinputFields( derivedParameters.boundaryConditions, derivedParameters.harmonicsSet)
-# fieldSetXYZbottom, fieldSetXYZtop = convertSPinputFieldsToXYZ( fieldSetSPbottom, fieldSetSPtop, derivedParameters.kVectorSet, simulationDefinition.layerStack, simulationDefinition.materialCollection, wavenumber)
-# injectedOrderIndicesBottom = getInjectedOrderIndices(fieldSetXYZbottom)
-# # add3DKandPVectorsToPlot( fieldSetXYZbottom, injectedOrderIndicesBottom, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
-# injectedOrderIndicesTop = getInjectedOrderIndices(fieldSetXYZtop)
-# # add3DKandPVectorsToPlot( fieldSetXYZtop, injectedOrderIndicesTop, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
-#
-# # Done with add3DlistedKandPVectorsToPlot
-# kVectorSet = derivedParameters.kVectorSet
-# harmonicsSet = derivedParameters.harmonicsSet
-# wavenumber = getWavenumber(derivedParameters.boundaryConditions)
-# inputFieldSetXYZbottom = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
-# inputFieldSetXYZtop = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParameters.kzNormTop)
-# # outputFieldSetXYZbottom = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
-# # outputFieldSetXYZtop = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParameters.kzNormTop)
-# # bottomOrderIndices = [ getOrderIndex(harmonicsSet, ϖ) for ϖ in bottomOrders]
-# # topOrderIndices = [ getOrderIndex(harmonicsSet, ϖ) for ϖ in topOrders]
-# # add3DKandPVectorsToPlot( inputFieldSetXYZbottom, bottomOrderIndices, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
-# # add3DKandPVectorsToPlot( inputFieldSetXYZtop, topOrderIndices, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
-#
-# # Compare:
-# @test isapprox( fieldSetXYZbottom.fields, inputFieldSetXYZbottom.fields,  rtol=1e-3, atol=1e-5)
-# @test fieldSetXYZbottom.isForward == inputFieldSetXYZbottom.isForward
-
+@test isapprox( (kXYZ ⋅ inputFieldSetXYZbottomA.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
+@test isapprox( (kXYZ ⋅ inputFieldSetXYZbottomB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
 
 
 
 
 ### AllModesAnalysisDefinition:
 # Calc common parameters
-derivedParameters = DerivedParameters(simulationDefinition)
-# Calc input fields
-inputFields = calcInputFields(simulationDefinition, derivedParameters)
-@test isapprox( fieldsXYZbottom.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
+# derivedParametersA = DerivedParameters(simulationDefinitionA)
+# # Calc input fields
+# inputFields = calcInputFields(simulationDefinition, derivedParameters)
+# @test isapprox( fieldsXYZbottom.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
 # Calc global scattering matrix
-Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
+SglobalA = calcGlobalScatteringMatrix(simulationDefinitionA, derivedParametersA)
+SglobalB = calcGlobalScatteringMatrix(simulationDefinitionB, derivedParametersB)
 # Propagate fields
-outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
+# outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
 # Output data as a named tuple
 # data = (inputFields = inputFields, outputFields = outputFields)
+
+# Calculating output fields
+outputFieldsA = propagateFields( SglobalA, inputFieldsA, derivedParametersA )
+outputFieldsB = propagateFields( SglobalB, inputFieldsB, derivedParametersB )
+@test isapprox( outputFieldsA.top.modeFields, inputFieldsA.bottom.modeFields, rtol=1e-3, atol=1e-5)
+@test isapprox( outputFieldsB.top.modeFields, inputFieldsB.bottom.modeFields, rtol=1e-3, atol=1e-5)
+# Convert output fields to XYZ
+# Is negative by default, so must use a negative value for kz when calculating for bottom input.  Must also use a negative value for top output.
+# @show derivedParametersA.kzNormBottom
+outputFieldSetXYZbottomA = convertFieldSetStackToXYZ(outputFieldsA.bottom, kVectorSet, -derivedParametersA.kzNormBottom)
+outputFieldSetXYZbottomB = convertFieldSetStackToXYZ(outputFieldsB.bottom, kVectorSet, -derivedParametersB.kzNormBottom)
+outputFieldSetXYZtopA = convertFieldSetStackToXYZ(outputFieldsA.top, kVectorSet, derivedParametersA.kzNormTop )
+outputFieldSetXYZtopB = convertFieldSetStackToXYZ(outputFieldsB.top, kVectorSet, derivedParametersB.kzNormTop )
+@test isapprox( outputFieldSetXYZtopA.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
+@test outputFieldSetXYZtopA.isForward == true
+@test isapprox( outputFieldSetXYZtopB.fields[1,:], [1/sqrt(2)*1im, -1, -1/sqrt(2)*1im], rtol=1e-3, atol=1e-5)
+@test outputFieldSetXYZtopA.isForward == true
+@test isapprox( (kXYZ ⋅ outputFieldSetXYZtopA.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
+@test isapprox( (kXYZ ⋅ outputFieldSetXYZtopB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
+
+# Convert output XYZ to SP
+fieldsSPtopA = convertFieldSetXYZtoSP( outputFieldSetXYZtopA, kVectorSet, getMaterial(matCol,"Air"), wavenumber )
+fieldsSPtopB = convertFieldSetXYZtoSP( outputFieldSetXYZtopB, kVectorSet, getMaterial(matCol,"Air"), wavenumber )
+@test fieldsSPtopA.fields[1,:] ≈ [1, 0]
+@test fieldsSPtopA.isForward == true
+@test fieldsSPtopB.fields[1,:] ≈ [1, 1im]
+@test fieldsSPtopB.isForward == true
+
+
+
+
+# Following runSimulation:
+derivedParametersA = DerivedParameters(simulationDefinitionA)
+derivedParametersB = DerivedParameters(simulationDefinitionB)
+allModeDataA = runSimulation(simulationDefinitionA)
+allModeDataB = runSimulation(simulationDefinitionB)
+@test isapprox( outputFieldsA.top.modeFields, inputFieldsA.bottom.modeFields, rtol=1e-3, atol=1e-5)
+@test isapprox( outputFieldsB.top.modeFields, inputFieldsB.bottom.modeFields, rtol=1e-3, atol=1e-5)
+
+
+# bottomOrders = [_2VectorInt(0,0),]
+# topOrders = [_2VectorInt(0,0),]
+# kVectorSet = derivedParametersA.kVectorSet
+# harmonicsSet = derivedParams.harmonicsSet
+wavenumber = getWavenumber(derivedParametersA.boundaryConditions)
+# bottomOrderIndices = [ getOrderIndex(harmonicsSet, ϖ) for ϖ in bottomOrders]
+# topOrderIndices = [ getOrderIndex(harmonicsSet, ϖ) for ϖ in topOrders]
+
+inputFieldSetXYZbottomA = convertFieldSetStackToXYZ(allModeDataA.inputFields.bottom, kVectorSet, -derivedParametersA.kzNormBottom)
+inputFieldSetXYZtopA = convertFieldSetStackToXYZ(allModeDataA.inputFields.top, kVectorSet, derivedParametersA.kzNormTop)
+outputFieldSetXYZbottomA = convertFieldSetStackToXYZ(allModeDataA.outputFields.bottom, kVectorSet, derivedParametersA.kzNormBottom)
+outputFieldSetXYZtopA = convertFieldSetStackToXYZ(allModeDataA.outputFields.top, kVectorSet, derivedParametersA.kzNormTop)
+@test isapprox( outputFieldSetXYZtopA.fields, inputFieldSetXYZbottomA.fields, rtol=1e-3, atol=1e-5)
+@test isapprox( outputFieldSetXYZtopA.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
+@test isapprox( inputFieldSetXYZbottomA.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
+
+inputFieldSetXYZbottomB = convertFieldSetStackToXYZ(allModeDataB.inputFields.bottom, kVectorSet, -derivedParametersB.kzNormBottom)
+inputFieldSetXYZtopB = convertFieldSetStackToXYZ(allModeDataB.inputFields.top, kVectorSet, derivedParametersB.kzNormTop)
+outputFieldSetXYZbottomB = convertFieldSetStackToXYZ(allModeDataB.outputFields.bottom, kVectorSet, derivedParametersB.kzNormBottom)
+outputFieldSetXYZtopB = convertFieldSetStackToXYZ(allModeDataB.outputFields.top, kVectorSet, derivedParametersB.kzNormTop)
+@test isapprox( outputFieldSetXYZtopB.fields, inputFieldSetXYZbottomB.fields, rtol=1e-3, atol=1e-5)
+@test isapprox( outputFieldSetXYZtopB.fields[1,:], [1/sqrt(2)*1im, -1, -1/sqrt(2)*1im], rtol=1e-3, atol=1e-5)
+@test isapprox( inputFieldSetXYZbottomB.fields[1,:], [1/sqrt(2)*1im, -1, -1/sqrt(2)*1im], rtol=1e-3, atol=1e-5)
+
+inputFieldSetSPbottomA = convertFieldSetXYZtoSP( inputFieldSetXYZbottomA, kVectorSet, getMaterial(matCol,"Air"), wavenumber )
+outputFieldSetSPtopA = convertFieldSetXYZtoSP( outputFieldSetXYZtopA, kVectorSet, getMaterial(matCol,"Air"), wavenumber )
+@test inputFieldSetSPbottomA.fields[1,:] ≈ [1, 0]
+@test inputFieldSetSPbottomA.isForward == true
+@test outputFieldSetSPtopA.fields[1,:] ≈ [1, 0]
+@test outputFieldSetSPtopA.isForward == true
+
+inputFieldSetSPbottomB = convertFieldSetXYZtoSP( inputFieldSetXYZbottomB, kVectorSet, getMaterial(matCol,"Air"), wavenumber )
+outputFieldSetSPtopB = convertFieldSetXYZtoSP( outputFieldSetXYZtopB, kVectorSet, getMaterial(matCol,"Air"), wavenumber )
+@test inputFieldSetSPbottomB.fields[1,:] ≈ [1, 1im]
+@test inputFieldSetSPbottomB.isForward == true
+@test outputFieldSetSPtopB.fields[1,:] ≈ [1, 1im]
+@test outputFieldSetSPtopB.isForward == true
+
+inputFieldSetXYZbottomA, inputFieldSetXYZtopA, inputFieldSetSPbottomA, inputFieldSetSPtopA = analyzeInputFields(inputFieldsA, derivedParametersA, simulationDefinitionA.layerStack, simulationDefinitionA.materialCollection, getWavenumber(simulationDefinitionA) )
+inputFieldSetXYZbottomB, inputFieldSetXYZtopB, inputFieldSetSPbottomB, inputFieldSetSPtopB = analyzeInputFields(inputFieldsB, derivedParametersB, simulationDefinitionB.layerStack, simulationDefinitionB.materialCollection, getWavenumber(simulationDefinitionB) )
+@test isapprox( inputFieldSetXYZbottomA.fields[1,:], [0, -1, 0], rtol=1e-3, atol=1e-5)
+@test inputFieldSetXYZbottomA.isForward == true
+@test isapprox( inputFieldSetXYZbottomB.fields[1,:], [1/sqrt(2)*1im, -1, -1/sqrt(2)*1im], rtol=1e-3, atol=1e-5)
+@test inputFieldSetXYZbottomB.isForward == true
+@test isapprox( (kXYZ ⋅ inputFieldSetXYZbottomA.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
+@test isapprox( (kXYZ ⋅ inputFieldSetXYZbottomB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
+
+@test inputFieldSetSPbottomA.fields[1,:] ≈ [1, 0]
+@test inputFieldSetSPbottomA.isForward == true
+@test outputFieldSetSPtopA.fields[1,:] ≈ [1, 0]
+@test outputFieldSetSPtopA.isForward == true
+@test inputFieldSetSPbottomB.fields[1,:] ≈ [1, 1im]
+@test inputFieldSetSPbottomB.isForward == true
+@test outputFieldSetSPtopB.fields[1,:] ≈ [1, 1im]
+@test outputFieldSetSPtopB.isForward == true
 
 
 
 
 end;
 
-end # module
+# end # module

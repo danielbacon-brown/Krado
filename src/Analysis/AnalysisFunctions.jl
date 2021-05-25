@@ -2,14 +2,10 @@
 
 function calcPowerFluxes(inputFields::InputFields, outputFields::OutputFields, derivedParameters::DerivedParameters)
 
-    bottomFieldsOutput = 
-convertFieldSetStackToXYZ(outputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
-    topFieldsOutput = 
-convertFieldSetStackToXYZ(outputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
-    bottomFieldsInput = 
-convertFieldSetStackToXYZ(inputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
-    topFieldsInput = 
-convertFieldSetStackToXYZ(inputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
+    bottomFieldsOutput = convertFieldSetStackToXYZ(outputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
+    topFieldsOutput = convertFieldSetStackToXYZ(outputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
+    bottomFieldsInput = convertFieldSetStackToXYZ(inputFields.bottom, derivedParameters.kVectorSet, -derivedParameters.kzNormBottom)
+    topFieldsInput = convertFieldSetStackToXYZ(inputFields.top, derivedParameters.kVectorSet, -derivedParameters.kzNormTop)
 
     # Get power flux of each
     inputBottomPowerFlux = calcPowerFlux(bottomFieldsInput, derivedParameters.kzNormBottom)
@@ -39,10 +35,8 @@ end
 # TODO: unit test this: and combine into single function
 function analyzeOutputFields(outputFields::OutputFields, derivedParameters::DerivedParameters, layerStack::Vector{<:LayerDefinition}, matCol::MaterialCollection, wavenumber::Wavenumber )
 
-    outputFieldSetXYZbottom = 
-convertFieldSetStackToXYZ(outputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
-    outputFieldSetXYZtop = 
-convertFieldSetStackToXYZ(outputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
+    outputFieldSetXYZbottom = convertFieldSetStackToXYZ(outputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
+    outputFieldSetXYZtop = convertFieldSetStackToXYZ(outputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
 
     outputFieldSetSPbottom = convertFieldSetXYZtoSP( outputFieldSetXYZbottom, derivedParameters.kVectorSet, getMaterial(matCol, first(layerStack).backgroundMaterialName), wavenumber )
     outputFieldSetSPtop = convertFieldSetXYZtoSP( outputFieldSetXYZtop, derivedParameters.kVectorSet, getMaterial(matCol, last(layerStack).backgroundMaterialName), wavenumber )
@@ -54,10 +48,8 @@ end
 function analyzeInputFields( inputFields::InputFields, derivedParameters::DerivedParameters, layerStack::Vector{<:LayerDefinition}, matCol::MaterialCollection, wavenumber::Wavenumber )
 
     # Convert xyz fields to stacked fields
-    inputFieldSetXYZbottom = 
-convertFieldSetStackToXYZ(inputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
-    inputFieldSetXYZtop = 
-convertFieldSetStackToXYZ(inputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
+    inputFieldSetXYZbottom = convertFieldSetStackToXYZ(inputFields.bottom, derivedParameters.kVectorSet, -derivedParameters.kzNormBottom)
+    inputFieldSetXYZtop = convertFieldSetStackToXYZ(inputFields.top, derivedParameters.kVectorSet, -derivedParameters.kzNormTop)
 
     inputFieldSetSPbottom = convertFieldSetXYZtoSP( inputFieldSetXYZbottom, derivedParameters.kVectorSet, getMaterial(matCol, first(layerStack).backgroundMaterialName), wavenumber )
     inputFieldSetSPtop = convertFieldSetXYZtoSP( inputFieldSetXYZtop, derivedParameters.kVectorSet, getMaterial(matCol, last(layerStack).backgroundMaterialName), wavenumber )

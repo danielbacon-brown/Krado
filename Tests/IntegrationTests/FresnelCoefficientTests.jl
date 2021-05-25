@@ -66,32 +66,44 @@ harmonicsTruncation = HarmonicsTruncationByRectangle(M,N)
 
 analysisDefinition = ZeroOrderModesAnalysisDefinition(FORWARD)
 
-@testset "SiO2 - visible" begin
+@testset "SiO2 - visible - uniform - thin - angled" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
 @test isapprox(abs(data.Rsp[P])^2, rₚBenchmark^2, rtol=1e-3)
 @test isapprox(abs(data.Rsp[S])^2, rₛBenchmark^2, rtol=1e-3)
+@test isapprox(abs(data.Tsp[P])^2, tₚBenchmark^2, rtol=1e-3)
+@test isapprox(abs(data.Tsp[S])^2, tₛBenchmark^2, rtol=1e-3)
+end;
 
-
+@testset "SiO2 - visible - uniform - thick - angled" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thick, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
+# @show(data.Rsp)
 @test isapprox(abs(data.Rsp[P])^2, rₚBenchmark^2, rtol=1e-3)
 @test isapprox(abs(data.Rsp[S])^2, rₛBenchmark^2, rtol=1e-3)
 @test isapprox(abs(data.Tsp[P])^2, tₚBenchmark^2, rtol=1e-3)
 @test isapprox(abs(data.Tsp[S])^2, tₛBenchmark^2, rtol=1e-3)
+end;
 
-
+@testset "SiO2 - visible - uniform - thin - angled - S" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngledJustS, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
+tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
 @test isapprox(abs(data.Rsp[S])^2, rₛBenchmark^2, rtol=1e-3)
 @test isapprox(abs(data.Tsp[S])^2, tₛBenchmark^2, rtol=1e-3)
+end;
 
+@testset "SiO2 - visible - uniform - thin - angled - P" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngledJustP, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
+tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
 @test isapprox(abs(data.Tsp[P])^2, tₚBenchmark^2, rtol=1e-3)
+@test isapprox(abs(data.Rsp[P])^2, rₚBenchmark^2, rtol=1e-3)
+end;
 
+@testset "SiO2 - visible - uniform - thin - normal" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 0*degrees)

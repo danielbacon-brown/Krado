@@ -31,10 +31,12 @@ include("../../src/IncludeKrado.jl")
     isTop = false
     Abyϖbottom = Dict{_2VectorInt,_2VectorComplex}()
     Abyϖtop = Dict{_2VectorInt,_2VectorComplex}()
-    Abyϖtop[_2VectorInt(1, 0)] = inputAmplitudesPpolarization  #Evanescent
-    Abyϖtop[_2VectorInt(0, 1)] = inputAmplitudesSpolarization  #Evanescent
-    Abyϖtop[_2VectorInt(-2, -2)] = inputAmplitudesSpolarizationWeak
+
+    # Abyϖtop[_2VectorInt(1, 0)] = inputAmplitudesPpolarization  #Evanescent
+    # Abyϖtop[_2VectorInt(0, 1)] = inputAmplitudesSpolarization  #Evanescent
+    # Abyϖtop[_2VectorInt(-2, -2)] = inputAmplitudesSpolarizationWeak
     Abyϖbottom[_2VectorInt(0, 0)] = inputAmplitudesCircularPolarization
+
     boundaryDefinition = InputByOrderBoundaryDefinition(
         wavenumber,
         θ,
@@ -223,7 +225,17 @@ include("../../src/IncludeKrado.jl")
     # plot2DinjectedKandPVectors(simulationDefinition; scale=μm, Escale = 0.5)
 
 
+
+
+
     # # Plot input and output modes
+    middle = UniformLayerDefinition(900 * nm, "Air")
+    substrateLayer = SemiInfiniteLayerDefinition("Air")
+    superstrateLayer = SemiInfiniteLayerDefinition("Air")
+    layerStack = [substrateLayer, middle, superstrateLayer]
+    simulationDefinition = SimulationDefinition( lattice, layerStack, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
+
+
     # bottomOrders = [_2VectorInt(-2,-2), _2VectorInt(0,0)]
     # topOrders = [_2VectorInt(-2,-2), _2VectorInt(0,0)]
     bottomOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
@@ -231,8 +243,11 @@ include("../../src/IncludeKrado.jl")
     derivedParameters = DerivedParameters(simulationDefinition)
     allModeData = runSimulation(AllModesAnalysisDefinition(), simulationDefinition)
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
-    fig, ax = plot3Dlattice(simulationDefinition.lattice, simulationDefinition.layerStack; scale=μm, title="Listed orders")
-    add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=μm, Escale = 0.3 )
+    fig, ax = plot3Dlattice(simulationDefinition.lattice, simulationDefinition.layerStack; scale=nm, title="Listed orders")
+    add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=nm, Escale = 500 )
+    xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
+    setCubicAxes(ax, xLimits, yLimits, zLimits; scale=nm)
 
     # Plot structure with 1D
     # UVstart = [0, 0]

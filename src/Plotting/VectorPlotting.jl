@@ -103,7 +103,7 @@ function add3DKandPVectorToPlot(k::TU3VectorComplex, P::TU3VectorComplex, kVecto
 end
 
 
-function add3DKandPVectorsToPlot( fieldSetXYZ::FieldSetXYZ, injectedOrderIndices::Vector{<:Integer}, side::Bool, simulationDef::SimulationDefinition, derivedParams::DerivedParameters; scale=μm, Escale=1)
+function add3DKandPVectorsToPlot( fieldSetXYZ::FieldSetXYZ, injectedOrderIndices::Vector{<:Integer}, direction::Bool, side::Bool, simulationDef::SimulationDefinition, derivedParams::DerivedParameters; scale=μm, Escale=1)
 
     latticeCenter = getLatticeCenterCoordinates(simulationDef.lattice)
     Zlimits = getLayerStackPlotLimits(simulationDef.layerStack)
@@ -122,6 +122,7 @@ function add3DKandPVectorsToPlot( fieldSetXYZ::FieldSetXYZ, injectedOrderIndices
             kXY = getkXYnorm(derivedParams.kVectorSet, ϖindex) * getk₀(derivedParams.kVectorSet)
             kXYZ = kXYtokXYZ(kXY, n, wavenumber, fieldSetXYZ.isForward)
             E = fieldSetXYZ.fields[ϖindex,:]
+            @test isapprox( (kXYZ ⋅ E), 0, rtol=1e-3, atol=1e-5)
             add3DKandPVectorToPlot(kXYZ, E, kVectorOrigin, wavenumber; scale=scale, Escale=Escale)
     end
 
@@ -176,9 +177,9 @@ function add3DinjectedKandPVectorsToPlot(simulationDef::SimulationDefinition, de
     fieldSetXYZbottom, fieldSetXYZtop = convertSPinputFieldsToXYZ( fieldSetSPbottom, fieldSetSPtop, derivedParams.kVectorSet, simulationDef.layerStack, simulationDef.materialCollection, wavenumber)
 
     injectedOrderIndicesBottom = getInjectedOrderIndices(fieldSetXYZbottom)
-    add3DKandPVectorsToPlot( fieldSetXYZbottom, injectedOrderIndicesBottom, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
+    add3DKandPVectorsToPlot( fieldSetXYZbottom, injectedOrderIndicesBottom, FORWARD, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
     injectedOrderIndicesTop = getInjectedOrderIndices(fieldSetXYZtop)
-    add3DKandPVectorsToPlot( fieldSetXYZtop, injectedOrderIndicesTop, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
+    add3DKandPVectorsToPlot( fieldSetXYZtop, injectedOrderIndicesTop, BACKWARD, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
 
     return nothing
 end
@@ -198,7 +199,7 @@ function add3DlistedKandPVectorsToPlot(inputFields, outputFields, bottomOrders, 
     # fieldSetSPbottom, fieldSetSPtop = calcSPinputFields( derivedParams.boundaryConditions, derivedParams.harmonicsSet)
 
 
-    inputFieldSetXYZbottom = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, derivedParams.kzNormBottom)
+    inputFieldSetXYZbottom = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, -derivedParams.kzNormBottom)
     inputFieldSetXYZtop = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParams.kzNormTop)
     outputFieldSetXYZbottom = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParams.kzNormBottom)
     outputFieldSetXYZtop = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParams.kzNormTop)
@@ -207,8 +208,14 @@ function add3DlistedKandPVectorsToPlot(inputFields, outputFields, bottomOrders, 
     # fieldSetXYZbottom, fieldSetXYZtop = convertSPinputFieldsToXYZ( fieldSetSPbottom, fieldSetSPtop, derivedParams.kVectorSet, simulationDef.layerStack, simulationDef.materialCollection, wavenumber)
 
     # injectedOrderIndicesBottom = getInjectedOrderIndices(fieldSetXYZbottom)
-    add3DKandPVectorsToPlot( inputFieldSetXYZbottom, bottomOrderIndices, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
-    # add3DKandPVectorsToPlot( inputFieldSetXYZtop, topOrderIndices, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
+    # INPUT
+    add3DKandPVectorsToPlot( inputFieldSetXYZbottom, bottomOrderIndices, FORWARD, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
+    add3DKandPVectorsToPlot( inputFieldSetXYZtop, topOrderIndices, BACKWARD, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
+    # OUTPUT
+    add3DKandPVectorsToPlot( outputFieldSetXYZbottom, bottomOrderIndices, BACKWARD, BOTTOM, simulationDef, derivedParams; scale=scale, Escale=Escale)
+    add3DKandPVectorsToPlot( outputFieldSetXYZtop, topOrderIndices, FORWARD, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
+
+
     # injectedOrderIndicesTop = getInjectedOrderIndices(fieldSetXYZtop)
     # add3DKandPVectorsToPlot( fieldSetXYZtop, injectedOrderIndicesTop, TOP, simulationDef, derivedParams; scale=scale, Escale=Escale)
 

@@ -633,6 +633,9 @@ Eᵦy = outputFields.bottom.modeFields[ (numHarmonics(kVectorSet)+1):(2*numHarmo
 # Eᵦz = inv(kzᵦ)*(kVectorSet.Kx*Eᵦx + kVectorSet.Ky*Eᵦy)
 # KNORM
 Eᵦz = -inv(kzᵦ)*(kVectorSet.KxNorm*Eᵦx + kVectorSet.KyNorm*Eᵦy)
+#new:
+# Eᵦz = -conj( inv(-abs.(kzᵦ))*(kVectorSet.KxNorm*Eᵦx + kVectorSet.KyNorm*Eᵦy) )
+
 Eₜx = outputFields.top.modeFields[1:numHarmonics(kVectorSet)]
 Eₜy = outputFields.top.modeFields[ (numHarmonics(kVectorSet)+1):(2*numHarmonics(kVectorSet))]
 # old:
@@ -661,6 +664,20 @@ topFieldsInput = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedP
 # UNSURE:
 @test isapprox(bottomFieldsOutput.fields[:,Z], Eᵦzbenchmark, rtol=1e-2)
 # @test isapprox(bottomFieldsOutput.fields[:,Z], conj(Eᵦzbenchmark), rtol=1e-2)
+
+# Checking dot product:
+iOrder = 5
+field = bottomFieldsOutput.fields[iOrder,:]
+# @show field
+k = [kVectorSet.kᵢNorm[iOrder][X], kVectorSet.kᵢNorm[iOrder][Y], derivedParameters.kzNormBottom[iOrder]]
+# @show k
+@test isapprox( field ⋅ k, 0, rtol=1e-3, atol=1e-4 )
+
+kbBenchmark = [kxbenchmark[iOrder,iOrder], kybenchmark[iOrder,iOrder], kzᵦbenchmark[iOrder,iOrder] ]
+fieldBenchmark = [Eᵦxbenchmark[iOrder], Eᵦybenchmark[iOrder], Eᵦzbenchmark[iOrder]]
+@test isapprox( fieldBenchmark ⋅ kbBenchmark, 0, rtol=1e-3, atol=1e-4 )
+
+
 @test isapprox(topFieldsOutput.fields[:,X], Eₜxbenchmark, rtol=1e-2)
 @test isapprox(topFieldsOutput.fields[:,Y], Eₜybenchmark, rtol=1e-2)
 # UNSURE:

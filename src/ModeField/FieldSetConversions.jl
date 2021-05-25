@@ -13,8 +13,12 @@ function convertFieldSetStackToXYZ(fieldSetStack::FieldSetStack, kVectorSet::KVe
     #UNSURE
     fieldsXYZ[:,Z] = -inv(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y]) # old.  Problem with imaginary fields and p-polarizaiton
     # fieldsXYZ[:,Z] = -inv.(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y])
-    # fieldsXYZ[:,Z] = -conj( inv(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y]) ) # new.  Fixes the conversion from Stack to XYZ
+    # fieldsXYZ[:,Z] = -conj( inv(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y]) ) # new.  Fixes the conversion from Stack to XYZ.  But fails for Top.
+    # fieldsXYZ[:,Z] = -conj( inv(Diagonal(-abs.(kz)))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y]) ) # new.
     # fieldsXYZ[:,Z] = -inv(conj(Diagonal(kz)))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y])
+
+    # if fieldSetStack.isForward && fieldSetStack.
+
     return FieldSetXYZ(fieldsXYZ, fieldSetStack.isForward)
 end
 
