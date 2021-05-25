@@ -62,7 +62,7 @@ include("../../src/IncludeKrado.jl")
     layer3 =
         PatternedLayerDefinition([100, 100], 100 * nm, LayerPattern(layer3solids, "Al2O3"))
     layer4solids = [Solid(
-        Polygon([0.1 * μm, 0], [[0, 0], [0.1, 0], [-0.05, 0.05], [0, -0.1]] * μm),
+        Polygon( [[0, 0], [0.1, 0], [-0.05, 0.05], [0, -0.1]] * μm, offset=[0.1 * μm, 0]),
         "Ag",
     )]
     layer4 =
@@ -192,9 +192,9 @@ include("../../src/IncludeKrado.jl")
     # plotLayerPositionGrid(layer2, simulationDefinition; scale=μm)
 
     # Plot the material distribution by color.
-    plotLayerMaterialsDistribution(layer2, simulationDefinition, materialPlottingParameters; scale=μm)
-    plotLayerMaterialsDistribution(layer3, simulationDefinition, materialPlottingParameters; scale=μm)
-    plotLayerMaterialsDistribution(layer4, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer2, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer3, simulationDefinition, materialPlottingParameters; scale=μm)
+    # plotLayerMaterialsDistribution(layer4, simulationDefinition, materialPlottingParameters; scale=μm)
     # plotLayerMaterialsDistribution(layer5, simulationDefinition, materialPlottingParameters; scale=μm)
     # plotLayerMaterialsDistribution(layer6, simulationDefinition, materialPlottingParameters; scale=μm)
     # plotLayerMaterialsDistribution(layer7, simulationDefinition, materialPlottingParameters; scale=μm)
@@ -209,7 +209,7 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot 3d k-vectors and polarization vectors
-    # plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = Escale)
+    plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
     # Plot a 3D structure.
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
@@ -226,12 +226,13 @@ include("../../src/IncludeKrado.jl")
     # # Plot input and output modes
     # bottomOrders = [_2VectorInt(-2,-2), _2VectorInt(0,0)]
     # topOrders = [_2VectorInt(-2,-2), _2VectorInt(0,0)]
-    # # topOrders = [ [-2,-2], [0,0] ]
-    # derivedParameters = DerivedParameters(simulationDefinition)
-    # allModeData = runSimulation(AllModesAnalysisDefinition(), simulationDefinition)
-    # # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
+    bottomOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
+    topOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
+    derivedParameters = DerivedParameters(simulationDefinition)
+    allModeData = runSimulation(AllModesAnalysisDefinition(), simulationDefinition)
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
-    # add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=μm, Escale = 0.3 )
+    fig, ax = plot3Dlattice(simulationDefinition.lattice, simulationDefinition.layerStack; scale=μm, title="Listed orders")
+    add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=μm, Escale = 0.3 )
 
     # Plot structure with 1D
     # UVstart = [0, 0]
@@ -249,11 +250,6 @@ include("../../src/IncludeKrado.jl")
     # positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisionsXY)
     # plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
     # plotCrossSectionϵbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
-
-
-
-
-    # plotCrossSection(simulationDefinition, numDivisions, materialPlottingParameters; scale=μm)
 
 
 end

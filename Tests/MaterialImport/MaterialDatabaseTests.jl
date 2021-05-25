@@ -202,7 +202,7 @@ layer2solids = [Solid(Rectangle([0,0],[0.518*μm,0.324*μm]), "Al2O3")]
 layer2 = PatternedLayerDefinition([100,100], 100*nm, LayerPattern(layer2solids, "Air"))
 layer3solids = [Solid(Circle([0.1*μm,0],0.15*μm), "Ag_J&C")]
 layer3 = PatternedLayerDefinition([100,100], 100*nm, LayerPattern(layer3solids, "Al2O3"))
-layer4solids = [Solid(Polygon([0.1*μm,0], [[0,0],[0.1,0],[-0.05,0.05],[0,-0.1]]*μm), "Ag_J&C")]
+layer4solids = [Solid(Polygon( [[0,0],[0.1,0],[-0.05,0.05],[0,-0.1]]*μm; offset=[0.1*μm,0]), "Ag_J&C")]
 layer4 = PatternedLayerDefinition([100,100], 100*nm, LayerPattern(layer4solids, "Air"))
 layerStack = [substrateLayer, layer1, layer2, layer3, layer4, superstrateLayer]
 

@@ -39,8 +39,9 @@ end
 function calcInputFields( simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters )
     return calcInputFields( derivedParameters.boundaryConditions, derivedParameters.harmonicsSet, derivedParameters.kVectorSet, simulationDefinition.layerStack, simulationDefinition.materialCollection, getWavenumber(simulationDefinition) )
 end
-
-
+function calcInputFields( simulationDefinition::SimulationDefinition )
+    return calcInputFields( simulationDefinition, DerivedParameters(simulationDefinition))
+end
 
 # ASSUMES USING INPUT BY ORDER BOUNDARY CONDITIONS
 function getkXYZ₀(simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters)

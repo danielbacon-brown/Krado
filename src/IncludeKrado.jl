@@ -48,10 +48,11 @@ include("Layer\\LayerDefinition.jl")
 include("Materials\\UserMaterials.jl")
 
 include("ModeField\\ModeCoefficientSet.jl")
-include("ModeField\\ModeFieldSet.jl")
+include("ModeField\\FieldSetStack.jl")
 include("ModeField\\ElectricEigenvectors.jl")
-include("ModeField\\ModeField3Set.jl")
-include("ModeField\\ModeFieldSPSet.jl")
+include("ModeField\\FieldSetXYZ.jl")
+include("ModeField\\FieldSetSP.jl")
+include("ModeField\\FieldSetConversions.jl")
 
 include("Layer\\LayerScatteringMatrix.jl")
 

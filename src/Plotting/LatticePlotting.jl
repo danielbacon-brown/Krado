@@ -40,65 +40,74 @@ end
 
 
 function setPlotLimitsAroundLattice(lattice::Lattice, ax; scale=1)
-    
+
     scaleLabel = LENGTHLABEL[scale]
-    
+
     xLimits, yLimits = getLatticePlotLimits(lattice; scale=scale)
-    PyPlot.xlim(xLimits[1], xLimits[2])    
+    PyPlot.xlim(xLimits[1], xLimits[2])
     PyPlot.ylim(yLimits[1], yLimits[2])
-    
+
     PyPlot.xlabel("x ($scaleLabel)")
-    PyPlot.ylabel("y ($scaleLabel)")    
-    
+    PyPlot.ylabel("y ($scaleLabel)")
+
     ax.axis("equal")
-    
+
 end
 
 function setPlotLimitsAroundReciprocalLattice(lattice::Lattice, ax; scale=1)
-    
+
     scaleLabel = LENGTHLABEL[scale]
-    
+
     xLimits, yLimits = getReciprocalLatticePlotLimits(lattice; scale=scale)
-    PyPlot.xlim(xLimits[1], xLimits[2])    
+    PyPlot.xlim(xLimits[1], xLimits[2])
     PyPlot.ylim(yLimits[1], yLimits[2])
-    
+
     PyPlot.xlabel("x ($(scaleLabel)⁻¹)")
     PyPlot.ylabel("y ($(scaleLabel)⁻¹)")
-    
+
     ax.axis("equal")
-    
+
 end
 
 
 # Plot the real-space periodicity vectors.
 function plotLatticeUnit(lattice::Lattice; scale=1)
-    
+
     scaleLabel = LENGTHLABEL[scale]
-    
+
     fig = PyPlot.figure("Lattice. L₁, L₂", figsize=(5,5))
     ax = PyPlot.axes()
-    
+
     addLatticeToPlot(lattice; scale=scale)
-        
-    setPlotLimitsAroundLattice(lattice, ax; scale=scale)    
+
+    setPlotLimitsAroundLattice(lattice, ax; scale=scale)
 end
 
 # Plot the real-space periodicity vectors.
 function plotReciprocalLatticeUnit(lattice::Lattice; scale=1)
-    
+
     scaleLabel = LENGTHLABEL[scale]
-    
+
     fig = PyPlot.figure("Reciprocal lattice. G₁, G₂", figsize=(5,5))
     ax = PyPlot.axes()
-    
-    addReciprocalLatticeToPlot(lattice; scale=scale)    
+
+    addReciprocalLatticeToPlot(lattice; scale=scale)
     setPlotLimitsAroundReciprocalLattice(lattice, ax; scale=scale)
 
 end
 
 # function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition})
-function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=μm)
-    
+function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=μm, title="Lattice")
+
+    fig = figure(title, figsize=(5,5))
+    ax = Axes3D(fig)
+
+    totalThickness = calcTotalThickness(layerStack)
+
+    xLimits, yLimits = getLatticePlotLimits(lattice)
+    zLimits = getLayerStackPlotLimits(layerStack)
+
+
     # Plot 3D lattice:
     xLimits, yLimits = getLatticePlotLimits(lattice)
     zLimits = getLayerStackPlotLimits(layerStack)
@@ -107,8 +116,8 @@ function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; 
     latticeX, latticeY = calcLatticeBoundaryLine(lattice)
     latticeZbottom = zeros(size(latticeX))
     latticeZtop = ones(size(latticeX))*totalThickness
-    latticeX = latticeX/scale
-    latticeY = latticeY/scale
+    latticeX = latticeX ./ scale
+    latticeY = latticeY ./ scale
     latticeZbottom = latticeZbottom/scale
     latticeZtop = latticeZtop/scale
 
@@ -119,4 +128,6 @@ function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; 
     for i = 1:4
         plot([latticeX[i],latticeX[i]], [latticeY[i],latticeY[i]], zLimits/scale, color=LATTICECOLOR)
     end
+
+    return fig, ax
 end

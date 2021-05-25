@@ -57,7 +57,7 @@ function numΔHarmonics(harmonicsSet::HarmonicsSet)
 end
 
 # Returns the index of the included harmonic order
-function getOrderIndex(harmonicsSet::HarmonicsSet, ϖ::_2VectorInt)
+function getOrderIndex(harmonicsSet::HarmonicsSet, ϖ)
     ϖ = _2VectorInt(ϖ)
 
     local index

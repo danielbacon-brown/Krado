@@ -9,11 +9,13 @@ mutable struct Rectangle <: Shape
     center::_2VectorFloat
     lengths::_2VectorFloat
 
-    function Rectangle(center::_2VectorFloat, lengths::_2VectorFloat)
-        new(center, lengths)
+    function Rectangle(center, lengths)
+        @assert length(center) == 2
+        @assert length(lengths) == 2
+        new( _2VectorFloat(center), _2VectorFloat(lengths) )
     end
 end
-Rectangle( center, lengths) = Rectangle( _2VectorFloat(center), _2VectorFloat(lengths))
+# Rectangle( center, lengths) = Rectangle( _2VectorFloat(center), _2VectorFloat(lengths))
 
 function containsXY(rect::Rectangle, testPoint)::Bool
     return all( broadcast( abs, testPoint-rect.center) .< 0.5*rect.lengths )
@@ -24,12 +26,13 @@ mutable struct Circle <: Shape
     center::_2VectorFloat
     radius::Float64
 
-    function Circle(center::_2VectorFloat, radius::Float64)
+    function Circle(center, radius)
+        @assert length(center) == 2
         @assert radius > 0
-        return new(center, radius)
+        return new( _2VectorFloat(center), Float64(radius) )
     end
 end
-Circle( center, radius) = Circle(_2VectorFloat(center), Float64(radius) )
+# Circle( center, radius) = Circle(_2VectorFloat(center), Float64(radius) )
 
 
 function containsXY(circ::Circle, testPoint)::Bool
@@ -38,20 +41,21 @@ end
 
 
 mutable struct Polygon <: Shape
-    # Coordinates is a list of x,y pairs
-    center::_2VectorFloat
+    # vertices is a list of x,y pairs
     vertices::Vector{_2VectorFloat}
+    offset::_2VectorFloat
 
-    function Polygon( center::_2VectorFloat, vertices::Vector{_2VectorFloat} )
+    function Polygon( vertices; offset=[0,0] )
         @assert length(vertices) > 2
-        return new(center, vertices)
+        @assert length(offset) == 2
+        return new( convert(Vector{_2VectorFloat}, vertices), _2VectorFloat(offset))
     end
 end
-Polygon(center, vertices) = Polygon(_2VectorFloat(center), convert(Vector{_2VectorFloat}, vertices) )
+# Polygon(center, vertices) = Polygon(_2VectorFloat(center), convert(Vector{_2VectorFloat}, vertices) )
 
 # TODO: switch to using default params
 # Default [0,0] offset
-Polygon(vertices) = Polygon(_2VectorFloat(0,0),vertices)
+# Polygon(vertices) = Polygon(_2VectorFloat(0,0),vertices)
 
 
 # Draws a ray to the right of test point.  If this ray intersects the line segment of the two vertices, return True.  Otherwise False.
@@ -98,7 +102,7 @@ end
 
 # Draws a ray in +x direction.  if the number of intersections is odd, it is inside the polygon
 function containsXY(poly::Polygon, testPoint)::Bool
-    testPoint = testPoint - poly.center
+    testPoint = testPoint - poly.offset
 
     numIntersections = 0
     # Test vertex pairs
@@ -172,10 +176,10 @@ function IntersectionShape(shape::Shape)
     return IntersectionShape([shape])
 end
 
-function containsXY(intersectionShape::IntersectionShape, testPoint::_2VectorFloat)::Bool
+function containsXY(intersectionShape::IntersectionShape, testPoint)::Bool
     return all([containsXY(shape, testPoint) for shape in intersectionShape.shapes])
 end
-containsXY(intersectionShape::IntersectionShape, testPoint) = containsXY(intersectionShape, _2VectorFloat(testPoint) )
+# containsXY(intersectionShape::IntersectionShape, testPoint) = containsXY(intersectionShape, _2VectorFloat(testPoint) )
 
 
 # The difference of a set of shapes, that functions as a shape itself

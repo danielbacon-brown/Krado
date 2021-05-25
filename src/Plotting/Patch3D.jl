@@ -3,12 +3,12 @@ function plotPatch3D(layerStack::Vector{<:LayerDefinition}, simulationDef::Simul
 
     scaleLabel = LENGTHLABEL[scale]
 
-    fig = figure("3D Materials Distribution", figsize=(5,5))
-    ax = Axes3D(fig)
+    # fig = figure("3D Materials Distribution", figsize=(5,5))
+    # ax = Axes3D(fig)
+    #
+    # totalThickness = calcTotalThickness(layerStack)
 
-    totalThickness = calcTotalThickness(layerStack)
-
-    plot3Dlattice(simulationDef.lattice, layerStack; scale=scale)
+    fig, ax = plot3Dlattice(simulationDef.lattice, layerStack; scale=scale, title="3D Materials Distribution")
 
     # Plot 3D lattice:
     xLimits, yLimits = getLatticePlotLimits(simulationDef.lattice)
@@ -53,8 +53,14 @@ end
 
 function calcTotalThickness(layerStack::Vector{<:LayerDefinition})
     numLayers = length(layerStack)
-    @assert numLayers >= 3
-    return sum( [layerStack[i].thickness for i in 2:(numLayers-1)] )
+    # @assert numLayers >= 2
+    # @assert numLayers >= 3
+    if numLayers >= 3
+
+        return sum( [layerStack[i].thickness for i in 2:(numLayers-1)] )
+    else
+        return 0
+    end
 end
 
 function getLayerStackPlotLimits(layerStack::Vector{<:LayerDefinition}; relativePadding=0.5)

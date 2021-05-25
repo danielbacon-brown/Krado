@@ -39,8 +39,8 @@ end
 
 
 # Define according to a 3-vector for k.
-function createKVectorSet(wavenumber::Wavenumber, k::_3VectorFloat, ϖ::_2VectorInt, Gvectors::GvectorSet )
-    return createKVectorSet(wavenumber, k[X:Y], ϖ, Gvectors)
+function createKVectorSet(wavenumber::Wavenumber, Gvectors::GvectorSet; k = [0,0,1], ϖ = [0,0]  )
+    return createKVectorSet(wavenumber, k[X:Y], _2VectorInt(ϖ), Gvectors)
 end
 
 #TODO: use defaults:

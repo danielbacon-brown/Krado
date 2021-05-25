@@ -25,7 +25,7 @@
 
     matCol = MaterialCollection()
     addMaterial!(matCol,"Air", Material(ConstantPermittivity(1)) )
-    
+
     layerBottom = SemiInfiniteLayerDefinition("Air")
     layerTop = SemiInfiniteLayerDefinition("Air")
     layerStack = [layerBottom, layerTop]
@@ -51,15 +51,15 @@
     k₀2 = norm(kXYZ2)
     ρ, θ, ϕ = cartesian2SphericalCoordinates(kXYZ2)
     # @test boundaryDefinition2.θ ≈ 0
-    @test ϕ ≈ 0   
-    
+    @test ϕ ≈ 0
+
     boundaryDefinition2 = InputByOrderBoundaryDefinition(WavenumberByk₀(k₀2), θ, ϕ, _2VectorInt(0,0), BOTTOM, amplitudeByOrderBottom, amplitudeByOrderTop)
     # @test boundaryDefinition2.kXY₀ ≈ getXY(kXYZ2)
     # @test boundaryDefinition2.θ ≈ 0
-    # @test boundaryDefinition2.ϕ ≈ 2    
+    # @test boundaryDefinition2.ϕ ≈ 2
     @test boundaryDefinition2.Abyϖbottom[_2VectorInt(1,0)] ≈ A
     @test boundaryDefinition2.Abyϖbottom[_2VectorInt(-1,0)] ≈ A
-    
+
     boundaryConditions2 = InputByOrderBoundaryConditions( boundaryDefinition2, matCol, layerStack)
     kVectorSet2 = createKVectorSet(Gvectors, boundaryConditions2)
     # modesBottom2, modesTop2 = calcInputModes(boundaryConditions2, kVectorSet2, harmonicsSet)
@@ -69,6 +69,11 @@
     # NOTE: The order is not necessarily preserved when calculating modes
     # @test modesBottom2[1].kXY ≈ getkXY(kVectorSet2, getOrderIndex(harmonicsSet,_2VectorInt(-1,0)) )
     # @test modesBottom2[2].kXY ≈ getkXY(kVectorSet2, getOrderIndex(harmonicsSet,_2VectorInt(1,0)) )
+
+
+
+
+
 
 
 

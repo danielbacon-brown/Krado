@@ -647,21 +647,25 @@ Eₜz = -inv(kzₜ)*(kVectorSet.KxNorm*Eₜx + kVectorSet.KyNorm*Eₜy)
 @test isapprox(Eₜz, Eₜzbenchmark, rtol=1e-2)
 
 # old
-# bottomFieldsOutput = convertFieldSetStackToFieldSetXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzBottom)
-# topFieldsOutput = convertFieldSetStackToFieldSetXYZ(outputFields.top, kVectorSet, derivedParameters.kzTop)
-# bottomFieldsInput = convertFieldSetStackToFieldSetXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzBottom)
-# topFieldsInput = convertFieldSetStackToFieldSetXYZ(inputFields.top, kVectorSet, derivedParameters.kzTop)
+# bottomFieldsOutput = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzBottom)
+# topFieldsOutput = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParameters.kzTop)
+# bottomFieldsInput = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzBottom)
+# topFieldsInput = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParameters.kzTop)
 # KNORM
-bottomFieldsOutput = convertFieldSetStackToFieldSetXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
-topFieldsOutput = convertFieldSetStackToFieldSetXYZ(outputFields.top, kVectorSet, derivedParameters.kzNormTop)
-bottomFieldsInput = convertFieldSetStackToFieldSetXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
-topFieldsInput = convertFieldSetStackToFieldSetXYZ(inputFields.top, kVectorSet, derivedParameters.kzNormTop)
+bottomFieldsOutput = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
+topFieldsOutput = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParameters.kzNormTop)
+bottomFieldsInput = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
+topFieldsInput = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParameters.kzNormTop)
 @test isapprox(bottomFieldsOutput.fields[:,X], Eᵦxbenchmark, rtol=1e-2)
 @test isapprox(bottomFieldsOutput.fields[:,Y], Eᵦybenchmark, rtol=1e-2)
+# UNSURE:
 @test isapprox(bottomFieldsOutput.fields[:,Z], Eᵦzbenchmark, rtol=1e-2)
+# @test isapprox(bottomFieldsOutput.fields[:,Z], conj(Eᵦzbenchmark), rtol=1e-2)
 @test isapprox(topFieldsOutput.fields[:,X], Eₜxbenchmark, rtol=1e-2)
 @test isapprox(topFieldsOutput.fields[:,Y], Eₜybenchmark, rtol=1e-2)
+# UNSURE:
 @test isapprox(topFieldsOutput.fields[:,Z], Eₜzbenchmark, rtol=1e-2)
+# @test isapprox(topFieldsOutput.fields[:,Z], conj(Eₜzbenchmark), rtol=1e-2)
 
 # Step 12: Diffraction efficiencies
 

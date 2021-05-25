@@ -344,12 +344,13 @@ function getkz(kXY::_2VectorFloat, n::Number, wavenumber::Wavenumber, kzPositive
 end
 getkz(kXY::Vector{T}, n::Number, wavenumber::Wavenumber, kzPositive::Bool ) where T<:Real = getkz(_2VectorFloat(kXY), n, wavenumber, kzPositive )
 
-function kXYtokXYZ(kXY::_2VectorFloat, n::Number, wavenumber::Wavenumber, kzPositive::Bool )::_3VectorComplex
+function kXYtokXYZ(kXY, n::Number, wavenumber::Wavenumber, kzPositive::Bool )::_3VectorComplex
+    kXY = _2VectorFloat(kXY)
     kz = getkz(kXY, n, wavenumber, kzPositive )
-    k₀ = getk₀(wavenumber)
+    # k₀ = getk₀(wavenumber)
     return _3VectorComplex(kXY[X], kXY[Y], kz)
 end
-kXYtokXYZ(kXY::Vector{T}, n::Number, wavenumber::Wavenumber, kzPositive::Bool ) where T<:Real = kXYtokXYZ(_2VectorFloat(kXY), n, wavenumber, kzPositive )
+# kXYtokXYZ(kXY::Vector{T}, n::Number, wavenumber::Wavenumber, kzPositive::Bool ) where T<:Real = kXYtokXYZ(_2VectorFloat(kXY), n, wavenumber, kzPositive )
 
 
 # Adds whitespace to the string so that it is the set length.  Clips the string if it is less than target length.

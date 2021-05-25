@@ -13,19 +13,19 @@ mutable struct FieldSetXYZ
 end
 
 # Calculates the XYZ field data based on the XY field data.
-function convertFieldSetStackToFieldSetXYZ(fieldSetStack::FieldSetStack, kVectorSet::KVectorSet, kz::Vector{T}) where T<:Number
-
-    k₀ = getk₀(kVectorSet.wavenumber)
-    kzDirection = bool2posNeg(fieldSetStack.isForward) # Reverse value if backwards propagating
-
-    nHarmonics = numHarmonics(kVectorSet)
-    fieldsXYZ = Array{ComplexF64,2}(undef, (nHarmonics,3))
-
-    fieldsXYZ[:,X] = fieldSetStack.modeFields[1:nHarmonics]
-    fieldsXYZ[:,Y] = fieldSetStack.modeFields[ (nHarmonics+1):(2*nHarmonics)]
-    fieldsXYZ[:,Z] = -inv(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y])
-    return FieldSetXYZ(fieldsXYZ, fieldSetStack.isForward)
-end
+# function convertFieldSetStackToXYZ(fieldSetStack::FieldSetStack, kVectorSet::KVectorSet, kz::Vector{T}) where T<:Number
+#
+#     k₀ = getk₀(kVectorSet.wavenumber)
+#     kzDirection = bool2posNeg(fieldSetStack.isForward) # Reverse value if backwards propagating
+#
+#     nHarmonics = numHarmonics(kVectorSet)
+#     fieldsXYZ = Array{ComplexF64,2}(undef, (nHarmonics,3))
+#
+#     fieldsXYZ[:,X] = fieldSetStack.modeFields[1:nHarmonics]
+#     fieldsXYZ[:,Y] = fieldSetStack.modeFields[ (nHarmonics+1):(2*nHarmonics)]
+#     fieldsXYZ[:,Z] = -inv(Diagonal(kz))*(kVectorSet.KxNorm*fieldsXYZ[:,X] + kVectorSet.KyNorm*fieldsXYZ[:,Y])
+#     return FieldSetXYZ(fieldsXYZ, fieldSetStack.isForward)
+# end
 
 function calcE²(fieldSetXYZ::FieldSetXYZ)
     return abs.(fieldSetXYZ.fields[:,X]).^2 + abs.(fieldSetXYZ.fields[:,Y]).^2 + abs.(fieldSetXYZ.fields[:,Z]).^2
