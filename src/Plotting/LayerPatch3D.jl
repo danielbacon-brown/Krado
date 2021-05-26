@@ -1,20 +1,22 @@
 
 # TODO: change r### and calcLatticeBoundaryLine, so that it is easier to understand which index corresponds to where in the lattice.  Maybe a dictionary.
 
-function plot3VectorGrid(grid::Array{_3VectorFloat,2}, params::PlottingParameters)
+function plot3VectorGrid(ax, grid::Array{_3VectorFloat,2}, params::PlottingParameters)
     x = map( r -> r[X], grid)
     y = map( r -> r[Y], grid)
     z = map( r -> r[Z], grid)
-    plot_surface( x, y, z, rstride=2,cstride=2, color=params.color,  alpha=params.alpha, shade=params.shade, edgecolor=params.lineColor, linewidth=params.lineWidth, linestyle=params.lineStyle )
+    ax.plot_surface( x, y, z, rstride=2,cstride=2, color=params.color,  alpha=params.alpha, shade=params.shade, edgecolor=params.lineColor, linewidth=params.lineWidth, linestyle=params.lineStyle )
 end
 
 
-function plotPatch3Dsubstrate(layer::SemiInfiniteLayerDefinition, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plot3Dsubstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
 
-    lattice = simulationDefinition.lattice
+    # lattice = simulationDefinition.lattice
 
-    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
-    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
+    layer = first(layerStack)
+
+    totalThickness = calcTotalThickness(layerStack)
+    zLimits = getLayerStackPlotLimits(layerStack)
 
     zOuter = zLimits[1]
     zInner = 0.0
@@ -50,20 +52,22 @@ function plotPatch3Dsubstrate(layer::SemiInfiniteLayerDefinition, simulationDefi
             [r211] [r221];
             [r212] [r222] ] / scale
 
-    plot3VectorGrid(top, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(south, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(north, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(west, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(east, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, top, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, south, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, north, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, west, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, east, materialParams[layer.backgroundMaterialName])
 
 end
 
-function plotPatch3Dsuperstrate(layer::SemiInfiniteLayerDefinition, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
 
-    lattice = simulationDefinition.lattice
+    # lattice = simulationDefinition.lattice
 
-    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
-    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
+    layer = last(layerStack)
+
+    totalThickness = calcTotalThickness(layerStack)
+    zLimits = getLayerStackPlotLimits(layerStack)
 
     zOuter = zLimits[2]
     zInner = totalThickness
@@ -99,18 +103,18 @@ function plotPatch3Dsuperstrate(layer::SemiInfiniteLayerDefinition, simulationDe
             [r212] [r222];
             [r211] [r221] ] / scale
 
-    plot3VectorGrid(bottom, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(south, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(north, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(west, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(east, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, bottom, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, south, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, north, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, west, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, east, materialParams[layer.backgroundMaterialName])
 
 end
 
 
-function plotPatch3D(layer::UniformLayerDefinition, simulationDefinition::SimulationDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
 
-    lattice = simulationDefinition.lattice
+    # lattice = simulationDefinition.lattice
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -149,19 +153,19 @@ function plotPatch3D(layer::UniformLayerDefinition, simulationDefinition::Simula
             [r212] [r222];
             [r211] [r221] ] / scale
 
-    plot3VectorGrid(bottom, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(top, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(south, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(north, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(west, materialParams[layer.backgroundMaterialName])
-    plot3VectorGrid(east, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, bottom, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, top, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, south, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, north, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, west, materialParams[layer.backgroundMaterialName])
+    plot3VectorGrid(ax, east, materialParams[layer.backgroundMaterialName])
 
 end
 
-function plotPatch3D(layer::PatternedLayerDefinition, simulationDefinition::SimulationDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plot3Dlayer(ax, lattice::Lattice, layer::PatternedLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
 # function plotPatch3D(layer::PatternedLayerDefinition)
 
-    lattice = simulationDefinition.lattice
+    # lattice = simulationDefinition.lattice
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -200,39 +204,38 @@ function plotPatch3D(layer::PatternedLayerDefinition, simulationDefinition::Simu
             [r212] [r222];
             [r211] [r221] ] / scale
 
-    plot3VectorGrid(bottom, materialParams[layer.layerPattern.backgroundMaterialName])
-    plot3VectorGrid(top, materialParams[layer.layerPattern.backgroundMaterialName])
-    plot3VectorGrid(south, materialParams[layer.layerPattern.backgroundMaterialName])
-    plot3VectorGrid(north, materialParams[layer.layerPattern.backgroundMaterialName])
-    plot3VectorGrid(west, materialParams[layer.layerPattern.backgroundMaterialName])
-    plot3VectorGrid(east, materialParams[layer.layerPattern.backgroundMaterialName])
+    plot3VectorGrid(ax, bottom, materialParams[layer.layerPattern.backgroundMaterialName])
+    plot3VectorGrid(ax, top, materialParams[layer.layerPattern.backgroundMaterialName])
+    plot3VectorGrid(ax, south, materialParams[layer.layerPattern.backgroundMaterialName])
+    plot3VectorGrid(ax, north, materialParams[layer.layerPattern.backgroundMaterialName])
+    plot3VectorGrid(ax, west, materialParams[layer.layerPattern.backgroundMaterialName])
+    plot3VectorGrid(ax, east, materialParams[layer.layerPattern.backgroundMaterialName])
 
 
     # plot layerPattern:
     zRange = _2VectorFloat(zLower, zUpper)
-    plotPatch3D(layer.layerPattern, zRange, materialParams; scale=scale)
+    plot3DlayerPattern(ax, layer.layerPattern, zRange, materialParams; scale=scale)
 
 end
 
 
-function plotPatch3D(pattern::LayerPattern, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plot3DlayerPattern(ax, pattern::LayerPattern, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=1)
 
     for solid in pattern.solids
-        plotPatch3D(solid, zRange, materialParams; scale=scale)
+        plotPatch3D(ax, solid, zRange, materialParams; scale=scale)
     end
-    return nothing
 end
 
-function plotPatch3D(solid::Solid, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotPatch3D(ax, solid::Solid, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=1)
 
     patches = getPlotPatches3D(solid.shape, zRange; scale=scale)
 
     for patch in patches
-        plot3VectorGrid(patch, materialParams[solid.materialName])
+        plot3VectorGrid(ax, patch, materialParams[solid.materialName])
     end
 end
 
-function getPlotPatches3D(rect::Rectangle, zRange::TU2VectorReal; scale=μm)
+function getPlotPatches3D(rect::Rectangle, zRange::TU2VectorReal; scale=1)
 
     patches = Vector{Array{_3VectorFloat,2}}(undef, 6)
 
@@ -272,7 +275,7 @@ function getPlotPatches3D(rect::Rectangle, zRange::TU2VectorReal; scale=μm)
     return patches
 end
 
-function getPlotPatches3D(circ::Circle, zRange::TU2VectorReal; scale=μm)
+function getPlotPatches3D(circ::Circle, zRange::TU2VectorReal; scale=1)
 
     numPatches = 40
 
@@ -296,7 +299,7 @@ function getPlotPatches3D(circ::Circle, zRange::TU2VectorReal; scale=μm)
 end
 
 
-function getPlotPatches3D(poly::Polygon, zRange::TU2VectorReal; scale=μm)
+function getPlotPatches3D(poly::Polygon, zRange::TU2VectorReal; scale=1)
 
     numPatches = length(poly.vertices)
 
@@ -323,7 +326,7 @@ function getPlotPatches3D(poly::Polygon, zRange::TU2VectorReal; scale=μm)
 end
 
 
-function getPlotPatches3D(parentShape::T, zRange::TU2VectorReal; scale=μm) where T<:Union{UnionShape, IntersectionShape, DifferenceShape}
+function getPlotPatches3D(parentShape::T, zRange::TU2VectorReal; scale=1) where T<:Union{UnionShape, IntersectionShape, DifferenceShape}
 
     patches = Array{_3VectorFloat,2}[]
     for shape in parentShape.shapes
@@ -332,7 +335,7 @@ function getPlotPatches3D(parentShape::T, zRange::TU2VectorReal; scale=μm) wher
     return patches
 end
 
-function getPlotPatches3D(parentShape::SubtractionShape, zRange::TU2VectorReal; scale=μm)
+function getPlotPatches3D(parentShape::SubtractionShape, zRange::TU2VectorReal; scale=1)
 
     patches = Array{_3VectorFloat,2}[]
     append!(patches, getPlotPatches3D(parentShape.baseShape, zRange; scale=scale) )

@@ -83,7 +83,7 @@ fieldSetXYZbottomB, fieldSetXYZtopB = convertSPinputFieldsToXYZ( fieldSetSPbotto
 # ax = Axes3D(fig)
 # @show fieldSetXYZbottomB.fields[1,:]
 @test isapprox( (kXYZ ⋅ fieldSetXYZbottomB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
-# add3DKandPVectorToPlot(kXYZ, fieldSetXYZbottomB.fields[1,:], [0,0,0], wavenumber; scale=μm, Escale=1)
+# add3DKandPVectorToPlot(kXYZ, fieldSetXYZbottomB.fields[1,:], [0,0,0], wavenumber; scale=1, Escale=1)
 
 # Convert xyz fields to stacked fields
 inputFieldStackBottomA = convertFieldSetXYZtoStack(fieldSetXYZbottomA)
@@ -104,7 +104,7 @@ fieldSetXYZbottomB = convertFieldSetStackToXYZ(inputFieldStackBottomB, kVectorSe
 # @show fieldSetXYZbottomB.fields[1,:]
 @test isapprox( (kXYZ ⋅ fieldSetXYZbottomB.fields[1,:]), 0, rtol=1e-3, atol=1e-5)
 # fig, ax = plot3Dlattice(simulationDefinitionB.lattice, simulationDefinitionB.layerStack; scale=1.0, title = "fieldSetXYZbottomB 2")
-# add3DKandPVectorToPlot(kXYZ, fieldSetXYZbottomB.fields[1,:], [0,0,0], wavenumber; scale=μm, Escale=1)
+# add3DKandPVectorToPlot(kXYZ, fieldSetXYZbottomB.fields[1,:], [0,0,0], wavenumber; scale=1, Escale=1)
 
 @test isapprox( fieldSetXYZbottomB.fields[1,:], [1/sqrt(2)*1im, -1, -1/sqrt(2)*1im], rtol=1e-3, atol=1e-5)
 @test fieldSetXYZbottomB.isForward == true

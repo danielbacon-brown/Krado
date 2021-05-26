@@ -109,3 +109,6 @@ const global DEFAULTSEQUENTIALCOLORMAP = get_cmap(:plasma)
 
 const global EPSILON = 1
 const global MU = 2
+
+
+const global DEFAULTPLOTSIZE = (5,5)

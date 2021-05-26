@@ -123,21 +123,11 @@ include("../../src/IncludeKrado.jl")
 
     # Define Harmonics.
     M, N = 3, 3
-    # M,N = 10,10
     harmonicsTruncation = HarmonicsTruncationByRectangle(M, N)
-    # M,N = 20,10
-    # harmonicsTruncation = SuperellipseHarmonicsTruncation(M,N, γSUPERELLIPSE["circle"])
 
-    analysisDefinition = TransmittanceReflectanceAnalysisDefinition(FORWARD)
+    analysisDefinition = AllModesAnalysisDefinition()
 
-    simulationDefinition = SimulationDefinition(
-        lattice,
-        layerStack,
-        harmonicsTruncation,
-        boundaryDefinition,
-        matCol,
-        analysisDefinition,
-    )
+    simulationDefinition = SimulationDefinition( lattice, layerStack, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
 
 
     # Define what materials correspond to what color
@@ -176,94 +166,75 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot HarmonicsSet:
-    # plotHarmonicsSet(simulationDefinition)
+    # fig, ax = plotHarmonicsSet(simulationDefinition)
 
     # Plot G-vectorSet:
-    # plotGvectorSet(simulationDefinition; scale=μm)
+    # fig, ax = plotGvectorSet(simulationDefinition; scale=μm)
 
     # Plot x,y components of k-vectors
-    # plotkXYVectors(simulationDefinition; scale=μm)
+    # fig, ax = plotkXYVectors(simulationDefinition; scale=μm)
 
     # Plot lattice:
-    # plotLatticeUnit(lattice; scale=μm)
+    # fig, ax = plotLatticeUnit(lattice; scale=μm)
 
     # Plot reciprocal lattice
-    # plotReciprocalLatticeUnit(lattice; scale=μm)
+    # fig, ax = plotReciprocalLatticeUnit(lattice; scale=μm)
 
     # Plot the coordinates that are sampled for the convolution matrix
-    # plotLayerPositionGrid(layer2, simulationDefinition; scale=μm)
+    # fig, ax = plotLayerPositionGrid(layer2, lattice; scale=μm)
 
     # Plot the material distribution by color.
-    # plotLayerMaterialsDistribution(layer2, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer3, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer4, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer5, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer6, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer7, simulationDefinition, materialPlottingParameters; scale=μm)
-    # plotLayerMaterialsDistribution(layer8, simulationDefinition, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer2, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer3, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer4, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer5, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer6, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer7, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer8, lattice, materialPlottingParameters; scale=μm)
+
 
 
     # Plot x,y components of the zero-order k-vector.
-    # plot2DZeroOrderKVector(simulationDefinition; scale=μm)
-
-    # Plot x,y components of the injected k-vectors.
-    # # # plot2DinjectedKVectors(simulationDefinition; scale=μm) # Not doing these anymore.  Should just use the E field set separately.
-
+    # fig, ax = plot2DZeroOrderKVector(simulationDefinition; scale=μm)
 
     # Plot 3d k-vectors and polarization vectors
-    # plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
+    # fig, ax = plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
+
+    # Plot 2d k-vectors and polarization vectors
+    # fig, ax = plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
     # Plot a 3D structure.
-    # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
-    # # # add3DinjectedKandPVectorsToPlot(simulationDefinition; scale=μm, Escale=1)
+    # fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=μm)
 
     # Plot 3D structure with injected modes
-    # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=nm)
-    # add3DinjectedKandPVectorsToPlot(simulationDefinition; scale=nm, Escale=500)
+    # fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=nm)
+    # add3DinjectedKandPVectorsToPlot(ax, simulationDefinition; scale=nm, Escale=500)
 
+    # Plot lattice with injected modes
+    # fig, ax = plot3Dlattice(lattice, layerStack; scale=nm)
+    # add3DinjectedKandPVectorsToPlot(ax, simulationDefinition; scale=nm, Escale=500)
+
+    # Plot 3D structure with predefined modes
+    # results = runSimulation(simulationDefinition)
+    # bottomOrders = [ [0,0], [0,1], [-2,-2]]
+    # topOrders = [ [1,0], [0,1], [-2,-2]]
+    # fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=nm)
+    # add3DlistedKandPVectorsToPlot( ax, results.inputFields, results.outputFields, bottomOrders, topOrders, simulationDefinition; scale=nm, Escale = 500 )
 
     # Plot 2D k-vectors and polarization vectors
-    plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
-    # plot2DinjectedKandPVectors(simulationDefinition; scale=μm, Escale = 0.5)
+    # plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
-
-
-
-
-    # # Plot input and output modes
-    middle = UniformLayerDefinition(900 * nm, "Air")
-    substrateLayer = SemiInfiniteLayerDefinition("Air")
-    superstrateLayer = SemiInfiniteLayerDefinition("Air")
-    layerStackAir = [substrateLayer, middle, superstrateLayer]
-    simulationDefinitionSimple = SimulationDefinition( lattice, layerStackAir, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
-
-
-    bottomOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
-    topOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
-    derivedParametersSimple = DerivedParameters(simulationDefinitionSimple)
-    allModeDataSimple = runSimulation(AllModesAnalysisDefinition(), simulationDefinitionSimple)
-
-    # fig, ax = plot3Dlattice(simulationDefinitionSimple.lattice, simulationDefinitionSimple.layerStack; scale=nm, title="Listed orders")
-    # add3DlistedKandPVectorsToPlot( allModeDataSimple.inputFields, allModeDataSimple.outputFields, bottomOrders, topOrders, simulationDefinitionSimple, derivedParametersSimple; scale=nm, Escale = 500 )
-    # set3DplotLimits(ax, simulationDefinitionSimple::SimulationDefinition; scale=scale)
-    # xLimits, yLimits = getLatticePlotLimits(simulationDefinitionSimple.lattice)
-    # zLimits = getLayerStackPlotLimits(simulationDefinitionSimple.layerStack)
-    # setCubicAxes(ax, xLimits, yLimits, zLimits; scale=nm)
 
     # Plot structure with 1D
-    # UVstart = [0, 0]
-    # UVstop = [1, 1]
-    # numDivisions = 20
-    # XYstart = convertUVtoXY(lattice, UVstart)
-    # XYstop = convertUVtoXY(lattice, UVstop)
-    # plotCrossSection(simulationDefinition, XYstart, XYstop, numDivisions, materialPlottingParameters; scale=μm)
-
-
-    # numDivisionsXY = 20
-    # numDivisionsZ = 30
-    # positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisionsXY)
-    # plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
-    # plotCrossSectionϵbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
+    UVstart = [0, 0]
+    UVstop = [1, 1]
+    numDivisions = 20
+    XYstart = convertUVtoXY(lattice, UVstart)
+    XYstop = convertUVtoXY(lattice, UVstop)
+    positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisions)
+    fig, ax = plotCrossSection(simulationDefinition, positionLineXY, materialPlottingParameters; scale=μm)
+    numDivisionsZ = 30
+    fig, ax = plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
 
 
 end

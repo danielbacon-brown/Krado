@@ -1,6 +1,24 @@
 
 # TODO: Add support for 1D lattice
 
+function create2Dfigure(;title::String = "")
+
+    fig = PyPlot.figure(title, figsize=DEFAULTPLOTSIZE)
+    ax = PyPlot.axes()
+
+    return fig, ax
+end
+
+function create3Dfigure(;title::String = "")
+
+    fig = figure(title, figsize=DEFAULTPLOTSIZE)
+    ax = Axes3D(fig)
+
+    return fig, ax
+end
+
+
+
 # Returns the X- and Y- limits for a plot that's slightly larger than the lattice.
 function getLatticePlotLimits(lattice::Lattice; relativePadding=0.1, scale=1)
     Lx, Ly = calcLatticeBoundaryLine(lattice)
@@ -25,45 +43,60 @@ end
 
 
 # Add to plot a set of lines that follow lattice boundaries
-function addLatticeToPlot(lattice::Lattice; scale=1)
+function addLatticeToPlot(ax, lattice::Lattice; scale=1)
     Lx, Ly = calcLatticeBoundaryLine(lattice)
     Lx, Ly = Lx/scale, Ly/scale
-    PyPlot.plot(Lx, Ly; color=LATTICECOLOR)
+    # PyPlot.plot(Lx, Ly; color=LATTICECOLOR)
+    ax.plot(Lx, Ly; color=LATTICECOLOR)
 end
 
 # Add to reciprocal lattice plot a set of lines that follow lattice boundaries
-function addReciprocalLatticeToPlot(lattice::Lattice; scale=1)
+function addReciprocalLatticeToPlot(ax, lattice::Lattice; scale=1)
     Gx, Gy = calcReciprocalLatticeBoundaryLine(lattice)
     Gx, Gy = Gx*scale, Gy*scale
-    PyPlot.plot(Gx, Gy; color=LATTICECOLOR)
+    # PyPlot.plot(Gx, Gy; color=LATTICECOLOR)
+    ax.plot(Gx, Gy; color=LATTICECOLOR)
 end
 
 
-function setPlotLimitsAroundLattice(lattice::Lattice, ax; scale=1)
+function setPlotLimitsAroundLattice(ax, lattice::Lattice; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
     xLimits, yLimits = getLatticePlotLimits(lattice; scale=scale)
-    PyPlot.xlim(xLimits[1], xLimits[2])
-    PyPlot.ylim(yLimits[1], yLimits[2])
+    # PyPlot.xlim(xLimits[1], xLimits[2])
+    # PyPlot.ylim(yLimits[1], yLimits[2])
+    #
+    # PyPlot.xlabel("x ($scaleLabel)")
+    # PyPlot.ylabel("y ($scaleLabel)")
+    # ax.xlim(xLimits[1], xLimits[2])
+    # ax.ylim(yLimits[1], yLimits[2])
+    ax.set_xlim(xLimits[1], xLimits[2])
+    ax.set_ylim(yLimits[1], yLimits[2])
 
-    PyPlot.xlabel("x ($scaleLabel)")
-    PyPlot.ylabel("y ($scaleLabel)")
+    ax.set_xlabel("x ($scaleLabel)")
+    ax.set_ylabel("y ($scaleLabel)")
 
     ax.axis("equal")
 
 end
 
-function setPlotLimitsAroundReciprocalLattice(lattice::Lattice, ax; scale=1)
+function setPlotLimitsAroundReciprocalLattice(ax, lattice::Lattice; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
     xLimits, yLimits = getReciprocalLatticePlotLimits(lattice; scale=scale)
-    PyPlot.xlim(xLimits[1], xLimits[2])
-    PyPlot.ylim(yLimits[1], yLimits[2])
+    # PyPlot.xlim(xLimits[1], xLimits[2])
+    # PyPlot.ylim(yLimits[1], yLimits[2])
+    #
+    # PyPlot.xlabel("x ($(scaleLabel)⁻¹)")
+    # PyPlot.ylabel("y ($(scaleLabel)⁻¹)")
 
-    PyPlot.xlabel("x ($(scaleLabel)⁻¹)")
-    PyPlot.ylabel("y ($(scaleLabel)⁻¹)")
+    ax.set_xlim(xLimits[1], xLimits[2])
+    ax.set_ylim(yLimits[1], yLimits[2])
+
+    ax.set_xlabel("x ($(scaleLabel)⁻¹)")
+    ax.set_ylabel("y ($(scaleLabel)⁻¹)")
 
     ax.axis("equal")
 
@@ -75,12 +108,15 @@ function plotLatticeUnit(lattice::Lattice; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
-    fig = PyPlot.figure("Lattice. L₁, L₂", figsize=(5,5))
-    ax = PyPlot.axes()
+    # fig = PyPlot.figure("Lattice. L₁, L₂", figsize=(5,5))
+    # ax = PyPlot.axes()
+    fig, ax = create2Dfigure(title="Lattice. L₁, L₂")
 
-    addLatticeToPlot(lattice; scale=scale)
+    addLatticeToPlot(ax, lattice; scale=scale)
 
-    setPlotLimitsAroundLattice(lattice, ax; scale=scale)
+    setPlotLimitsAroundLattice(ax, lattice; scale=scale)
+
+    return fig, ax
 end
 
 # Plot the real-space periodicity vectors.
@@ -88,46 +124,81 @@ function plotReciprocalLatticeUnit(lattice::Lattice; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
-    fig = PyPlot.figure("Reciprocal lattice. G₁, G₂", figsize=(5,5))
-    ax = PyPlot.axes()
+    # fig = PyPlot.figure("Reciprocal lattice. G₁, G₂", figsize=(5,5))
+    # ax = PyPlot.axes()
+    fig, ax = create2Dfigure(title="Reciprocal lattice. G₁, G₂")
 
-    addReciprocalLatticeToPlot(lattice; scale=scale)
-    setPlotLimitsAroundReciprocalLattice(lattice, ax; scale=scale)
+    addReciprocalLatticeToPlot(ax, lattice; scale=scale)
+    setPlotLimitsAroundReciprocalLattice(ax, lattice; scale=scale)
 
+    return fig, ax
 end
 
-# function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition})
-function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=μm, title="Lattice")
+function addToPlot3Dlattice(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=1)
 
-    fig = figure(title, figsize=(5,5))
-    ax = Axes3D(fig)
-
-    totalThickness = calcTotalThickness(layerStack)
-
-    xLimits, yLimits = getLatticePlotLimits(lattice)
-    zLimits = getLayerStackPlotLimits(layerStack)
-
-
-    # Plot 3D lattice:
+    # Get boundary limits of plot
     xLimits, yLimits = getLatticePlotLimits(lattice)
     zLimits = getLayerStackPlotLimits(layerStack)
     totalThickness = calcTotalThickness(layerStack)
 
+    # Calcuulate coordinates of lattice
     latticeX, latticeY = calcLatticeBoundaryLine(lattice)
     latticeZbottom = zeros(size(latticeX))
     latticeZtop = ones(size(latticeX))*totalThickness
-    latticeX = latticeX ./ scale
-    latticeY = latticeY ./ scale
-    latticeZbottom = latticeZbottom/scale
-    latticeZtop = latticeZtop/scale
+    # latticeX = latticeX ./ scale
+    # latticeY = latticeY ./ scale
+    # latticeZbottom = latticeZbottom/scale
+    # latticeZtop = latticeZtop/scale
 
-    # Plot bottom and top:
-    plot(latticeX, latticeY, latticeZbottom, color=LATTICECOLOR)
-    plot(latticeX, latticeY, latticeZtop, color=LATTICECOLOR)
-    # Plot vertical lines:
+    # Plot horizontal lines
+    plot(latticeX./scale, latticeY./scale, latticeZbottom./scale, color=LATTICECOLOR)
+    plot(latticeX./scale, latticeY./scale, latticeZtop./scale, color=LATTICECOLOR)
+
+    # Plot vertical lines
     for i = 1:4
-        plot([latticeX[i],latticeX[i]], [latticeY[i],latticeY[i]], zLimits/scale, color=LATTICECOLOR)
+        plot([latticeX[i],latticeX[i]]./scale, [latticeY[i],latticeY[i]]./scale, zLimits./scale, color=LATTICECOLOR)
     end
+end
+
+
+# function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition})
+function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=1, title="Lattice")
+
+    # fig = figure(title, figsize=(5,5))
+    # ax = Axes3D(fig)
+
+    fig, ax = create3Dfigure(title=title)
+
+    # totalThickness = calcTotalThickness(layerStack)
+
+    # xLimits, yLimits = getLatticePlotLimits(lattice)
+    # zLimits = getLayerStackPlotLimits(layerStack)
+
+
+    # Plot 3D lattice:
+    # xLimits, yLimits = getLatticePlotLimits(lattice)
+    # zLimits = getLayerStackPlotLimits(layerStack)
+    # totalThickness = calcTotalThickness(layerStack)
+    #
+    # latticeX, latticeY = calcLatticeBoundaryLine(lattice)
+    # latticeZbottom = zeros(size(latticeX))
+    # latticeZtop = ones(size(latticeX))*totalThickness
+    # latticeX = latticeX ./ scale
+    # latticeY = latticeY ./ scale
+    # latticeZbottom = latticeZbottom/scale
+    # latticeZtop = latticeZtop/scale
+    #
+    # # Plot bottom and top:
+    # plot(latticeX, latticeY, latticeZbottom, color=LATTICECOLOR)
+    # plot(latticeX, latticeY, latticeZtop, color=LATTICECOLOR)
+    # # Plot vertical lines:
+    # for i = 1:4
+    #     plot([latticeX[i],latticeX[i]], [latticeY[i],latticeY[i]], zLimits/scale, color=LATTICECOLOR)
+    # end
+
+    addToPlot3Dlattice(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=scale)
+
+    set3DplotLimits(ax, lattice, layerStack; scale=scale)
 
     return fig, ax
 end

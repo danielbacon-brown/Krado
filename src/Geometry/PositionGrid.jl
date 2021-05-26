@@ -93,9 +93,13 @@ function Base.length(positionGrid::PositionGridZ)
 end
 
 # Only makes sense to get the distance of a linear position grid
-function totalDistance(positionGridXY::PositionGridXY{1})
+function linearDistance(positionGridXY::PositionGridXY{1})
     return norm(positionGridXY.start .- positionGridXY.stopU)
 end
+function linearSpacing(positionGridXY::PositionGridXY{1})
+    return linearDistance(positionGridXY) / length(positionGridXY.positions)
+end
+
 
 function relativeDistances(positionGrid::PositionGridXY)
     return [norm(positionGrid.positions[i] - positionGrid.start) for i in 1:length(positionGrid)]

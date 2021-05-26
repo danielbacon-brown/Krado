@@ -1,5 +1,11 @@
 TODO LIST:
 
+TODO: Do the UserMaterial Parameters but for the plotting parameters
+
+TODO: LayerStack struct
+
+TODO: Structure structure that combines Lattice and LayerStack? -nah, don't do this
+
 TODO: Make a patterned layer act like an uniform layer if there is no variation in the film.
 
 TODO: Turn scattering matrix into a parametric type that can handle DistributedArrays, etc.

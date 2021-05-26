@@ -23,6 +23,7 @@ function plotHarmonicsSet(simulation::SimulationDefinition)
     PyPlot.xlabel("m")
     PyPlot.ylabel("n")
 
+    return fig, ax
 end
 
 
@@ -49,6 +50,7 @@ function plotGvectorSet(simulation::SimulationDefinition; scale=1)
     PyPlot.xlabel("kx ($(scaleLabel)⁻¹)")
     PyPlot.ylabel("ky ($(scaleLabel)⁻¹)")
 
+    return fig, ax
 end
 
 # Scatterplot showing the values of all G-vectors
@@ -75,5 +77,7 @@ function plotkXYVectors(simulation::SimulationDefinition; scale=1)
     PyPlot.scatter(kᵢx, kᵢy )
     PyPlot.xlabel("kx ($(scaleLabel)⁻¹)")
     PyPlot.ylabel("ky ($(scaleLabel)⁻¹)")
+
+    return fig, ax
 
 end
