@@ -1,5 +1,5 @@
 
-function plotPatch3D(layerStack::Vector{<:LayerDefinition}, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotPatch3D(layerStack::Vector{<:LayerDefinition}, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
     scaleLabel = LENGTHLABEL[scale]
 
@@ -8,23 +8,23 @@ function plotPatch3D(layerStack::Vector{<:LayerDefinition}, simulationDef::Simul
     #
     # totalThickness = calcTotalThickness(layerStack)
 
-    fig, ax = plot3Dlattice(simulationDef.lattice, layerStack; scale=scale, title="3D Materials Distribution")
+    fig, ax = plot3Dlattice(simulationDefinition.lattice, layerStack; scale=scale, title="3D Materials Distribution")
 
     # Plot 3D lattice:
-    xLimits, yLimits = getLatticePlotLimits(simulationDef.lattice)
-    zLimits = getLayerStackPlotLimits(layerStack)
+    # xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
+    # zLimits = getLayerStackPlotLimits(layerStack)
 
 
     # Plot substrate:
-    plotPatch3Dsubstrate(layerStack[1], simulationDef, materialParams; scale=scale)
-    plotPatch3Dsuperstrate(layerStack[end], simulationDef, materialParams; scale=scale)
+    plotPatch3Dsubstrate(layerStack[1], simulationDefinition, materialParams; scale=scale)
+    plotPatch3Dsuperstrate(layerStack[end], simulationDefinition, materialParams; scale=scale)
     # Plot each layer
     layerZpositions = calcLayerZpositions(layerStack)
     for iLayer = 2:(length(layerStack)-1)
-        plotPatch3D(layerStack[iLayer], simulationDef, layerZpositions[iLayer], materialParams; scale=scale)
+        plotPatch3D(layerStack[iLayer], simulationDefinition, layerZpositions[iLayer], materialParams; scale=scale)
     end
-
-    setCubicAxes(ax, xLimits, yLimits, zLimits; scale=scale)
+    set3DplotLimits(ax, simulationDefinition::SimulationDefinition; scale=scale)
+    # setCubicAxes(ax, xLimits, yLimits, zLimits; scale=scale)
 
     xlabel("X ($scaleLabel)")
     ylabel("Y ($scaleLabel)")
@@ -35,7 +35,7 @@ function plotPatch3D(layerStack::Vector{<:LayerDefinition}, simulationDef::Simul
     addMaterialLegend(materialParams::Dict{String,PlottingParameters})
 
 end
-plotPatch3D(simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm) = plotPatch3D(simulationDef.layerStack, simulationDef, materialParams; scale=scale)
+plotPatch3D(simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm) = plotPatch3D(simulationDefinition.layerStack, simulationDefinition, materialParams; scale=scale)
 
 #Get z-coordinates of the bottom of each layer in stack.  Layer 1 (the substrate) is below 0, layer 2 is at zero.  Last layer is total thickness
 function calcLayerZpositions(layerStack::Vector{<:LayerDefinition})
@@ -89,6 +89,13 @@ function setCubicAxes(ax, xLimits::Vector{<:Real}, yLimits::Vector{<:Real}, zLim
 
 end
 
+function set3DplotLimits(ax, simulationDefinition::SimulationDefinition; scale=μm)
+    xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
+    setCubicAxes(ax, xLimits, yLimits, zLimits; scale=scale)
+end
+
+
 function setCrossSectionAxes(ax, xLimits::Vector{<:Real}, zLimits::Vector{<:Real}; scale=μm)
     lengthX = abs(xLimits[2]-xLimits[1])
     lengthZ = abs(zLimits[2]-zLimits[1])
@@ -108,7 +115,7 @@ end
 
 
 # 2D cross-section showing material names
-function plotCrossSection(simulationDef::SimulationDefinition, XYstart::TU2VectorReal, XYstop::TU2VectorReal, numDivisions::Integer, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotCrossSection(simulationDefinition::SimulationDefinition, XYstart::TU2VectorReal, XYstop::TU2VectorReal, numDivisions::Integer, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
     scaleLabel = LENGTHLABEL[scale]
 
@@ -116,19 +123,19 @@ function plotCrossSection(simulationDef::SimulationDefinition, XYstart::TU2Vecto
     fig = PyPlot.figure("2D Cross-section Material Distribution", figsize=(5,5))
     ax = PyPlot.axes()
 
-    totalThickness = calcTotalThickness(simulationDef.layerStack)
+    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
 
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     linearXYdistance = norm(XYstop - XYstart)
     xLimits = [0, linearXYdistance]
 
-    plotCrossSectionSubstrate(ax, simulationDef.layerStack[1], XYstart, XYstop, simulationDef, materialParams; scale=scale)
-    plotCrossSectionSuperstrate(ax, last(simulationDef.layerStack), XYstart, XYstop, simulationDef, materialParams; scale=scale)
+    plotCrossSectionSubstrate(ax, simulationDefinition.layerStack[1], XYstart, XYstop, simulationDefinition, materialParams; scale=scale)
+    plotCrossSectionSuperstrate(ax, last(simulationDefinition.layerStack), XYstart, XYstop, simulationDefinition, materialParams; scale=scale)
 
     # Plot each layer
-    layerZpositions = calcLayerZpositions(simulationDef.layerStack)
-    for iLayer = 2:(length(simulationDef.layerStack)-1)
-        plotCrossSectionLayer(ax, simulationDef.layerStack[iLayer], XYstart, XYstop, numDivisions, layerZpositions[iLayer], simulationDef, materialParams; scale=scale)
+    layerZpositions = calcLayerZpositions(simulationDefinition.layerStack)
+    for iLayer = 2:(length(simulationDefinition.layerStack)-1)
+        plotCrossSectionLayer(ax, simulationDefinition.layerStack[iLayer], XYstart, XYstop, numDivisions, layerZpositions[iLayer], simulationDefinition, materialParams; scale=scale)
     end
 
     setCrossSectionAxes(ax, xLimits, zLimits; scale=scale)
@@ -138,12 +145,12 @@ function plotCrossSection(simulationDef::SimulationDefinition, XYstart::TU2Vecto
     addMaterialLegend(materialParams::Dict{String,PlottingParameters})
 
 end
-plotCrossSection(simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm) = plotCrossSection(simulationDef.layerStack, simulationDef, materialParams; scale=scale)
+plotCrossSection(simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm) = plotCrossSection(simulationDefinition.layerStack, simulationDefinition, materialParams; scale=scale)
 
 
 # Sugar for plotting 1D cross-section.
-function plotCrossSection(simulationDef::SimulationDefinition, numDivisions::Integer, materialParams::Dict{String, PlottingParameters}; scale=μm)
-    if ~is1D(simulationDef.lattice)
+function plotCrossSection(simulationDefinition::SimulationDefinition, numDivisions::Integer, materialParams::Dict{String, PlottingParameters}; scale=μm)
+    if ~is1D(simulationDefinition.lattice)
         error("Expected 1-dimensional lattice.  Start and stop positions must be defined for plotting cross-section of 2D structure.")
     end
 
@@ -159,9 +166,9 @@ end
 
 
 
-function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     zOuter = zLimits[BOTTOMINDEX]
     zInner = 0.0
 
@@ -175,11 +182,11 @@ function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xySta
     ax.add_patch(rect)
 end
 
-function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     zOuter = zLimits[TOPINDEX]
-    totalThickness = calcTotalThickness(simulationDef.layerStack)
+    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
     zInner = totalThickness
 
     linearXYdistance = norm(xyStop - xyStart)
@@ -193,7 +200,7 @@ function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xyS
 end
 
 # Uniform layer
-function plotCrossSectionLayer(ax, layer::UniformLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotCrossSectionLayer(ax, layer::UniformLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -210,7 +217,7 @@ end
 
 
 # Patterned layer
-function plotCrossSectionLayer(ax, layer::PatternedLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotCrossSectionLayer(ax, layer::PatternedLayerDefinition, xyStart::TU2VectorReal, xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -256,10 +263,10 @@ end
 
 
 
-function plotCrossSectionNsubstrate(ax, Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDef::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
+function plotCrossSectionNsubstrate(ax, Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDefinition::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
 
     # Get Z dimensions
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     zOuter = zLimits[BOTTOMINDEX]
     zInner = 0.0
 
@@ -274,12 +281,12 @@ function plotCrossSectionNsubstrate(ax, Nvalues::Vector{<:Real}, minMaxN::Vector
     ax.add_patch(rect)
 end
 
-function plotCrossSectionNsuperstrate(ax, Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDef::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
+function plotCrossSectionNsuperstrate(ax, Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal, xyStop::TU2VectorReal, simulationDefinition::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
 
     # Get Z dimensions
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     zOuter = zLimits[TOPINDEX]
-    totalThickness = calcTotalThickness(simulationDef.layerStack)
+    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
     zInner = totalThickness
 
     # Get X,Y dimensions of rectangle
@@ -294,7 +301,7 @@ function plotCrossSectionNsuperstrate(ax, Nvalues::Vector{<:Real}, minMaxN::Vect
 end
 
 # Uniform layer
-function plotCrossSectionNlayer(ax, layer::UniformLayerDefinition,  Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal,  xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDef::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
+function plotCrossSectionNlayer(ax, layer::UniformLayerDefinition,  Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal,  xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDefinition::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -312,7 +319,7 @@ function plotCrossSectionNlayer(ax, layer::UniformLayerDefinition,  Nvalues::Vec
 end
 
 # Patterned layer
-function plotCrossSectionNlayer(ax, layer::PatternedLayerDefinition,  Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal, xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDef::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
+function plotCrossSectionNlayer(ax, layer::PatternedLayerDefinition,  Nvalues::Vector{<:Real}, minMaxN::Vector{<:Real}, xyStart::TU2VectorReal, xyStop::TU2VectorReal, numDivisions::Integer, zPosition::Real, simulationDefinition::SimulationDefinition; scale=μm, colormap=DEFAULTSEQUENTIALCOLORMAP)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -322,7 +329,7 @@ function plotCrossSectionNlayer(ax, layer::PatternedLayerDefinition,  Nvalues::V
     xLimits = [0, linearXYdistance]
 
     # posGrid = calcUniformGridPositionsLineMidpoint( xyStart, xyStop, numDivisions)
-    posGrid = PositionGridXY(simulationDef.lattice, layerDef.numDivisions)
+    posGrid = PositionGridXY(simulationDefinition.lattice, layerDef.numDivisions)
 
 
     xyDistances = [norm(posGrid[i]-xyStart) for i in 1:numDivisions]

@@ -4,7 +4,7 @@ Krado is a full-featured RCWA simulator library.  The geometry of your device is
 Currently, the software is usable.  However, work to complete the manual, improve performance, ease-of-use, flexibility, etc. remains.  
 
 ```@docs
-SimulationDefinition
+simulationDefinition
 getWavenumber
 runSimulation(simulationDefinition::SimulationDefinition)
 ```

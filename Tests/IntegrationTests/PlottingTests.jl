@@ -15,7 +15,7 @@ include("../../src/IncludeKrado.jl")
     # Incident wavevector
     wavenumber = WavenumberByλ₀(500 * nm)
 
-    Escale = 1
+    # Escale = 1
 
     # Benchmark appears to use nonstandard rotation method.  Here, θ is azimuthal angle (rotation around z-axis) and ϕ is zenith angle (rotation around Y-axis).  ϕ rotation occurs first.
     θ = 0 * degrees
@@ -32,9 +32,9 @@ include("../../src/IncludeKrado.jl")
     Abyϖbottom = Dict{_2VectorInt,_2VectorComplex}()
     Abyϖtop = Dict{_2VectorInt,_2VectorComplex}()
 
-    # Abyϖtop[_2VectorInt(1, 0)] = inputAmplitudesPpolarization  #Evanescent
-    # Abyϖtop[_2VectorInt(0, 1)] = inputAmplitudesSpolarization  #Evanescent
-    # Abyϖtop[_2VectorInt(-2, -2)] = inputAmplitudesSpolarizationWeak
+    Abyϖtop[_2VectorInt(1, 0)] = inputAmplitudesPpolarization  #Evanescent
+    Abyϖtop[_2VectorInt(0, 1)] = inputAmplitudesSpolarization  #Evanescent
+    Abyϖtop[_2VectorInt(-2, -2)] = inputAmplitudesSpolarizationWeak
     Abyϖbottom[_2VectorInt(0, 0)] = inputAmplitudesCircularPolarization
 
     boundaryDefinition = InputByOrderBoundaryDefinition(
@@ -211,17 +211,19 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot 3d k-vectors and polarization vectors
-    plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
+    # plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
     # Plot a 3D structure.
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
-    # add3DinjectedKandPVectorsToPlot(simulationDefinition; scale=μm, Escale=1)
+    # # # add3DinjectedKandPVectorsToPlot(simulationDefinition; scale=μm, Escale=1)
+
+    # Plot 3D structure with injected modes
     # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=nm)
     # add3DinjectedKandPVectorsToPlot(simulationDefinition; scale=nm, Escale=500)
 
 
     # Plot 2D k-vectors and polarization vectors
-    # plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = Escale*500)
+    plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
     # plot2DinjectedKandPVectors(simulationDefinition; scale=μm, Escale = 0.5)
 
 
@@ -232,22 +234,21 @@ include("../../src/IncludeKrado.jl")
     middle = UniformLayerDefinition(900 * nm, "Air")
     substrateLayer = SemiInfiniteLayerDefinition("Air")
     superstrateLayer = SemiInfiniteLayerDefinition("Air")
-    layerStack = [substrateLayer, middle, superstrateLayer]
-    simulationDefinition = SimulationDefinition( lattice, layerStack, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
+    layerStackAir = [substrateLayer, middle, superstrateLayer]
+    simulationDefinitionSimple = SimulationDefinition( lattice, layerStackAir, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
 
 
-    # bottomOrders = [_2VectorInt(-2,-2), _2VectorInt(0,0)]
-    # topOrders = [_2VectorInt(-2,-2), _2VectorInt(0,0)]
     bottomOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
     topOrders = [ [0,0], [1,0], [0,1], [-2,-2]]
-    derivedParameters = DerivedParameters(simulationDefinition)
-    allModeData = runSimulation(AllModesAnalysisDefinition(), simulationDefinition)
-    # plotPatch3D(layerStack, simulationDefinition, materialPlottingParameters; scale=μm)
-    fig, ax = plot3Dlattice(simulationDefinition.lattice, simulationDefinition.layerStack; scale=nm, title="Listed orders")
-    add3DlistedKandPVectorsToPlot( allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=nm, Escale = 500 )
-    xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
-    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
-    setCubicAxes(ax, xLimits, yLimits, zLimits; scale=nm)
+    derivedParametersSimple = DerivedParameters(simulationDefinitionSimple)
+    allModeDataSimple = runSimulation(AllModesAnalysisDefinition(), simulationDefinitionSimple)
+
+    # fig, ax = plot3Dlattice(simulationDefinitionSimple.lattice, simulationDefinitionSimple.layerStack; scale=nm, title="Listed orders")
+    # add3DlistedKandPVectorsToPlot( allModeDataSimple.inputFields, allModeDataSimple.outputFields, bottomOrders, topOrders, simulationDefinitionSimple, derivedParametersSimple; scale=nm, Escale = 500 )
+    # set3DplotLimits(ax, simulationDefinitionSimple::SimulationDefinition; scale=scale)
+    # xLimits, yLimits = getLatticePlotLimits(simulationDefinitionSimple.lattice)
+    # zLimits = getLayerStackPlotLimits(simulationDefinitionSimple.layerStack)
+    # setCubicAxes(ax, xLimits, yLimits, zLimits; scale=nm)
 
     # Plot structure with 1D
     # UVstart = [0, 0]
@@ -256,8 +257,6 @@ include("../../src/IncludeKrado.jl")
     # XYstart = convertUVtoXY(lattice, UVstart)
     # XYstop = convertUVtoXY(lattice, UVstop)
     # plotCrossSection(simulationDefinition, XYstart, XYstop, numDivisions, materialPlottingParameters; scale=μm)
-
-
 
 
     # numDivisionsXY = 20

@@ -175,7 +175,7 @@ function runSimulation(analysisDefinition::TransmittanceReflectanceAnalysisDefin
 
       # Calc common parameters
       derivedParameters = DerivedParameters(simulationDefinition)
-      # @timeit timerOutput "derivedParams" derivedParameters = DerivedParameters(simulationDefinition)
+      # @timeit timerOutput "derivedParameters" derivedParameters = DerivedParameters(simulationDefinition)
 
       # Calc input fields
       inputFields = calcInputFields(simulationDefinition, derivedParameters)

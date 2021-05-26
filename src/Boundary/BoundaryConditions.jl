@@ -118,8 +118,8 @@ end
 
 
 
-function BoundaryConditions( boundaryDef::InputByOrderBoundaryDefinition, simulationDef::SimulationDefinition)
-    return InputByOrderBoundaryConditions( boundaryDef, simulationDef.materialCollection, simulationDef.layerStack)
+function BoundaryConditions( boundaryDef::InputByOrderBoundaryDefinition, simulationDefinition::SimulationDefinition)
+    return InputByOrderBoundaryConditions( boundaryDef, simulationDefinition.materialCollection, simulationDefinition.layerStack)
 end
 
 

@@ -9,12 +9,12 @@ function plot3VectorGrid(grid::Array{_3VectorFloat,2}, params::PlottingParameter
 end
 
 
-function plotPatch3Dsubstrate(layer::SemiInfiniteLayerDefinition, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotPatch3Dsubstrate(layer::SemiInfiniteLayerDefinition, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
-    lattice = simulationDef.lattice
+    lattice = simulationDefinition.lattice
 
-    totalThickness = calcTotalThickness(simulationDef.layerStack)
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
 
     zOuter = zLimits[1]
     zInner = 0.0
@@ -58,12 +58,12 @@ function plotPatch3Dsubstrate(layer::SemiInfiniteLayerDefinition, simulationDef:
 
 end
 
-function plotPatch3Dsuperstrate(layer::SemiInfiniteLayerDefinition, simulationDef::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotPatch3Dsuperstrate(layer::SemiInfiniteLayerDefinition, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
-    lattice = simulationDef.lattice
+    lattice = simulationDefinition.lattice
 
-    totalThickness = calcTotalThickness(simulationDef.layerStack)
-    zLimits = getLayerStackPlotLimits(simulationDef.layerStack)
+    totalThickness = calcTotalThickness(simulationDefinition.layerStack)
+    zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
 
     zOuter = zLimits[2]
     zInner = totalThickness
@@ -108,9 +108,9 @@ function plotPatch3Dsuperstrate(layer::SemiInfiniteLayerDefinition, simulationDe
 end
 
 
-function plotPatch3D(layer::UniformLayerDefinition, simulationDef::SimulationDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotPatch3D(layer::UniformLayerDefinition, simulationDefinition::SimulationDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=μm)
 
-    lattice = simulationDef.lattice
+    lattice = simulationDefinition.lattice
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -158,10 +158,10 @@ function plotPatch3D(layer::UniformLayerDefinition, simulationDef::SimulationDef
 
 end
 
-function plotPatch3D(layer::PatternedLayerDefinition, simulationDef::SimulationDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=μm)
+function plotPatch3D(layer::PatternedLayerDefinition, simulationDefinition::SimulationDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=μm)
 # function plotPatch3D(layer::PatternedLayerDefinition)
 
-    lattice = simulationDef.lattice
+    lattice = simulationDefinition.lattice
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)

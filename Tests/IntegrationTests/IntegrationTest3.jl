@@ -117,7 +117,7 @@ harmonicsTruncation = HarmonicsTruncationByRectangle(M,N)
 analysisDefinition = RelativeReflectedTransmittedOrdersAnalysisDefinition()
 
 
-######## DEFINE SIMULATIONDEFINITION ###############################################################
+######## DEFINE simulationDefinitionINITION ###############################################################
 simulationDefinition = SimulationDefinition(lattice, layerStack, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition)
 
 

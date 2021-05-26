@@ -10,7 +10,7 @@ using YAML
 
 # const global DIR = @__DIR__
 
-export SimulationDefinition
+export simulationDefinition
 export funcA
 export getWavenumber
 

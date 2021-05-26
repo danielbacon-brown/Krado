@@ -1,4 +1,4 @@
-# Need to define the abstract type before SimulationDefinition.  But the particulars need to be defined after Simulation definition
+# Need to define the abstract type before simulationDefinition.  But the particulars need to be defined after Simulation definition
 abstract type AnalysisDefinition end
 
 
@@ -23,11 +23,11 @@ abstract type AnalysisDefinition end
 
 # Should also have "analysis" constituent that governs what kind of data is returned from this simulation when it is run
 """
-    SimulationDefinition
+    simulationDefinition
 
 SimulationDefinition(::Lattice, ::Vector{T2}, ::HarmonicsTruncation, ::BoundaryDefinition, ::MaterialCollection, ::AnalysisDefinition; PrecisionType=Float64) where T2<:LayerDefinition
 
-SimulationDefinition is a structure that contains all of the parameters needed to define a single "experiment", e.g. a single geometry, wavelength, angle of incidence, etc.  It does not include any results or derived parameters.
+simulationDefinition is a structure that contains all of the parameters needed to define a single "experiment", e.g. a single geometry, wavelength, angle of incidence, etc.  It does not include any results or derived parameters.
 """
 mutable struct SimulationDefinition
 

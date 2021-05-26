@@ -36,7 +36,7 @@ end
 
 
 
-# Defines a sweep using a baseline SimulationDefinition and an iterable of parameters.  Mutates the simulation definition
+# Defines a sweep using a baseline simulationDefinition and an iterable of parameters.  Mutates the simulation definition
 mutable struct MutationSimulationSweep <: SimulationSweep
 
     # Parameters is an iterable.  May be nested (e.g. a named tuple inside a vector).

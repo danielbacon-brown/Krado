@@ -92,9 +92,9 @@ end
 # Mvalues = [1,3,10,30,100, 300]
 Mvalues = [200]
 
-sectionNames = ["derivedParams", "outputFields", "Bottom layer", "S matrix layer 2", "Multiply layer 2", "Top layer"]
+sectionNames = ["derivedParameters", "outputFields", "Bottom layer", "S matrix layer 2", "Multiply layer 2", "Top layer"]
 sectionNamesForDisplay = unifyStringLengths( sectionNames )
-# sectionNames = ["derivedParams", "inputFields", "outputFields", "Sglobal"]
+# sectionNames = ["derivedParameters", "inputFields", "outputFields", "Sglobal"]
 # maxLength = maximum( [length(sectionName) for sectionName in sectionNames] )
 # sectionNamesForDisplay = [ setLength(sectionName, maxLength) for sectionName in sectionNames]
 sweepData = map(doSimulationByHarmonics, Mvalues)

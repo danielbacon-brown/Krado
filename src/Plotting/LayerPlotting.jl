@@ -1,32 +1,32 @@
 # Plotting related to layer geometry
 
 
-function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, simulationDef::SimulationDefinition; scale=μm)
+function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, simulationDefinition::SimulationDefinition; scale=μm)
 
     scaleLabel = LENGTHLABEL[scale]
 
-    fig = PyPlot.figure("Layer division grid", figsize=(5,5))
+    fig = PyPlot.figure("Layer coordinates", figsize=(5,5))
     ax = PyPlot.axes()
-    PyPlot.clf()
+    # PyPlot.clf()
 
     # Plot lattice unit cell
-    addLatticeToPlot(simulationDef.lattice; scale=scale)
+    addLatticeToPlot(simulationDefinition.lattice; scale=scale)
 
     # Plot position grid
-    # posGrid = calcUniformGridPositions(simulationDef.lattice, layerDef)
-    posGrid = PositionGridXY(simulationDef.lattice, layerDef.numDivisions)
+    # posGrid = calcUniformGridPositions(simulationDefinition.lattice, layerDef)
+    posGrid = PositionGridXY(simulationDefinition.lattice, layerDef.numDivisions)
     # posGridValues = posGrid.positions / scale
     xCoords, yCoords = linearizePositionGrid(posGrid)
     # xCoords, yCoords = linearizePositionGrid(posGridValues)
 
     PyPlot.scatter(xCoords[:]/scale, yCoords[:]/scale, s=1, color="black", marker="," )
 
-    setPlotLimitsAroundLattice(simulationDef.lattice, ax; scale=scale)
+    setPlotLimitsAroundLattice(simulationDefinition.lattice, ax; scale=scale)
 
 end
 
 
-function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, simulationDef::SimulationDefinition, materialParams::Dict{String,PlottingParameters}; scale=μm)
+function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, simulationDefinition::SimulationDefinition, materialParams::Dict{String,PlottingParameters}; scale=μm)
 
     scaleLabel = LENGTHLABEL[scale]
 
@@ -34,12 +34,12 @@ function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, simu
     ax = PyPlot.axes()
 
     # Plot lattice unit cell
-    Lx, Ly = calcLatticeBoundaryLine(simulationDef.lattice)
-    addLatticeToPlot(simulationDef.lattice; scale=scale)
+    # Lx, Ly = calcLatticeBoundaryLine(simulationDefinition.lattice)
+    addLatticeToPlot(simulationDefinition.lattice; scale=scale)
 
     # Get position grid
-    # posGrid = calcUniformGridPositions(simulationDef.lattice, layerDef)
-    posGrid = PositionGridXY(simulationDef.lattice, layerDef.numDivisions)
+    # posGrid = calcUniformGridPositions(simulationDefinition.lattice, layerDef)
+    posGrid = PositionGridXY(simulationDefinition.lattice, layerDef.numDivisions)
     xCoords, yCoords = linearizePositionGrid(posGrid)
     xCoords = xCoords/scale
     yCoords = yCoords/scale
@@ -52,7 +52,7 @@ function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, simu
     PyPlot.scatter(xCoords, yCoords, s=1, c=colorGrid, marker="," )
 
 
-    setPlotLimitsAroundLattice(simulationDef.lattice, ax; scale=scale)
+    setPlotLimitsAroundLattice(simulationDefinition.lattice, ax; scale=scale)
 
     addMaterialLegend(materialParams::Dict{String,PlottingParameters})
 
