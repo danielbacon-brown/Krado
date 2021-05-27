@@ -33,7 +33,7 @@ end
 
 # Returns the given outputFields in terms of XYZ and SP.
 # TODO: unit test this: and combine into single function
-function analyzeOutputFields(outputFields::OutputFields, derivedParameters::DerivedParameters, layerStack::Vector{<:LayerDefinition}, matCol::MaterialCollection, wavenumber::Wavenumber )
+function analyzeOutputFields(outputFields::OutputFields, derivedParameters::DerivedParameters, layerStack::LayerStack, matCol::MaterialCollection, wavenumber::Wavenumber )
 
     outputFieldSetXYZbottom = convertFieldSetStackToXYZ(outputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
     outputFieldSetXYZtop = convertFieldSetStackToXYZ(outputFields.top, derivedParameters.kVectorSet, derivedParameters.kzNormTop)
@@ -45,7 +45,7 @@ function analyzeOutputFields(outputFields::OutputFields, derivedParameters::Deri
 end
 
 # clone of output fields (is it exact?)
-function analyzeInputFields( inputFields::InputFields, derivedParameters::DerivedParameters, layerStack::Vector{<:LayerDefinition}, matCol::MaterialCollection, wavenumber::Wavenumber )
+function analyzeInputFields( inputFields::InputFields, derivedParameters::DerivedParameters, layerStack::LayerStack, matCol::MaterialCollection, wavenumber::Wavenumber )
 
     # Convert xyz fields to stacked fields
     inputFieldSetXYZbottom = convertFieldSetStackToXYZ(inputFields.bottom, derivedParameters.kVectorSet, -derivedParameters.kzNormBottom)

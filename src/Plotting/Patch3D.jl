@@ -1,6 +1,6 @@
 
 
-function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
+function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
     # Plot substrate:
     plot3Dsubstrate(ax, lattice, layerStack, materialParams; scale=scale)
     plot3Dsuperstrate(ax, lattice, layerStack, materialParams; scale=scale)
@@ -13,11 +13,11 @@ function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::Vector{<:LayerD
 
 end
 
-function plot3Dstructure(lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dstructure(lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
 
     fig, ax = plot3Dlattice(lattice, layerStack; scale=scale, title="3D Materials Distribution")
 
-    addToPlot3Dstructure( ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=scale)
+    addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=scale)
 
     set3DplotLimits(ax, lattice, layerStack; scale=scale)
 
@@ -25,7 +25,7 @@ function plot3Dstructure(lattice::Lattice, layerStack::Vector{<:LayerDefinition}
 end
 
 #Get z-coordinates of the bottom of each layer in stack.  Layer 1 (the substrate) is below 0, layer 2 is at zero.  Last layer is total thickness
-function calcLayerZpositions(layerStack::Vector{<:LayerDefinition})
+function calcLayerZpositions(layerStack::LayerStack)
     zLimits = getLayerStackPlotLimits(layerStack)
 
     layerZ = zeros(length(layerStack) + 1)
@@ -38,7 +38,7 @@ function calcLayerZpositions(layerStack::Vector{<:LayerDefinition})
     return layerZ
 end
 
-function calcTotalThickness(layerStack::Vector{<:LayerDefinition})
+function calcTotalThickness(layerStack::LayerStack)
     numLayers = length(layerStack)
 
     if numLayers >= 3
@@ -49,7 +49,7 @@ function calcTotalThickness(layerStack::Vector{<:LayerDefinition})
     end
 end
 
-function getLayerStackPlotLimits(layerStack::Vector{<:LayerDefinition}; relativePadding=0.5)
+function getLayerStackPlotLimits(layerStack::LayerStack; relativePadding=0.5)
     totalThickness = calcTotalThickness(layerStack)
     padding = totalThickness*relativePadding
     return [-padding, totalThickness+padding]

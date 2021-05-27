@@ -105,7 +105,7 @@ layer1 = PatternedLayerDefinition(layerDivisions, layer1depth, layerPattern1)
 bottomLayer = SemiInfiniteLayerDefinition("bottom material")
 topLayer = SemiInfiniteLayerDefinition("top material")
 
-layerStack = [bottomLayer, layer1, layer2, topLayer]
+layerStack = LayerStack([bottomLayer, layer1, layer2, topLayer])
 
 
 ######## DEFINE HARMONICSTRUNCATION ################################################################

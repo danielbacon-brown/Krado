@@ -56,8 +56,8 @@ uniformSiO2Thin = UniformLayerDefinition(1 * nm, "SiO2_564nm")
 uniformAirThick = UniformLayerDefinition(10 * μm, "Air")
 uniformSiO2Thick = UniformLayerDefinition(10 * μm, "SiO2_564nm")
 semiInfSiO2 = SemiInfiniteLayerDefinition("SiO2_564nm")
-layerStackSiO2Thin = [semiInfAir, uniformAirThin, uniformSiO2Thin, semiInfSiO2]
-layerStackSiO2Thick = [semiInfAir, uniformAirThick, uniformSiO2Thick, semiInfSiO2]
+layerStackSiO2Thin = LayerStack([semiInfAir, uniformAirThin, uniformSiO2Thin, semiInfSiO2])
+layerStackSiO2Thick = LayerStack([semiInfAir, uniformAirThick, uniformSiO2Thick, semiInfSiO2])
 
 
 # Define Harmonics.
@@ -119,7 +119,7 @@ semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPatt = UniformLayerDefinition(1 * nm, "Air")
 uniformSiO2Patt = UniformLayerDefinition(1 * nm, "SiO2_564nm")
 semiInfSiO2 = SemiInfiniteLayerDefinition("SiO2_564nm")
-layerStackSiO2Patt = [semiInfAir, uniformAirPatt, uniformSiO2Patt, semiInfSiO2]
+layerStackSiO2Patt = LayerStack([semiInfAir, uniformAirPatt, uniformSiO2Patt, semiInfSiO2])
 
 simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Patt, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
@@ -149,7 +149,7 @@ semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAir = UniformLayerDefinition(1 * μm, "Air")
 uniformSi = UniformLayerDefinition(1 * μm, "Si564nm")
 semiInfSi = SemiInfiniteLayerDefinition("Si564nm")
-layerStackSi = [semiInfAir, uniformAir, uniformSi, semiInfSi]
+layerStackSi = LayerStack([semiInfAir, uniformAir, uniformSi, semiInfSi])
 
 
 @testset "Si uniform - visible" begin
@@ -177,7 +177,7 @@ semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Air"))
 uniformSiPatt = PatternedLayerDefinition(numDivisions, 1 * μm, LayerPattern("Si564nm"))
 semiInfSi = SemiInfiniteLayerDefinition("Si564nm")
-layerStackSiPatt = [semiInfAir, uniformAirPatt, uniformSiPatt, semiInfSi]
+layerStackSiPatt = LayerStack([semiInfAir, uniformAirPatt, uniformSiPatt, semiInfSi])
 
 @testset "Si patterned - visible" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiPatt, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
@@ -199,7 +199,7 @@ end
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirPattThick = PatternedLayerDefinition(numDivisions, 1 * mm, LayerPattern("Air"))
 uniformSiPattThick = PatternedLayerDefinition(numDivisions, 1 * mm, LayerPattern("Si564nm"))
-layerStackSiPattThick = [semiInfAir, uniformAirPattThick, uniformSiPattThick, semiInfAir]
+layerStackSiPattThick = LayerStack([semiInfAir, uniformAirPattThick, uniformSiPattThick, semiInfAir])
 
 
 simulationDefinition = SimulationDefinition(lattice, layerStackSiPattThick, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
@@ -233,7 +233,7 @@ semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAir = UniformLayerDefinition(1 * μm, "Air")
 uniformSi = UniformLayerDefinition(1 * μm, "Si302nm")
 semiInfSi = SemiInfiniteLayerDefinition("Si302nm")
-layerStackSi = [semiInfAir, uniformAir, uniformSi, semiInfSi]
+layerStackSi = LayerStack([semiInfAir, uniformAir, uniformSi, semiInfSi])
 
 @testset "Si uniform - UV - angled incidence" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
@@ -257,7 +257,7 @@ end;
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirThick = UniformLayerDefinition(1 * mm, "Air")
 uniformSiThick = UniformLayerDefinition(1 * mm, "Si302nm")
-layerStackSiUniformThick = [semiInfAir, uniformAirThick, uniformSiThick, semiInfAir]
+layerStackSiUniformThick = LayerStack([semiInfAir, uniformAirThick, uniformSiThick, semiInfAir])
 
 
 simulationDefinition = SimulationDefinition(lattice, layerStackSiUniformThick, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)

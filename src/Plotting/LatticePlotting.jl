@@ -86,7 +86,7 @@ function plotReciprocalLatticeUnit(lattice::Lattice; scale=1)
     return fig, ax
 end
 
-function addToPlot3Dlattice(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=1)
+function addToPlot3Dlattice(ax, lattice::Lattice, layerStack::LayerStack; scale=1)
 
     # Get boundary limits of plot
     xLimits, yLimits = getLatticePlotLimits(lattice)
@@ -109,12 +109,12 @@ function addToPlot3Dlattice(ax, lattice::Lattice, layerStack::Vector{<:LayerDefi
 end
 
 
-# function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition})
-function plot3Dlattice(lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=1, title="Lattice")
+# function plot3Dlattice(lattice::Lattice, layerStack::LayerStack)
+function plot3Dlattice(lattice::Lattice, layerStack::LayerStack; scale=1, title="Lattice")
 
     fig, ax = create3Dfigure(title=title)
 
-    addToPlot3Dlattice(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=scale)
+    addToPlot3Dlattice(ax, lattice::Lattice, layerStack::LayerStack; scale=scale)
 
     set3DplotLimits(ax, lattice, layerStack; scale=scale)
 

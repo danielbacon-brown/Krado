@@ -33,7 +33,7 @@ mutable struct SimulationDefinition
 
     lattice::Lattice
 
-    layerStack::Vector{T} where T<:LayerDefinition # Stack of layers defining the structure.  First layer is reflection layer (the layer in which light is injected).  Last layer is the transmission layer.  First and last layers must be of type UniformLayerDefinition
+    layerStack::LayerStack # Stack of layers defining the structure.  First layer is reflection layer (the layer in which light is injected).  Last layer is the transmission layer.  First and last layers must be of type UniformLayerDefinition
 
     harmonicsTruncation::HarmonicsTruncation  # Defines how the set of harmonics to use should be defined
 
@@ -45,7 +45,7 @@ mutable struct SimulationDefinition
 
     PrecisionType::Type
 
-    function SimulationDefinition(lattice::Lattice, layerStack::Vector{T2}, harmonicsTruncation::HarmonicsTruncation, boundaryDefinition::BoundaryDefinition, materialCollection::MaterialCollection, analysisDefinition::AnalysisDefinition; PrecisionType=Float64) where T2<:LayerDefinition
+    function SimulationDefinition(lattice::Lattice, layerStack::LayerStack, harmonicsTruncation::HarmonicsTruncation, boundaryDefinition::BoundaryDefinition, materialCollection::MaterialCollection, analysisDefinition::AnalysisDefinition; PrecisionType=Float64)
         return new(lattice, layerStack, harmonicsTruncation, boundaryDefinition, materialCollection, analysisDefinition, PrecisionType)
     end
 
@@ -58,7 +58,3 @@ Returns the wavenumber to be used in the simulation.
 function getWavenumber(simulationDefinition::SimulationDefinition)
     return simulationDefinition.boundaryDefinition.wavenumber
 end
-
-# function getk₀(simulationDefinition::SimulationDefinition)
-#     return getk₀(getWavenumber(simulationDefinition))
-# end

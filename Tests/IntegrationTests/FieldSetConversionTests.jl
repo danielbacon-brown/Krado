@@ -11,7 +11,7 @@ matCol = MaterialCollection()
 addMaterial!(matCol,"Air", Material(ConstantPermittivity(1)) )
 layerBottom = SemiInfiniteLayerDefinition("Air")
 layerTop = SemiInfiniteLayerDefinition("Air")
-layerStack = [layerBottom, layerTop]
+layerStack = LayerStack([layerBottom, layerTop])
 
 nAir = 1
 

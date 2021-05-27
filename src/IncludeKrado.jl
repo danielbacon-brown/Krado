@@ -44,6 +44,7 @@ include("Geometry\\Solid.jl")
 include("Layer\\LayerPattern.jl")
 include("Layer\\GridLayerPattern.jl")
 include("Layer\\LayerDefinition.jl")
+include("Layer\\LayerStack.jl")
 
 include("Materials\\UserMaterials.jl")
 

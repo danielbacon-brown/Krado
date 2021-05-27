@@ -99,7 +99,7 @@ include("../../src/IncludeKrado.jl")
     substrateLayer = SemiInfiniteLayerDefinition("Al2O3")
     superstrateLayer = SemiInfiniteLayerDefinition("Air")
 
-    layerStack = [
+    layerStack = LayerStack([
         substrateLayer,
         layer1,
         layer2,
@@ -111,7 +111,7 @@ include("../../src/IncludeKrado.jl")
         layer8,
         layer9,
         superstrateLayer,
-    ]
+    ])
 
 
     # Import materials:

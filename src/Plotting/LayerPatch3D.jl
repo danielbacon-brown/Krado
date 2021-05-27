@@ -9,7 +9,7 @@ function plot3VectorGrid(ax, grid::Array{_3VectorFloat,2}, params::PlottingParam
 end
 
 
-function plot3Dsubstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dsubstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
 
     layer = first(layerStack)
 
@@ -58,7 +58,7 @@ function plot3Dsubstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinit
 
 end
 
-function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
 
     layer = last(layerStack)
 

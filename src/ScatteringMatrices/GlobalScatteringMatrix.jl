@@ -44,7 +44,7 @@ end
 # TODO: Make this more memory efficient
 # Calculate global scattering matrix for a stack of layers
 # The first layer and last layers must be a SemiInfiniteLayerDefinition
-function calcGlobalScatteringMatrix(layerStack::Vector{T}, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice, PrecisionType::DataType) where T<:LayerDefinition
+function calcGlobalScatteringMatrix(layerStack::LayerStack, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice, PrecisionType::DataType) where T<:LayerDefinition
 
     @assert first(layerStack) isa SemiInfiniteLayerDefinition
     @assert last(layerStack) isa SemiInfiniteLayerDefinition

@@ -56,7 +56,7 @@ function setCubicAxes(ax, xLimits::Vector{<:Real}, yLimits::Vector{<:Real}, zLim
 
 end
 
-function set3DplotLimits(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}; scale=1)
+function set3DplotLimits(ax, lattice::Lattice, layerStack::LayerStack; scale=1)
     xLimits, yLimits = getLatticePlotLimits(lattice)
     zLimits = getLayerStackPlotLimits(layerStack)
     setCubicAxes(ax, xLimits, yLimits, zLimits; scale=scale)
