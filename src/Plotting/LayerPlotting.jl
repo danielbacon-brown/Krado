@@ -6,22 +6,16 @@ function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, lattice::Latt
 
     scaleLabel = LENGTHLABEL[scale]
 
-    # fig = PyPlot.figure("Layer coordinates", figsize=(5,5))
-    # ax = PyPlot.axes()
-    # PyPlot.clf()
     fig, ax = create2Dfigure(title="Positions within layer")
 
     # Plot lattice unit cell
     addLatticeToPlot(ax, lattice; scale=scale)
 
     # Plot position grid
-    # posGrid = calcUniformGridPositions(simulationDefinition.lattice, layerDef)
     posGrid = PositionGridXY(lattice, layerDef.numDivisions)
-    # posGridValues = posGrid.positions / scale
     xCoords, yCoords = linearizePositionGrid(posGrid)
-    # xCoords, yCoords = linearizePositionGrid(posGridValues)
 
-    PyPlot.scatter(xCoords[:]/scale, yCoords[:]/scale, s=1, color="black", marker="," )
+    ax.scatter(xCoords[:]/scale, yCoords[:]/scale, s=1, color="black", marker="," )
 
     setPlotLimitsAroundLattice(ax, lattice; scale=scale)
 
@@ -29,21 +23,16 @@ function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, lattice::Latt
 end
 
 
-# function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, simulationDefinition::SimulationDefinition, materialParams::Dict{String,PlottingParameters}; scale=1)
 function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, lattice::Lattice, materialParams::Dict{String,PlottingParameters}; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
-    # fig = PyPlot.figure("Layer Materials Distribution", figsize=(5,5))
-    # ax = PyPlot.axes()
     fig, ax = create2Dfigure(title="Layer Materials Distribution")
 
     # Plot lattice unit cell
-    # Lx, Ly = calcLatticeBoundaryLine(simulationDefinition.lattice)
     addLatticeToPlot(ax, lattice; scale=scale)
 
     # Get position grid
-    # posGrid = calcUniformGridPositions(simulationDefinition.lattice, layerDef)
     posGrid = PositionGridXY(lattice, layerDef.numDivisions)
     xCoords, yCoords = linearizePositionGrid(posGrid)
     xCoords = xCoords/scale
@@ -54,8 +43,7 @@ function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, latt
 
     colorGrid = map(materialName -> materialParams[materialName].color, linearMaterialNames)
 
-    PyPlot.scatter(xCoords, yCoords, s=1, c=colorGrid, marker="," )
-
+    ax.scatter(xCoords, yCoords, s=1, c=colorGrid, marker="," )
 
     setPlotLimitsAroundLattice(ax, lattice; scale=scale)
 
@@ -69,6 +57,5 @@ function addMaterialLegend(ax, materialParams)
     for (matName, matParam) in materialParams
         push!(legendPatches, PATCHES.Patch(color=matParam.color, label=matName))
     end
-    # PyPlot.legend(handles=legendPatches, bbox_to_anchor=(1, 1), loc="best")
     ax.legend(handles=legendPatches, bbox_to_anchor=(1, 1), loc="best")
 end

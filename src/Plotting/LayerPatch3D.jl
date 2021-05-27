@@ -62,8 +62,6 @@ end
 
 function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
 
-    # lattice = simulationDefinition.lattice
-
     layer = last(layerStack)
 
     totalThickness = calcTotalThickness(layerStack)
@@ -114,8 +112,6 @@ end
 
 function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
 
-    # lattice = simulationDefinition.lattice
-
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
 
@@ -163,9 +159,6 @@ function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosit
 end
 
 function plot3Dlayer(ax, lattice::Lattice, layer::PatternedLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
-# function plotPatch3D(layer::PatternedLayerDefinition)
-
-    # lattice = simulationDefinition.lattice
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)

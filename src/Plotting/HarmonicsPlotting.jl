@@ -1,6 +1,8 @@
 # Harmonics related plotting functions
-
-
+function setLabels(ax, xLabel, yLabel)
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+end
 
 # Scatterplot showing the (m,n) harmonic orders
 function plotHarmonicsSet(simulation::SimulationDefinition)
@@ -8,8 +10,7 @@ function plotHarmonicsSet(simulation::SimulationDefinition)
     derivedParameters = DerivedParameters(simulation)
     harmonicsSet = derivedParameters.harmonicsSet
 
-    fig = PyPlot.figure("Harmonics (m,n)", figsize=(5,5))
-    ax = PyPlot.axes()
+    fig, ax = create2Dfigure(title="Harmonics (m,n)")
 
     nPoints = numHarmonics(harmonicsSet)
     mᵢ = Vector{Int64}(undef,nPoints)
@@ -19,9 +20,8 @@ function plotHarmonicsSet(simulation::SimulationDefinition)
         nᵢ[iHarmonic] = harmonicsSet.mnᵢ[iHarmonic][V]
     end
 
-    PyPlot.scatter(mᵢ, nᵢ )
-    PyPlot.xlabel("m")
-    PyPlot.ylabel("n")
+    ax.scatter(mᵢ, nᵢ )
+    setLabels(ax, "m", "n")
 
     return fig, ax
 end
@@ -35,8 +35,7 @@ function plotGvectorSet(simulation::SimulationDefinition; scale=1)
     derivedParameters = DerivedParameters(simulation)
     gVectorSet = derivedParameters.gVectorSet
 
-    fig = PyPlot.figure("G-vectors", figsize=(5,5))
-    ax = PyPlot.axes()
+    fig, ax = create2Dfigure(title="G-vectors")
 
     nPoints = numGvectors(gVectorSet)
     Gᵢx = Vector{Float64}(undef,nPoints)
@@ -46,9 +45,8 @@ function plotGvectorSet(simulation::SimulationDefinition; scale=1)
         Gᵢy[iHarmonic] = gVectorSet.Gᵢ[iHarmonic][Y] * scale
     end
 
-    PyPlot.scatter(Gᵢx, Gᵢy )
-    PyPlot.xlabel("kx ($(scaleLabel)⁻¹)")
-    PyPlot.ylabel("ky ($(scaleLabel)⁻¹)")
+    ax.scatter(Gᵢx, Gᵢy )
+    setLabels(ax, "kx ($(scaleLabel)⁻¹)", "kx ($(scaleLabel)⁻¹)")
 
     return fig, ax
 end
@@ -61,8 +59,7 @@ function plotkXYVectors(simulation::SimulationDefinition; scale=1)
     derivedParameters = DerivedParameters(simulation)
     kVectorSet = derivedParameters.kVectorSet
 
-    fig = PyPlot.figure("kXY-vectors", figsize=(5,5))
-    ax = PyPlot.axes()
+    fig, ax = create2Dfigure(title="K-vectors")
 
     k₀ = getk₀(kVectorSet)
 
@@ -74,9 +71,8 @@ function plotkXYVectors(simulation::SimulationDefinition; scale=1)
         kᵢy[iHarmonic] = kVectorSet.kᵢNorm[iHarmonic][Y]*k₀ * scale
     end
 
-    PyPlot.scatter(kᵢx, kᵢy )
-    PyPlot.xlabel("kx ($(scaleLabel)⁻¹)")
-    PyPlot.ylabel("ky ($(scaleLabel)⁻¹)")
+    ax.scatter(kᵢx, kᵢy )
+    setLabels(ax, "kx ($(scaleLabel)⁻¹)", "kx ($(scaleLabel)⁻¹)")
 
     return fig, ax
 

@@ -53,8 +53,6 @@ function plot2DZeroOrderKVector(simulationDefinition::SimulationDefinition; scal
 
     derivedParameters = DerivedParameters(simulationDefinition)
 
-    # fig = PyPlot.figure("Plot 0-order k-vector", figsize=(5,5))
-    # ax = PyPlot.axes()
     fig, ax = create2Dfigure(title="Plot 0-order k-vector")
 
     addLatticeToPlot(ax, simulationDefinition.lattice; scale=scale)
@@ -73,20 +71,6 @@ function scaleKVectorToWavelength(k::TU3VectorComplex, wavenumber::Wavenumber)
     scaledKvector = k/norm(k)^2 * λ₀ * k₀
     return scaledKvector
 end
-
-# TODO: is this used?
-# function addKVectorToPlot(k::TU3VectorComplex, kVectorOrigin::TU3VectorReal, wavenumber::Wavenumber; scale=1)
-#     # Scale k-vector so that the length is equal to the wavelength
-#     scaledKvector = scaleKVectorToWavelength(k, wavenumber)
-#     scaledKvectorReal = real(scaledKvector)
-#     scaledKvectorImag = imag(scaledKvector)
-#     # @show k
-#     # @show scaledKvector
-#
-#     # Add to current figure
-#     quiver(kVectorOrigin[X]/scale, kVectorOrigin[Y]/scale, kVectorOrigin[Z]/scale, scaledKvectorReal[X]/scale, scaledKvectorReal[Y]/scale, scaledKvectorReal[Z]/scale, color=PVECTORCOLOR, linestyle=PVECTORREALLINESTYLE)
-#     quiver(kVectorOrigin[X]/scale, kVectorOrigin[Y]/scale, kVectorOrigin[Z]/scale, scaledKvectorImag[X]/scale, scaledKvectorImag[Y]/scale, scaledKvectorImag[Z]/scale, color=PVECTORCOLOR, linestyle=PVECTORIMAGLINESTYLE)
-# end
 
 function add3DKandPVectorToPlot(ax, k::TU3VectorComplex, P::TU3VectorComplex, kVectorOrigin::TU3VectorReal, wavenumber::Wavenumber; scale=1, Escale=1)
 
@@ -118,11 +102,9 @@ function add3DKandPVectorsToPlot( ax, fieldSetXYZ::FieldSetXYZ, injectedOrderInd
     end
 
     for ϖindex in injectedOrderIndices
-            # kXY = getkXY(derivedParameters.kVectorSet, ϖindex)
             kXY = getkXYnorm(derivedParameters.kVectorSet, ϖindex) * getk₀(derivedParameters.kVectorSet)
             kXYZ = kXYtokXYZ(kXY, n, wavenumber, fieldSetXYZ.isForward)
             E = fieldSetXYZ.fields[ϖindex,:]
-            # @test isapprox( (kXYZ ⋅ E), 0, rtol=1e-3, atol=1e-5)
             add3DKandPVectorToPlot(ax, kXYZ, E, kVectorOrigin, wavenumber; scale=scale, Escale=Escale)
     end
 
@@ -187,8 +169,6 @@ add3DinjectedKandPVectorsToPlot(ax, simulationDefinition::SimulationDefinition; 
 
 # Plots listed KP vectors. Useful for visualizing diffraction amplitudes and polarization.
 function add3DlistedKandPVectorsToPlot(ax, inputFields, outputFields, bottomOrders, topOrders, simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters; scale=1, Escale=1)
-    # derivedParameters = DerivedParameters(simulationDefinition)
-# allModeData.inputFields, allModeData.outputFields, bottomOrders, topOrders, simulationDefinition, derivedParameters; scale=1, Escale = 0.3
     kVectorSet = derivedParameters.kVectorSet
     harmonicsSet = derivedParameters.harmonicsSet
     wavenumber = getWavenumber(derivedParameters.boundaryConditions)
@@ -197,18 +177,12 @@ function add3DlistedKandPVectorsToPlot(ax, inputFields, outputFields, bottomOrde
     topOrderIndices = [ getOrderIndex(harmonicsSet, ϖ) for ϖ in topOrders]
 
     # Create fields in terms of SP
-    # fieldSetSPbottom, fieldSetSPtop = calcSPinputFields( derivedParameters.boundaryConditions, derivedParameters.harmonicsSet)
-
-
     inputFieldSetXYZbottom = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, -derivedParameters.kzNormBottom)
     inputFieldSetXYZtop = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParameters.kzNormTop)
     outputFieldSetXYZbottom = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
     outputFieldSetXYZtop = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParameters.kzNormTop)
 
     # Convert SP fields to xyz
-    # fieldSetXYZbottom, fieldSetXYZtop = convertSPinputFieldsToXYZ( fieldSetSPbottom, fieldSetSPtop, derivedParameters.kVectorSet, simulationDefinition.layerStack, simulationDefinition.materialCollection, wavenumber)
-
-    # injectedOrderIndicesBottom = getInjectedOrderIndices(fieldSetXYZbottom)
     # INPUT
     add3DKandPVectorsToPlot( ax, inputFieldSetXYZbottom, bottomOrderIndices, FORWARD, BOTTOM, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
     add3DKandPVectorsToPlot( ax, inputFieldSetXYZtop, topOrderIndices, BACKWARD, TOP, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
@@ -216,11 +190,6 @@ function add3DlistedKandPVectorsToPlot(ax, inputFields, outputFields, bottomOrde
     add3DKandPVectorsToPlot( ax, outputFieldSetXYZbottom, bottomOrderIndices, BACKWARD, BOTTOM, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
     add3DKandPVectorsToPlot( ax, outputFieldSetXYZtop, topOrderIndices, FORWARD, TOP, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
 
-
-    # injectedOrderIndicesTop = getInjectedOrderIndices(fieldSetXYZtop)
-    # add3DKandPVectorsToPlot( fieldSetXYZtop, injectedOrderIndicesTop, TOP, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
-
-    return nothing
 end
 add3DlistedKandPVectorsToPlot(ax, inputFields, outputFields, bottomOrders, topOrders, simulationDefinition::SimulationDefinition; scale=1, Escale=1) = add3DlistedKandPVectorsToPlot(ax, inputFields, outputFields, bottomOrders, topOrders, simulationDefinition, DerivedParameters(simulationDefinition); scale=1, Escale=1)
 
@@ -231,25 +200,12 @@ function plot3DinjectedKandPVectors(simulationDefinition::SimulationDefinition; 
 
     derivedParameters = DerivedParameters(simulationDefinition)
 
-
-    # fig = figure("3D Injected Modes", figsize=(5,5))
-    # ax = Axes3D(fig)
-    #
-    # totalThickness = calcTotalThickness(simulationDefinition.layerStack)
-    #
-    # xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
-    # zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
-
     # Plot 3D lattice:
     fig, ax = plot3Dlattice(simulationDefinition.lattice, simulationDefinition.layerStack; scale=scale, title = "3D Injected Modes")
 
     add3DinjectedKandPVectorsToPlot(ax, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
 
     set3DplotLimits(ax, simulationDefinition.lattice, simulationDefinition.layerStack; scale=scale)
-    # set3DplotLimits(ax, simulationDefinition; scale=scale)
-    # xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
-    # zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
-    # setCubicAxes(ax, xLimits, yLimits, zLimits; scale=scale)
 
     return fig, ax
 end
@@ -295,15 +251,9 @@ function plot2DinjectedKandPVectors(simulationDefinition::SimulationDefinition; 
 
     derivedParameters = DerivedParameters(simulationDefinition)
 
-
-    # fig = figure("2D Injected Modes", figsize=(5,5))
-    # ax = PyPlot.axes()
     fig, ax = create2Dfigure(title="2D Injected Modes")
 
     addLatticeToPlot(ax, simulationDefinition.lattice; scale=scale)
-
-    # xLimits, yLimits = getLatticePlotLimits(simulationDefinition.lattice)
-    # zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
 
     add2DinjectedKandPVectorsToPlot(ax, simulationDefinition, derivedParameters; scale=scale, Escale=Escale)
 

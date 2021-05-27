@@ -166,25 +166,25 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot HarmonicsSet:
-    # fig, ax = plotHarmonicsSet(simulationDefinition)
+    fig, ax = plotHarmonicsSet(simulationDefinition)
 
     # Plot G-vectorSet:
-    # fig, ax = plotGvectorSet(simulationDefinition; scale=μm)
+    fig, ax = plotGvectorSet(simulationDefinition; scale=μm)
 
     # Plot x,y components of k-vectors
-    # fig, ax = plotkXYVectors(simulationDefinition; scale=μm)
+    fig, ax = plotkXYVectors(simulationDefinition; scale=μm)
 
     # Plot lattice:
-    # fig, ax = plotLatticeUnit(lattice; scale=μm)
+    fig, ax = plotLatticeUnit(lattice; scale=μm)
 
     # Plot reciprocal lattice
-    # fig, ax = plotReciprocalLatticeUnit(lattice; scale=μm)
+    fig, ax = plotReciprocalLatticeUnit(lattice; scale=μm)
 
     # Plot the coordinates that are sampled for the convolution matrix
-    # fig, ax = plotLayerPositionGrid(layer2, lattice; scale=μm)
+    fig, ax = plotLayerPositionGrid(layer2, lattice; scale=μm)
 
     # Plot the material distribution by color.
-    # fig, ax = plotLayerMaterialsDistribution(layer2, lattice, materialPlottingParameters; scale=μm)
+    fig, ax = plotLayerMaterialsDistribution(layer2, lattice, materialPlottingParameters; scale=μm)
     # fig, ax = plotLayerMaterialsDistribution(layer3, lattice, materialPlottingParameters; scale=μm)
     # fig, ax = plotLayerMaterialsDistribution(layer4, lattice, materialPlottingParameters; scale=μm)
     # fig, ax = plotLayerMaterialsDistribution(layer5, lattice, materialPlottingParameters; scale=μm)
@@ -195,34 +195,34 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot x,y components of the zero-order k-vector.
-    # fig, ax = plot2DZeroOrderKVector(simulationDefinition; scale=μm)
+    fig, ax = plot2DZeroOrderKVector(simulationDefinition; scale=μm)
 
     # Plot 3d k-vectors and polarization vectors
-    # fig, ax = plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
+    fig, ax = plot3DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
     # Plot 2d k-vectors and polarization vectors
-    # fig, ax = plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
+    fig, ax = plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
     # Plot a 3D structure.
-    # fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=μm)
+    fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=μm)
 
     # Plot 3D structure with injected modes
-    # fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=nm)
-    # add3DinjectedKandPVectorsToPlot(ax, simulationDefinition; scale=nm, Escale=500)
+    fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=nm)
+    add3DinjectedKandPVectorsToPlot(ax, simulationDefinition; scale=nm, Escale=500)
 
     # Plot lattice with injected modes
-    # fig, ax = plot3Dlattice(lattice, layerStack; scale=nm)
-    # add3DinjectedKandPVectorsToPlot(ax, simulationDefinition; scale=nm, Escale=500)
+    fig, ax = plot3Dlattice(lattice, layerStack; scale=nm)
+    add3DinjectedKandPVectorsToPlot(ax, simulationDefinition; scale=nm, Escale=500)
 
     # Plot 3D structure with predefined modes
-    # results = runSimulation(simulationDefinition)
-    # bottomOrders = [ [0,0], [0,1], [-2,-2]]
-    # topOrders = [ [1,0], [0,1], [-2,-2]]
-    # fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=nm)
-    # add3DlistedKandPVectorsToPlot( ax, results.inputFields, results.outputFields, bottomOrders, topOrders, simulationDefinition; scale=nm, Escale = 500 )
+    results = runSimulation(simulationDefinition)
+    bottomOrders = [ [0,0], [0,1], [-2,-2]]
+    topOrders = [ [1,0], [0,1], [-2,-2]]
+    fig, ax = plot3Dstructure(lattice, layerStack, materialPlottingParameters; scale=nm)
+    add3DlistedKandPVectorsToPlot( ax, results.inputFields, results.outputFields, bottomOrders, topOrders, simulationDefinition; scale=nm, Escale = 500 )
 
     # Plot 2D k-vectors and polarization vectors
-    # plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
+    plot2DinjectedKandPVectors(simulationDefinition; scale=nm, Escale = 500)
 
 
     # Plot structure with 1D
@@ -234,7 +234,7 @@ include("../../src/IncludeKrado.jl")
     positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisions)
     fig, ax = plotCrossSection(simulationDefinition, positionLineXY, materialPlottingParameters; scale=μm)
     numDivisionsZ = 30
-    fig, ax = plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
+    fig, ax1, ax2 = plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
 
 
 end

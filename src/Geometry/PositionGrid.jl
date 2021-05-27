@@ -77,7 +77,6 @@ end
 
 
 # For 1D lattice
-# function PositionGridXYleftAligned( lattice::Lattice, numDivisions::Integer)
 function PositionGridXY( gridAlignment::LeftAlignment, lattice::Lattice, numDivisions::Integer)
     @assert(is1D(lattice))
     return PositionGridXY( gridAlignment, lattice, _2VectorInt(numDivisions,1))
