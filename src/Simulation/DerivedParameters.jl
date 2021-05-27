@@ -22,7 +22,7 @@ function DerivedParameters(simulationDefinition::SimulationDefinition)
     boundaryConditions = BoundaryConditions( simulationDefinition.boundaryDefinition, simulationDefinition)
     harmonicsSet = calcHarmonicsSet( simulationDefinition.harmonicsTruncation )
     gVectorSet = GvectorSet( harmonicsSet, simulationDefinition.lattice )
-    kVectorSet = createKVectorSet(simulationDefinition.boundaryDefinition.wavenumber, boundaryConditions.kXY₀, simulationDefinition.boundaryDefinition.mainHarmonicOrder, gVectorSet)
+    kVectorSet = createKVectorSet(simulationDefinition.boundaryDefinition.wavenumber, boundaryConditions.kXY₀, simulationDefinition.boundaryDefinition.mainHarmonicOrder, gVectorSet, harmonicsSet)
 
 
     kzNormBottom = calckzBottom(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)

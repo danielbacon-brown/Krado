@@ -294,7 +294,7 @@ kXYZ = getkXYZ₀(boundaryConditions, layerStack, matCol, kzPositive)
 
 
 Gvectors = GvectorSet(harmonicsSet,lattice)
-kVectorSet = createKVectorSet(boundaryDefinition, boundaryConditions, Gvectors)
+kVectorSet = createKVectorSet(boundaryDefinition, boundaryConditions, Gvectors, harmonicsSet)
 
 
 
@@ -351,12 +351,13 @@ inputFields = calcInputFields(boundaryConditions, harmonicsSet, kVectorSet, laye
 
 
 ##### CALCULATE CONVOLUTION MATRICES OF INTERMEDIATE LAYERS
-Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, lattice, Gvectors, matCol, wavenumber )
+# Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, lattice, Gvectors, harmonicsSet, matCol, wavenumber )
+Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, simulationDefinition, derivedParameters )
 @test Cμᵢⱼ1 ≈ Array{ComplexF64,2}(I,(9,9))
 @test isapprox(Cϵᵢⱼ1, Cϵᵢⱼ1benchmark, rtol=1e-1)
 
 # No need to calculate convolution matricese for uniform layer:
-# Cϵᵢⱼ2, Cμᵢⱼ2 = calcConvolutionMatrices( layer2, lattice, Gvectors, matCol, wavenumber )
+# Cϵᵢⱼ2, Cμᵢⱼ2 = calcConvolutionMatrices( layer2, lattice, Gvectors, harmonicsSet, matCol, wavenumber )
 # @test Cϵᵢⱼ2[1,1] ≈ Complex(6,0)
 # @test Cμᵢⱼ2[1,1] ≈ Complex(1,0)
 # @test Cϵᵢⱼ2 ≈ 6*Array{ComplexF64,2}(I,(9,9))
@@ -416,7 +417,8 @@ S₁ = calcScatteringMatrix_ABX(prealloc, A₁,B₁,X₁)
 @test isapprox(S₁.matrix[_2,_1], S1₂₁benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_2,_2], S1₂₂benchmark, rtol=1e-3)
 # sugary:
-S₁ = calcScatteringMatrix(prealloc, layer1, matCol, kVectorSet, Gvectors, lattice )
+# S₁ = calcScatteringMatrix(prealloc, layer1, matCol, kVectorSet, Gvectors, lattice )
+S₁ = calcScatteringMatrix(prealloc, layer1, simulationDefinition, derivedParameters )
 @test isapprox(S₁.matrix[_1,_1], S1₁₁benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_1,_2], S1₁₂benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_2,_1], S1₂₁benchmark, rtol=1e-3)
@@ -551,7 +553,8 @@ Sglobal = GlobalScatteringMatrix(Sᵦ⊗Sdevice⊗Sₜ)
 
 
 # Put it in terms of a device stack:
-Sglobal = calcGlobalScatteringMatrix(layerStack, matCol, kVectorSet, Gvectors, lattice, PrecisionType)
+Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
+# Sglobal = calcGlobalScatteringMatrix(layerStack, matCol, kVectorSet, Gvectors, lattice, PrecisionType)
 @test isapprox(Sglobal.matrix[_1,_1], SG₁₁benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_1,_2], SG₁₂benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_2,_1], SG₂₁benchmark,rtol=1e-3)

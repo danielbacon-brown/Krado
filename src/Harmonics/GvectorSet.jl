@@ -2,9 +2,12 @@
 mutable struct GvectorSet
     Gᵢ::Vector{_2VectorFloat}
     ΔGᵢⱼ::Dict{_2VectorInt,_2VectorFloat}
-    harmonicsSet::HarmonicsSet
-    function GvectorSet(Gᵢ::Vector{_2VectorFloat}, ΔGᵢⱼ::Dict{_2VectorInt,_2VectorFloat}, harmonicsSet::HarmonicsSet)
-        return new(Gᵢ, ΔGᵢⱼ, harmonicsSet)
+    # harmonicsSet::HarmonicsSet
+    # function GvectorSet(Gᵢ::Vector{_2VectorFloat}, ΔGᵢⱼ::Dict{_2VectorInt,_2VectorFloat}, harmonicsSet::HarmonicsSet)
+    #     return new(Gᵢ, ΔGᵢⱼ, harmonicsSet)
+    # end
+    function GvectorSet(Gᵢ::Vector{_2VectorFloat}, ΔGᵢⱼ::Dict{_2VectorInt,_2VectorFloat})
+        return new(Gᵢ, ΔGᵢⱼ)
     end
 end
 
@@ -16,7 +19,7 @@ function GvectorSet(Gᵢ, harmonicsSet::HarmonicsSet, lattice::Lattice)
         push!(ΔGᵢⱼ, Δmnᵢⱼ => Δmnᵢⱼ[1]*lattice.G₁ + Δmnᵢⱼ[2]*lattice.G₂)
     end
 
-    return GvectorSet(Gᵢ, ΔGᵢⱼ, harmonicsSet)
+    return GvectorSet(Gᵢ, ΔGᵢⱼ)
 end
 
 

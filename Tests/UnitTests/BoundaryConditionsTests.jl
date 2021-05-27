@@ -36,7 +36,7 @@
     harmonicsSet = calcHarmonicsSet(harmonicsDef)
     Gvectors = GvectorSet(harmonicsSet, lattice1)
     boundaryConditions = InputByOrderBoundaryConditions( boundaryDefinition1, matCol, layerStack)
-    kVectorSet = createKVectorSet(Gvectors, boundaryConditions)
+    kVectorSet = createKVectorSet(Gvectors, harmonicsSet, boundaryConditions)
 
     # bottomModes1, topModes1 = calcInputModes(boundaryConditions,kVectorSet,harmonicsSet)
     # @test bottomModes1[1] ≈ mode1
@@ -61,7 +61,7 @@
     @test boundaryDefinition2.Abyϖbottom[_2VectorInt(-1,0)] ≈ A
 
     boundaryConditions2 = InputByOrderBoundaryConditions( boundaryDefinition2, matCol, layerStack)
-    kVectorSet2 = createKVectorSet(Gvectors, boundaryConditions2)
+    kVectorSet2 = createKVectorSet(Gvectors, harmonicsSet, boundaryConditions2)
     # modesBottom2, modesTop2 = calcInputModes(boundaryConditions2, kVectorSet2, harmonicsSet)
 
     # @test modesBottom2[1].A ≈ A

@@ -281,12 +281,14 @@ end
 
 
 # Calculates scattering matrix for a patterned layer
-function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::PatternedLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice ) where {PrecisionType<:Real}
+function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::PatternedLayerDefinition, simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters ) where {PrecisionType<:Real}
+    kVectorSet = derivedParameters.kVectorSet
 
     W₀ = calcW₀( numHarmonics(kVectorSet) )
     V₀ = calcV₀( kVectorSet )
 
-    Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layer, lattice, gVectorSet, matCol, kVectorSet.wavenumber )
+    # Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layer, lattice, gVectorSet, harmonicsSet, matCol, kVectorSet.wavenumber )
+    Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layer, simulationDefinition, derivedParameters )
     Cϵᵢⱼ⁻¹ = inv(Cϵᵢⱼ)
     Cμᵢⱼ⁻¹ = inv(Cμᵢⱼ)
 
@@ -408,8 +410,8 @@ function calcScatteringMatrixTop(prealloc::ScatteringMatrixAllocations{Precision
 end
 
 # You don't need to know the GvectorSet or lattice to calculate the scattering matrix of a uniform layer.
-function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::UniformLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice ) where {PrecisionType<:Real}
-    return calcScatteringMatrix(prealloc, layer, matCol, kVectorSet )
+function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::UniformLayerDefinition, simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters ) where {PrecisionType<:Real}
+    return calcScatteringMatrix(prealloc, layer, simulationDefinition.materialCollection, derivedParameters.kVectorSet )
 end
 
 

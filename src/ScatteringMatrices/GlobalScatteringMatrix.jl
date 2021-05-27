@@ -44,32 +44,39 @@ end
 # TODO: Make this more memory efficient
 # Calculate global scattering matrix for a stack of layers
 # The first layer and last layers must be a SemiInfiniteLayerDefinition
-function calcGlobalScatteringMatrix(layerStack::LayerStack, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, lattice::Lattice, PrecisionType::DataType) where T<:LayerDefinition
+# function calcGlobalScatteringMatrix(layerStack::LayerStack, matCol::MaterialCollection, kVectorSet::KVectorSet, gVectorSet::GvectorSet, harmonicsSet::HarmonicsSet, lattice::Lattice, PrecisionType::DataType) where T<:LayerDefinition
+# function calcGlobalScatteringMatrix(layerStack::LayerStack, matCol::MaterialCollection, derivedParameters::DerivedParameters, lattice::Lattice, PrecisionType::DataType) where T<:LayerDefinition
+function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters )
+
+    layerStack = simulationDefinition.layerStack
 
     @assert first(layerStack) isa SemiInfiniteLayerDefinition
     @assert last(layerStack) isa SemiInfiniteLayerDefinition
 
+    kVectorSet = derivedParameters.kVectorSet
     nHarmonics = numHarmonics(kVectorSet)
 
 
     # Preallocate all the data for the calculation of layer scattering matrices
-    prealloc = ScatteringMatrixAllocations{PrecisionType}(numHarmonics(kVectorSet), kVectorSet)
+    # prealloc = ScatteringMatrixAllocations{PrecisionType}(numHarmonics(kVectorSet), kVectorSet)
+    prealloc = ScatteringMatrixAllocations{simulationDefinition.PrecisionType}(numHarmonics(kVectorSet), kVectorSet)
 
     # Calculate values common to all layers
     # TODO: make sure these are actually used
     prealloc.W₀ = calcW₀( nHarmonics )
     prealloc.V₀ = calcV₀( kVectorSet )
 
-    Sassembled = calcScatteringMatrixBottom( prealloc, first(layerStack), matCol, kVectorSet)
+    Sassembled = calcScatteringMatrixBottom( prealloc, first(layerStack), simulationDefinition.materialCollection, kVectorSet)
 
 
     for iLayer = 2:(length(layerStack)-1)
-        SnewLayer = calcScatteringMatrix(prealloc, layerStack[iLayer], matCol, kVectorSet, gVectorSet, lattice)
+        # SnewLayer = calcScatteringMatrix(prealloc, layerStack[iLayer], matCol, derivedParameters, lattice)
+        SnewLayer = calcScatteringMatrix(prealloc, layerStack[iLayer], simulationDefinition, derivedParameters )
         # @show SnewLayer.matrix
         RedhefferStarProduct!( Sassembled, SnewLayer )
 
     end
-    Stop = calcScatteringMatrixTop( prealloc, last(layerStack), matCol, kVectorSet)
+    Stop = calcScatteringMatrixTop( prealloc, last(layerStack), simulationDefinition.materialCollection, kVectorSet)
 
     RedhefferStarProduct!( Sassembled, Stop )
 
@@ -77,9 +84,9 @@ function calcGlobalScatteringMatrix(layerStack::LayerStack, matCol::MaterialColl
 end
 
 
-function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters)
-    return calcGlobalScatteringMatrix(simulationDefinition.layerStack, simulationDefinition.materialCollection, derivedParameters.kVectorSet, derivedParameters.gVectorSet, simulationDefinition.lattice, simulationDefinition.PrecisionType)
-end
+# function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, derivedParameters::DerivedParameters)
+#     return calcGlobalScatteringMatrix(simulationDefinition.layerStack, simulationDefinition.materialCollection, derivedParameters.kVectorSet, derivedParameters.gVectorSet, derivedParameters.harmonicsSet, simulationDefinition.lattice, simulationDefinition.PrecisionType)
+# end
 
 
 

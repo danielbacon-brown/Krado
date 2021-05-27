@@ -24,29 +24,30 @@ end
 # Define the set according to a central k-vector corresponding to the given harmonic order and a GvectorSet
 # Each k-vector of each harmonic is just input k-vector plus the G-vector corresponding to the mode difference between that harmonic and the k-vector
 # The Main way to define a k-vector set
-function createKVectorSet(wavenumber::Wavenumber, k, ϖ, Gvectors::GvectorSet)
+function createKVectorSet(wavenumber::Wavenumber, k, ϖ, Gvectors::GvectorSet, harmonicsSet::HarmonicsSet)
     k₀ = getk₀(wavenumber)
     k = _2VectorFloat(k)
     ϖ = _2VectorInt(ϖ)
 
     kᵢ = Vector{_2VectorFloat}(undef, numGvectors(Gvectors) )
     for i in 1:numGvectors(Gvectors)
-        kᵢ[i] = k/k₀ + Gvectors.ΔGᵢⱼ[ Gvectors.harmonicsSet.mnᵢ[i] - ϖ ]/k₀
+        kᵢ[i] = k/k₀ + Gvectors.ΔGᵢⱼ[ harmonicsSet.mnᵢ[i] - ϖ ]/k₀
     end
 
     return KVectorSet(wavenumber, kᵢ)
 end
 
 
+
 # Define according to a 3-vector for k.
-function createKVectorSet(wavenumber::Wavenumber, Gvectors::GvectorSet; k = [0,0,1], ϖ = [0,0]  )
-    return createKVectorSet(wavenumber, k[X:Y], _2VectorInt(ϖ), Gvectors)
+function createKVectorSet(wavenumber::Wavenumber, Gvectors::GvectorSet, harmonicsSet::HarmonicsSet; k = [0,0,1], ϖ = [0,0]  )
+    return createKVectorSet(wavenumber, k[X:Y], _2VectorInt(ϖ), Gvectors, harmonicsSet)
 end
 
 #TODO: use defaults:
 
-function createKVectorSet(wavenumber::Wavenumber, k, Gvectors::GvectorSet )
-    return createKVectorSet(wavenumber, convert(_2VectorFloat,k[X:Y]), _2VectorInt(0,0), Gvectors)
+function createKVectorSet(wavenumber::Wavenumber, k, Gvectors::GvectorSet, harmonicsSet::HarmonicsSet )
+    return createKVectorSet(wavenumber, convert(_2VectorFloat,k[X:Y]), _2VectorInt(0,0), Gvectors, harmonicsSet)
 end
 
 

@@ -51,13 +51,14 @@
     # Integration of ϵ over g-vector set
     harmonicsSet = calcHarmonicsSet( HarmonicsTruncationByRectangle(1,1) )
     Gvectors = GvectorSet(harmonicsSet, lattice2D)
-    ∫ϵexpΔ𝐆𝐫 = calc∫xexpΔ𝐆𝐫Dict(ϵGrid2D,grid2D,Gvectors)
+    ∫ϵexpΔ𝐆𝐫 = calc∫xexpΔ𝐆𝐫Dict(ϵGrid2D,grid2D,Gvectors, harmonicsSet)
+    # ∫ϵexpΔ𝐆𝐫 = calc∫xexpΔ𝐆𝐫Dict(ϵGrid2D,grid2D, derivedParameters)
     @test ∫ϵexpΔ𝐆𝐫[[-2,1]] ≈ -0.25
 
     # Calculate ⟦ϵ⟧ aka Cϵ
     harmonicsSet = calcHarmonicsSet( HarmonicsTruncationByRectangle(1,0) )
     Gvectors = GvectorSet(harmonicsSet, lattice1D)
-    ∫ϵexpΔ𝐆𝐫 = calc∫xexpΔ𝐆𝐫Dict(ϵGrid1D,grid1D,Gvectors)
+    ∫ϵexpΔ𝐆𝐫 = calc∫xexpΔ𝐆𝐫Dict(ϵGrid1D,grid1D,Gvectors, harmonicsSet)
     Cϵᵢⱼ = assembleConvolutionMatrix( ∫ϵexpΔ𝐆𝐫, harmonicsSet )
     @test Cϵᵢⱼ ≈ Complex{Float64}[1.25 -0.25im -0.25;
         0.25im 1.25 -0.25im;
@@ -76,9 +77,17 @@
     divisions = 4
     thickness = 2*μm
     layerDefinition = PatternedLayerDefinition(divisions, thickness, spatialPermCalc)
-    harmonicsSet = calcHarmonicsSet( HarmonicsTruncationByRectangle(1,0) )
+    harmonicsTruncation = HarmonicsTruncationByRectangle(1,0)
+    harmonicsSet = calcHarmonicsSet( harmonicsTruncation)
     Gvectors = GvectorSet(harmonicsSet, lattice1D)
-    Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layerDefinition, lattice, Gvectors, matCol, wavenumber )
+    # Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layerDefinition, lattice, Gvectors, harmonicsSet, matCol, wavenumber )
+    analysisDefinition = AllModesAnalysisDefinition()
+    layerStack = LayerStack([SemiInfiniteLayerDefinition("material1"), layerDefinition, SemiInfiniteLayerDefinition("material1")])
+    boundaryDefinition = InputByOrderBoundaryDefinition(wavenumber, 0, 0,  false, [1,0])
+    # simulationDefinition = SimulationDefinition(lattice1D, lattice1D,layerStack,harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition, Float64 )
+    simulationDefinition = SimulationDefinition(lattice1D,layerStack,harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
+    derivedParameters = DerivedParameters(simulationDefinition)
+    Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layerDefinition, simulationDefinition, derivedParameters )
     @test Cϵᵢⱼ ≈ Complex{Float64}[1.25 -0.25im -0.25;
         0.25im 1.25 -0.25im;
         -0.25 0.25im 1.25]

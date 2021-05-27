@@ -80,43 +80,9 @@ function calc∫xexp𝐆𝐫(valueGrid, positionGrid::PositionGridXY, G::_2Vecto
     return total / (gridSize[1]*gridSize[2])
 end
 
-# Calculate the transform ∫∫x⋅exp(G̅⋅𝐫) for all G-vectorDifferences, putting results in a dict with the harmonic mn as the key.
-# This corresponds to the 'a' matrix
-# valueGrid is a 2D grid of the values at r real-space coordinates.  Does transform using a single G-vector: G.
-function calc∫xexpΔ𝐆𝐫Dict(valuesGrid, positionGrid::PositionGridXY, Gvectors::GvectorSet)
 
-    ∫xexpΔ𝐆𝐫 = Dict{_2VectorInt, ComplexF64}()
-    for ΔharmonicIndex in 1:numΔGvectors(Gvectors)
-        harmonic = Gvectors.harmonicsSet.Δmnᵢⱼ[ΔharmonicIndex]
-        ΔG = Gvectors.ΔGᵢⱼ[harmonic]
-        push!( ∫xexpΔ𝐆𝐫, harmonic => calc∫xexp𝐆𝐫(valuesGrid, positionGrid, ΔG) )
-    end
-    return ∫xexpΔ𝐆𝐫
-end
 
-# Input: dict describing ∫ϵ⋅exp(Δ𝐆⋅𝐫)
-#    and the set describing the harmonics to use
-# Output: 2D grid describing the convolution matrix (e.g. ⟦ϵ⟧  or ⟦μ⟧ )
-# Iterate over every combination of G-vectors and grab appropriate value from dict
-function assembleConvolutionMatrix( valuesByΔϖ::Dict{_2VectorInt,ComplexF64}, harmonicsSet::HarmonicsSet  )
 
-    # Refers to either Cϵ, ⟦ϵ⟧  or Cμ, ⟦μ⟧
-    Cϵᵢⱼ = Array{ComplexF64,2}(undef, (numHarmonics(harmonicsSet), numHarmonics(harmonicsSet)) )
-
-    for i_G = 1:numHarmonics(harmonicsSet)
-        for j_G = 1:numHarmonics(harmonicsSet)
-            Cϵᵢⱼ[i_G,j_G] = valuesByΔϖ[ harmonicsSet.mnᵢ[i_G] - harmonicsSet.mnᵢ[j_G]]
-        end
-    end
-    return Cϵᵢⱼ
-end
-
-# Calculates the convolution matrix for x (either ϵ or μ) by creating a dictionary of results for all possible pairs of G-vectors, then quickly generating the matrix using the dict
-function calcConvolutionMatrix( xGrid, positionGrid::PositionGridXY, Gvectors::GvectorSet)
-    ∫xexpΔ𝐆𝐫Dict = calc∫xexpΔ𝐆𝐫Dict(xGrid, positionGrid, Gvectors)
-    Cxᵢⱼ = assembleConvolutionMatrix( ∫xexpΔ𝐆𝐫Dict, Gvectors.harmonicsSet )
-    return Cxᵢⱼ
-end
 
 
 
@@ -130,20 +96,10 @@ function getPositionϵμGrids( layerDef::PatternedLayerDefinition, lattice::Latt
 end
 
 
-# Calculates the convolution matrices ⟦ϵ⟧  ⟦μ⟧ a the given layer and lattice with the corresponding harmonics and materials
-function calcConvolutionMatrices( layerDef::PatternedLayerDefinition, lattice::Lattice, Gvectors::GvectorSet, matCol::MaterialCollection, wavenumber::Wavenumber )
 
-    positionGrid, ϵGrid, μGrid = getPositionϵμGrids(layerDef, lattice, matCol, wavenumber)
 
-    # UNSURE - For some reason taking the conjugate is necessary.  Does not affect IntegrationTest3 but is needed for absorptive films
-    ϵGrid = conj.(ϵGrid)
-    μGrid = conj.(μGrid)
 
-    Cϵᵢⱼ = calcConvolutionMatrix( ϵGrid, positionGrid, Gvectors)
-    Cμᵢⱼ = calcConvolutionMatrix( μGrid, positionGrid, Gvectors)
 
-    return Cϵᵢⱼ, Cμᵢⱼ
-end
 
 
 # Returns the position grid Array{_2VectorFloat(X,Y),2}

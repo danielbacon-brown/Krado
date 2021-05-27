@@ -2,7 +2,7 @@ TODO LIST:
 
 TODO: Do the UserMaterial Parameters but for the plotting parameters
 
-TODO: LayerStack struct
+
 
 TODO: Structure structure that combines Lattice and LayerStack? -nah, don't do this
 
@@ -69,7 +69,7 @@ TODO: function defined shapes -- a shape with a lambda function check for is in 
 TODO: define 3D shapes - to automatically create layers for complex 3F geometries (Or maybe a recursive type scattering matrix calculations?)
 
 DONE: plotting of epsilon cross-section
-
+DONE: LayerStack struct
 
 DONE: Move Material database and user to tests to an external file.
 DONE: change TU2VectorReal to Real2Vector? etc

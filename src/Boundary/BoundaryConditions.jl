@@ -42,8 +42,8 @@ function InputByOrderBoundaryConditions( boundaryDef::InputByOrderBoundaryDefini
 end
 
 
-function createKVectorSet(boundaryDefinition::InputByOrderBoundaryDefinition, boundaryConditions::InputByOrderBoundaryConditions, GvectorSet::GvectorSet)
-    return createKVectorSet(boundaryDefinition.wavenumber, boundaryConditions.kXY₀, boundaryDefinition.mainHarmonicOrder, GvectorSet)
+function createKVectorSet(boundaryDefinition::InputByOrderBoundaryDefinition, boundaryConditions::InputByOrderBoundaryConditions, GvectorSet::GvectorSet, harmonicsSet::HarmonicsSet)
+    return createKVectorSet(boundaryDefinition.wavenumber, boundaryConditions.kXY₀, boundaryDefinition.mainHarmonicOrder, GvectorSet, harmonicsSet)
 end
 
 # Returns the 3-vector of the zero-order k-vector
@@ -60,9 +60,9 @@ end
 
 
 # Define a k-vector set using the k-vector of the boundary conditions
-function createKVectorSet(Gvectors::GvectorSet, boundCond::InputByOrderBoundaryConditions)
+function createKVectorSet(Gvectors::GvectorSet, harmonicsSet::HarmonicsSet, boundCond::InputByOrderBoundaryConditions)
     ϖ = _2VectorInt(0,0)
-    return createKVectorSet(boundCond.wavenumber, boundCond.kXY₀, ϖ, Gvectors)
+    return createKVectorSet(boundCond.wavenumber, boundCond.kXY₀, ϖ, Gvectors, harmonicsSet)
 end
 
 

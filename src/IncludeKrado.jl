@@ -70,6 +70,8 @@ include("Boundary\\BoundaryConditions.jl")
 include("Simulation\\FreeSpaceParameters.jl")
 include("Simulation\\DerivedParameters.jl")
 
+
+include("ScatteringMatrices\\ConvolutionMatrices.jl")
 include("ScatteringMatrices\\GlobalScatteringMatrix.jl")
 include("ScatteringMatrices\\ScatteringMatrixCalculations.jl")
 
