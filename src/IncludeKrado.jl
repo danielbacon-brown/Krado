@@ -77,6 +77,7 @@ include("Analysis\\SimulationSweep.jl")
 
 include("Plotting\\Plotting.jl")
 include("Plotting\\CoordinateData.jl")
+include("Plotting\\FigureSettings.jl")
 include("Plotting\\HarmonicsPlotting.jl")
 include("Plotting\\LatticePlotting.jl")
 include("Plotting\\LayerPlotting.jl")

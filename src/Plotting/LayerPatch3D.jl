@@ -11,8 +11,6 @@ end
 
 function plot3Dsubstrate(ax, lattice::Lattice, layerStack::Vector{<:LayerDefinition}, materialParams::Dict{String, PlottingParameters}; scale=1)
 
-    # lattice = simulationDefinition.lattice
-
     layer = first(layerStack)
 
     totalThickness = calcTotalThickness(layerStack)

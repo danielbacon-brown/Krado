@@ -1,27 +1,6 @@
 
 # TODO: Add support for 1D lattice
 
-function create2Dfigure(;title::String = "")
-
-    fig = PyPlot.figure(title, figsize=DEFAULTPLOTSIZE)
-    ax = PyPlot.axes()
-
-    return fig, ax
-end
-
-function create3Dfigure(;title::String = "")
-
-    fig = figure(title, figsize=DEFAULTPLOTSIZE)
-    ax = Axes3D(fig)
-
-    return fig, ax
-end
-
-function set2Dlimits(ax, xLimits, yLimits)
-    ax.set_xlim(xLimits[1], xLimits[2])
-    ax.set_ylim(yLimits[1], yLimits[2])
-    ax.axis("equal")
-end
 
 # Returns the X- and Y- limits for a plot that's slightly larger than the lattice.
 function getLatticePlotLimits(lattice::Lattice; relativePadding=0.1, scale=1)

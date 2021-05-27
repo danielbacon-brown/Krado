@@ -1,8 +1,4 @@
-# Harmonics related plotting functions
-function setLabels(ax, xLabel, yLabel)
-    ax.set_xlabel(xLabel)
-    ax.set_ylabel(yLabel)
-end
+
 
 # Scatterplot showing the (m,n) harmonic orders
 function plotHarmonicsSet(simulation::SimulationDefinition)

@@ -1,7 +1,6 @@
 # Plotting related to layer geometry
 
 
-# function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, simulationDefinition::SimulationDefinition; scale=1)
 function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, lattice::Lattice; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
@@ -50,12 +49,4 @@ function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, latt
     addMaterialLegend(ax, materialParams::Dict{String,PlottingParameters})
 
     return fig, ax
-end
-
-function addMaterialLegend(ax, materialParams)
-    legendPatches = []
-    for (matName, matParam) in materialParams
-        push!(legendPatches, PATCHES.Patch(color=matParam.color, label=matName))
-    end
-    ax.legend(handles=legendPatches, bbox_to_anchor=(1, 1), loc="best")
 end
