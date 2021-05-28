@@ -320,7 +320,8 @@ function plotCrossSectionFuncByArray( func, simulationDefinition::SimulationDefi
     linearXYdistance = linearDistance(positionGridXY)
     xLimits = [0, linearXYdistance]
 
-    positionGridZ = PositionGridZbyMidpoint( last(zLimits), first(zLimits), numDivisionsZ)  # from top to bottom
+    # positionGridZ = PositionGridZbyMidpoint( last(zLimits), first(zLimits), numDivisionsZ)  # from top to bottom
+    positionGridZ = PositionGridZ( CENTERALIGNMENT, last(zLimits), first(zLimits), numDivisionsZ)  # from top to bottom
 
     layerZpositions = calcLayerZpositions(layerStack)
 

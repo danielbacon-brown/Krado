@@ -45,6 +45,7 @@ include("Layer\\LayerPattern.jl")
 include("Layer\\GridLayerPattern.jl")
 include("Layer\\LayerDefinition.jl")
 include("Layer\\LayerStack.jl")
+include("Layer\\TrapezoidLayerSet.jl")
 
 include("Materials\\UserMaterials.jl")
 

@@ -21,6 +21,8 @@ include(relDir * "UnitsTests.jl")
 
 include(relDir * "ShapesTests.jl")
 
+include(relDir * "LayerSetTests.jl")
+
 include(relDir * "ScatteringMatrixTests.jl")
 
 include(relDir * "BoundaryConditionsTests.jl")

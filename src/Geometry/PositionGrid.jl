@@ -21,21 +21,30 @@ mutable struct PositionGridZ
     stop::Float64
     positions::Vector{Float64}
 
-    function PositionGridZ(start::Float64, stop::Float64, positions::Vector{Float64})
-        return new(start, stop, positions)
+    function PositionGridZ(start::Real, stop::Real, positions::Vector{<:Real})
+        return new( convert(Float64,start), convert(Float64,stop), convert(Vector{Float64},positions) )
     end
 end
 
 
 # Returns a sequence of coordinates at evenly spaced midpoints between zStart to zStop.
-function PositionGridZbyMidpoint( zStart::Real, zStop::Real, numDivisions::Integer)
+# function PositionGridZbyMidpoint( zStart::Real, zStop::Real, numDivisions::Integer)
+#
+#     # totalLength = abs(zStart-zStop)
+#     # pixelLength = totalLength / numDivisions
+#     fractionalLength = unitLinspace(CENTERALIGNMENT, numDivisions)
+#     zPositions = [ zStart + (zStop-zStart).*fractionalLength[i] for i in 1:numDivisions]
+#     return PositionGridZ( zStart, zStop, zPositions)
+# end
 
-    totalLength = abs(zStart-zStop)
-    pixelLength = totalLength / numDivisions
-    fractionalLength = unitLinspace(CENTERALIGNMENT, numDivisions)
+function PositionGridZ(gridAlignment::GridAlignment, zStart::Real, zStop::Real, numDivisions::Integer)
+    # totalLength = abs(zStart-zStop)
+    # pixelLength = totalLength / numDivisions
+    fractionalLength = unitLinspace(gridAlignment, numDivisions)
     zPositions = [ zStart + (zStop-zStart).*fractionalLength[i] for i in 1:numDivisions]
     return PositionGridZ( zStart, zStop, zPositions)
 end
+
 
 # Dispatch over the alignment of the lattice.
 function PositionGridXY(lattice::Lattice, numDivisions)
@@ -46,8 +55,8 @@ end
 
 function PositionGridXY( gridAlignment::GridAlignment, XYstart, XYstop, numDivisions::Integer)
 
-    totalLength = norm(XYstart .- XYstop)
-    pixelLength = totalLength / numDivisions
+    # totalLength = norm(XYstart .- XYstop)
+    # pixelLength = totalLength / numDivisions
     fractionalLength = unitLinspace(CENTERALIGNMENT, numDivisions)
     XYpositions = [ XYstart .+ (XYstop .- XYstart).*fractionalLength[i] for i in 1:numDivisions]
 
@@ -89,6 +98,10 @@ function Base.length(positionGrid::PositionGridXY)
 end
 function Base.length(positionGrid::PositionGridZ)
     return length(positionGrid.positions)
+end
+
+function Base.getindex(positionGrid::PositionGridZ, index::Int)
+    return getindex(positionGrid.positions, index)
 end
 
 # Only makes sense to get the distance of a linear position grid
