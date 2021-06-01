@@ -11,6 +11,8 @@ relDir = ""
 # using .Krado
 include("../../src/IncludeKrado.jl")
 
+@testset "Unit Tests" begin
+
 include(relDir * "LayerDefinitionTests.jl")
 
 # include(relDir * "MaterialDatabaseTests.jl")  # Not including this in test suite because it relies on external files.
@@ -47,5 +49,7 @@ include(relDir * "MaterialsTests.jl")
 
 include(relDir * "LayerPatternTests.jl")
 
+
+end;
 
 end

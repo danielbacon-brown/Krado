@@ -63,9 +63,10 @@ function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, 
 
     # Calculate values common to all layers
     # TODO: make sure these are actually used
-    prealloc.W₀ = calcW₀( nHarmonics )
+    # prealloc.W₀ = calcW₀( nHarmonics )
+    prealloc.W₀ = calcW₀( numHarmonics(kVectorSet) )
     prealloc.V₀ = calcV₀( kVectorSet )
-
+    # @show prealloc.W₀.matrix
     Sassembled = calcScatteringMatrixBottom( prealloc, first(layerStack), simulationDefinition.materialCollection, kVectorSet)
 
 

@@ -14,8 +14,8 @@ using Test
 @testset "IntegrationTest3" begin
 include("IntegrationTest3BenchmarkData.jl")
 
-println()
-println("Beginning IntegrationTest3")
+# println()
+# println("Beginning IntegrationTest3")
 
 include("../../src/IncludeKrado.jl")
 
@@ -383,9 +383,16 @@ SglobalBenchmark = vcat( hcat(SglobalBenchmark11, SglobalBenchmark12),
                         hcat(SglobalBenchmark21, SglobalBenchmark22) )
 @test Sglobal.matrix ≈ SglobalBenchmark
 
+# @test prealloc.W₀.matrix == derivedParameters.freeSpaceParameters.W₀.matrix
+
+
+
 # STEP 7: MAIN LOOP
 PrecisionType = Float32
 prealloc = ScatteringMatrixAllocations{PrecisionType}(numHarmonics(kVectorSet), kVectorSet)
+
+prealloc.W₀ = calcW₀( numHarmonics(kVectorSet) )
+prealloc.V₀ = calcV₀( kVectorSet )
 
 # Layer 1: Patterned
 P₁ = calcPmatrixPatterned(prealloc, kVectorSet, Cϵᵢⱼ1, Cϵᵢⱼ⁻¹1, Cμᵢⱼ1, Cμᵢⱼ⁻¹1)
@@ -396,6 +403,8 @@ Q₁ = calcQmatrixPatterned(prealloc, kVectorSet, Cϵᵢⱼ1, Cϵᵢⱼ⁻¹1, C
 
 Ω²₁ = calcΩ²(prealloc, P₁,Q₁)
 @test isapprox(Ω²₁, Ω²₁benchmark, rtol=1e-3)
+
+# @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
 
 
 # NOTE: The eigenvalue decomposition is not unique, so values relying on it will not be identical to benchmark, before calculation of the full scattering matrix.
@@ -424,6 +433,7 @@ S₁ = calcScatteringMatrix(prealloc, layer1, simulationDefinition, derivedParam
 @test isapprox(S₁.matrix[_2,_1], S1₂₁benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_2,_2], S1₂₂benchmark, rtol=1e-3)
 
+# @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
 
 
 # Layer 2: Unpatterned
@@ -478,8 +488,10 @@ Pᵦ, Qᵦ = calcPQmatrix(prealloc, bottomLayer, kVectorSet, matCol)
 @test isapprox(Λᵦ, Λᵦbenchmark, rtol=1e-3)
 Λᵦ = calcΛsemiInfiniteBottom(prealloc, Array(kzᵦ), kVectorSet.wavenumber)
 @test isapprox(Λᵦ, Λᵦbenchmark, rtol=1e-3)
-Wᵦ = derivedParameters.freeSpaceParameters.W₀
+Wᵦ = deepcopy(derivedParameters.freeSpaceParameters.W₀)
 # Wᵦeigenmodes = Wᵦ
+
+# @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
 
 
 # Vᵦ = calcEigenmodesFromQλ(Qᵦ,λᵦ)
@@ -503,7 +515,7 @@ Sᵦ = calcScatteringMatrixBottom_AB(prealloc, Aᵦ,Bᵦ)
 @test isapprox(Sᵦ.matrix[_2,_1], SR₂₁benchmark, rtol=1e-3)
 @test isapprox(Sᵦ.matrix[_2,_2], SR₂₂benchmark, rtol=1e-3)
 
-
+@test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
 Sᵦ = calcScatteringMatrixBottom(prealloc, bottomLayer, matCol, kVectorSet)
 @test isapprox(Sᵦ.matrix[_1,_1], SR₁₁benchmark, rtol=1e-3)
 @test isapprox(Sᵦ.matrix[_1,_2], SR₁₂benchmark, rtol=1e-3)
@@ -516,9 +528,10 @@ Sᵦ = calcScatteringMatrixBottom(prealloc, bottomLayer, matCol, kVectorSet)
 Pₜ, Qₜ = calcPQmatrix(prealloc, topLayer, kVectorSet, matCol)
 Ω²ₜ = calcΩ²(prealloc, Pₜ,Qₜ)
 
+@test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
 Λₜ = calcΛsemiInfiniteTop(prealloc, Array(kzₜ), kVectorSet.wavenumber)
 @test isapprox(Λₜ,Λₜbenchmark,rtol=1e-3)
-Wₜ = derivedParameters.freeSpaceParameters.W₀
+Wₜ = deepcopy(derivedParameters.freeSpaceParameters.W₀)
 # Wₜeigenmodes = Wₜ
 
 Vₜ = calcMagneticEigenvectorsFromQWλ(prealloc, Qₜ,Wₜ,Λₜ)
@@ -715,7 +728,7 @@ totalReflectance = abs(sum(real(reflectances)))
 
 end;  # End of test set
 
-println("Completed test set.")
+# println("Completed test set.")
 
 
 

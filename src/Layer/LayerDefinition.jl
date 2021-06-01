@@ -127,8 +127,9 @@ function calckzTop(kVectorSet::KVectorSet, layer::SemiInfiniteLayerDefinition, m
     return ComplexF64[ sqrt.( conj(ϵ)*conj(μ) - kᵢ[X]^2 - kᵢ[Y]^2)  for kᵢ in kVectorSet.kᵢNorm]  # REMOVING CONJ from Kzᵦ.  Either the lecture or the benchmark is wrong.
 end
 
-function calc_ϵμ(layerDef::T1, matCol::MaterialCollection, kVectorSet::KVectorSet) where T1<:Union{UniformLayerDefinition, SemiInfiniteLayerDefinition}
-    ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), kVectorSet.wavenumber)
+# function calc_ϵμ(layerDef::T1, matCol::MaterialCollection, kVectorSet::KVectorSet) where T1<:Union{UniformLayerDefinition, SemiInfiniteLayerDefinition}
+function calc_ϵμ(layerDef::T1, matCol::MaterialCollection, wavenumber::Wavenumber) where T1<:Union{UniformLayerDefinition, SemiInfiniteLayerDefinition}
+    ϵ, μ = calc_ϵμ( getMaterial(matCol,layerDef.backgroundMaterialName), wavenumber)
     return ϵ, μ
 end
 

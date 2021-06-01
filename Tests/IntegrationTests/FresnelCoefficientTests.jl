@@ -2,7 +2,7 @@ module FresnelCoefficientsTest
 using Test
 
 
-println("Fresnel Coefficients - Si and SiO2")
+# println("Fresnel Coefficients - Si and SiO2")
 @testset "Fresnel Coefficients - Si and SiO2" begin
 
 include("../../src/IncludeKrado.jl")

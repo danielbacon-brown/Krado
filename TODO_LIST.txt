@@ -44,7 +44,7 @@ TODO: Functions for making tapers, turning a 3D function into a stack of layers,
 TODO: Nested sweeps
 TODO: Plotting of results, e.g. transmission spectra
 
-DONE: Variable precision in scattering matrices
+
 TODO: Include more function-derived materials
 TODO: Add user-set rules for material extrapolations
 
@@ -55,7 +55,6 @@ TODO: Measure and improve performance
 TODO: RunSimulation for calculating Es and Ep transmission/reflection
 TODO: RunSimulation for calculating Jones Matrix
 
-TODO: Remove harmonics set from g-vectors
 TODO: Use built-in Fourier transform method, FFT
 TODO: Use analytical Fourier transform method
 
@@ -68,6 +67,9 @@ TODO: import and export of Simulation and results data to YAML file
 TODO: function defined shapes -- a shape with a lambda function check for is in x-y
 TODO: define 3D shapes - to automatically create layers for complex 3F geometries (Or maybe a recursive type scattering matrix calculations?)
 
+DONE: Variable precision in scattering matrices
+DONE: Trapezoidal layer set creation.
+DONE: Remove harmonics set from g-vectors
 DONE: plotting of epsilon cross-section
 DONE: LayerStack struct
 
