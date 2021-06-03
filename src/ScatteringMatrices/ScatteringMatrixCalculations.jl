@@ -18,10 +18,11 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
 
     Ω²::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
 
-    W::ElectricEigenvectors{PrecisionType} # (nHarmonics*2, nHarmonics*2)
-    λ::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
+    Wᵢ::ElectricEigenvectors{PrecisionType} # (nHarmonics*2, nHarmonics*2)
+    # λᵢ::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
+    λᵢ::Diagonal{Complex{PrecisionType}} # (nHarmonics*2, nHarmonics*2)
 
-    V::MagneticEigenvectors{PrecisionType} # (nHarmonics*2, nHarmonics*2)
+    Vᵢ::MagneticEigenvectors{PrecisionType} # (nHarmonics*2, nHarmonics*2)
 
     A::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
     B::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
@@ -50,10 +51,11 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
 
         Ω² = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
 
-        W = ElectricEigenvectors{PrecisionType}(zeros(Complex{PrecisionType}, (2*nHarmonics, 2*nHarmonics)))
-        λ = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
+        Wᵢ = ElectricEigenvectors{PrecisionType}(zeros(Complex{PrecisionType}, (2*nHarmonics, 2*nHarmonics)))
+        # λ = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
+        λ = Diagonal{Complex{PrecisionType}}( 1:2*nHarmonics )
 
-        V = MagneticEigenvectors{PrecisionType}(zeros(Complex{PrecisionType}, (2*nHarmonics, 2*nHarmonics)))
+        Vᵢ = MagneticEigenvectors{PrecisionType}(zeros(Complex{PrecisionType}, (2*nHarmonics, 2*nHarmonics)))
 
         A = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
         B = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
@@ -65,7 +67,7 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
         _1Big, _2Big = getQuadrantSlices(S)
 
         # return new(W₀, V₀, Cϵᵢⱼ, Cμᵢⱼ, Cϵᵢⱼ⁻¹, Cμᵢⱼ⁻¹, P, Q, Ω², W, λ, V, A, B, X, S)
-        return new(W₀, V₀, Cϵᵢⱼ, Cμᵢⱼ, Cϵᵢⱼ⁻¹, Cμᵢⱼ⁻¹, P, Q, Ω², W, λ, V, A, B, X, S, _1, _2, _1Big, _2Big)
+        return new(W₀, V₀, Cϵᵢⱼ, Cμᵢⱼ, Cϵᵢⱼ⁻¹, Cμᵢⱼ⁻¹, P, Q, Ω², Wᵢ, λ, Vᵢ, A, B, X, S, _1, _2, _1Big, _2Big)
     end
 end
 
@@ -147,18 +149,48 @@ function calcW₀(numHarmonics::Integer)
 end
 
 function calcWᵢλᵢ(prealloc::ScatteringMatrixAllocations{PrecisionType}, Ω²ᵢ::Array{<:Number, 2}) where {PrecisionType<:Real}
+    # error()
     λ²ᵢ, Wᵢ = eigen(Ω²ᵢ)
-    λ²ᵢ = Diagonal( λ²ᵢ )
-    λᵢ = sqrt.(λ²ᵢ)
-    return ElectricEigenvectors{PrecisionType}(Wᵢ), Array(λᵢ)
+    # @show typeof()
+    # λ²ᵢ, Wᵢ = eigen!(Ω²ᵢ)  # Ω²ᵢ is no longer needed, so overwrite
+    # λ²ᵢ = Diagonal( λ²ᵢ )
+    # λᵢ = Diagonal( sqrt.(λ²ᵢ) )
+    prealloc.λᵢ = Diagonal( sqrt.(λ²ᵢ) )
+    # @show typeof(prealloc.λᵢ)
+    # λᵢ = sqrt.(λ²ᵢ)
+    # return ElectricEigenvectors{PrecisionType}(Wᵢ), Array(λᵢ)
+    prealloc.Wᵢ = ElectricEigenvectors{PrecisionType}(Wᵢ)
+    # return ElectricEigenvectors{PrecisionType}(Wᵢ), λᵢ
+    return prealloc.Wᵢ, prealloc.λᵢ
 end
+
+
+# function Base.inv(A::Diagonal)
+#     return Diagonal( inv.(A.diag) )
+# end
 
 # TODO RENAME
-function calcMagneticEigenvectorsFromQWλ(prealloc::ScatteringMatrixAllocations{PrecisionType}, Q::Array{T1,2}, Wᵢ::ElectricEigenvectors, λ::Array{T3,2}) where {T1<:Number, T2<:Number, T3<:Number, PrecisionType<:Real}
-    return MagneticEigenvectors{PrecisionType}( Q * Wᵢ.matrix * inv(λ) )
+# function calcMagneticEigenvectorsFromQWλ(prealloc::ScatteringMatrixAllocations{PrecisionType}, Q::Array{T1,2}, Wᵢ::ElectricEigenvectors, λ::Array{T3,2}) where {T1<:Number, T2<:Number, T3<:Number, PrecisionType<:Real}
+function calcMagneticEigenvectorsFromQWλ(prealloc::ScatteringMatrixAllocations{PrecisionType}, Q::AbstractArray{<:Complex,2}, Wᵢ::ElectricEigenvectors, λ::AbstractArray{<:Complex,2}) where {PrecisionType<:Real}
+    # return MagneticEigenvectors{PrecisionType}( Q * Wᵢ.matrix * inv(λ) )
+    # return MagneticEigenvectors{PrecisionType}( Q * Wᵢ.matrix / λ )
+    # prealloc.Vᵢ.matrix = Q * Wᵢ.matrix / λ
+    # @show typeof(prealloc.Vᵢ.matrix)
+
+    # mul!(prealloc.Vᵢ.matrix, Q, Wᵢ.matrix) # Q*Wᵢ
+    # @show typeof(prealloc.Vᵢ.matrix)
+    # @show typeof(λ)
+    # @show inv(λ)
+    # rdiv!(prealloc.Vᵢ.matrix, λ) # (Q*Wᵢ) / λ
+    # rdiv!(prealloc.Vᵢ.matrix, factorize(λ)) # (Q*Wᵢ) / λ
+    # rdiv!(factorize(prealloc.Vᵢ.matrix), factorize(λ)) # (Q*Wᵢ) / λ
+    mul!(prealloc.Vᵢ.matrix, Q, Wᵢ.matrix*inv(λ) ) # Q*(Wᵢ/λ)
+    # @show typeof(prealloc.Vᵢ.matrix)
+    # return MagneticEigenvectors{PrecisionType}( Q * Wᵢ.matrix / λ )
+    return prealloc.Vᵢ
 end
 
-
+# TODO: IS THIS USED?
 function calcEigenmodesForUniformLayer(prealloc::ScatteringMatrixAllocations{PrecisionType}, kVectorSet::KVectorSet, layerDef::Tlayer, matCol::MaterialCollection) where { Tlayer<:Union{UniformLayerDefinition, SemiInfiniteLayerDefinition}, PrecisionType<:Real}
 
     P, Q = calcPQmatrix(prealloc, layerDef, kVectorSet, matCol)
@@ -189,8 +221,10 @@ end
 
 # function calcQmatrixUnpatterned(prealloc::ScatteringMatrixAllocations{PrecisionType}, P::Array{ComplexF64,2}, ϵ::ComplexF64, μ::ComplexF64) where {PrecisionType<:Real}
 function calcQmatrixUnpatterned(prealloc::ScatteringMatrixAllocations{PrecisionType}, P::Array{<:Complex,2}, ϵ::Complex, μ::Complex) where {PrecisionType<:Real}
-    Q = (ϵ / μ) * P
-    return Q
+    # Q = (ϵ / μ) * P
+    prealloc.Q = (ϵ / μ) * P
+    # return Q
+    return prealloc.Q
 end
 
 
@@ -218,7 +252,8 @@ function calcAB(prealloc::ScatteringMatrixAllocations{PrecisionType}, Wᵢ::Elec
 end
 
 
-function calcX(prealloc::ScatteringMatrixAllocations{PrecisionType}, λᵢ::Array{<:Number,2}, wavenumber::Wavenumber, thickness::Real) where {PrecisionType<:Real}
+# function calcX(prealloc::ScatteringMatrixAllocations{PrecisionType}, λᵢ::Array{<:Number,2}, wavenumber::Wavenumber, thickness::Real) where {PrecisionType<:Real}
+function calcX(prealloc::ScatteringMatrixAllocations{PrecisionType}, λᵢ::AbstractArray{<:Number,2}, wavenumber::Wavenumber, thickness::Real) where {PrecisionType<:Real}
     k₀d = -1*getk₀(wavenumber) * thickness
     λᵢk₀d = λᵢ*k₀d
     return exp(-λᵢ*getk₀(wavenumber)*thickness)
@@ -249,7 +284,8 @@ end
 # S₁₂ = inv(Aᵢ₀-Xᵢ*Bᵢ₀*inv(Aᵢ₀)*Xᵢ*Bᵢ₀) * Xᵢ*(Aᵢ₀-Bᵢ₀*inv(Aᵢ₀)*Bᵢ₀)
 # S₂₁ = S₁₂
 # S₂₂ = S₁₁
-function calcScatteringMatrix_ABX(prealloc::ScatteringMatrixAllocations{PrecisionType}, Aᵢ::Array{<:Number,2}, Bᵢ::Array{<:Number,2}, Xᵢ::Array{<:Number,2}) where {PrecisionType<:Real}
+# function calcScatteringMatrix_ABX(prealloc::ScatteringMatrixAllocations{PrecisionType}, Aᵢ::Array{<:Number,2}, Bᵢ::Array{<:Number,2}, Xᵢ::Array{<:Number,2}) where {PrecisionType<:Real}
+function calcScatteringMatrix_ABX(prealloc::ScatteringMatrixAllocations{PrecisionType}, Aᵢ::AbstractArray{<:Number,2}, Bᵢ::AbstractArray{<:Number,2}, Xᵢ::AbstractArray{<:Number,2}) where {PrecisionType<:Real}
 
     nHarmonics = half( size(Aᵢ)[1] )
     _1, _2 = getQuadrantSlices(nHarmonics)
@@ -289,7 +325,7 @@ function calcScatteringMatrix(prealloc::ScatteringMatrixAllocations{PrecisionTyp
     P, Q = calcPQmatrix(prealloc, layer, kVectorSet, matCol)
     Ω² = calcΩ²(prealloc, P, Q)
 
-    W, λ = calcWᵢλᵢ(prealloc,  Ω²)
+    W, λ = calcWᵢλᵢ(prealloc,  Ω²) # Note that
     V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, W, λ)
 
     A, B = calcAB(prealloc, W, W₀, V, V₀)
@@ -380,7 +416,7 @@ function calcScatteringMatrixTop_AB(prealloc::ScatteringMatrixAllocations{Precis
 end
 
 
-function calcABsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+function calcABsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, derivedParameters::DerivedParameters, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection) where {PrecisionType<:Real}
     # @show prealloc.W₀.matrix
 
     # W₀ = calcW₀( numHarmonics(kVectorSet) )
@@ -389,11 +425,13 @@ function calcABsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{Precisio
     # @show prealloc.W₀
     # @test W₀.matrix == prealloc.W₀.matrix
 
-    P, Q = calcPQmatrix(prealloc, layer, kVectorSet, matCol)
+    P, Q = calcPQmatrix(prealloc, layer, derivedParameters.kVectorSet, matCol)
     Ω² = calcΩ²(prealloc, P, Q)
-    kz = Array(Diagonal( calckzBottom(kVectorSet, layer, matCol, kVectorSet.wavenumber) ))
+    # kz = Array(Diagonal( calckzBottom(kVectorSet, layer, matCol, kVectorSet.wavenumber) ))
+    kz = Diagonal( derivedParameters.kzNormBottom )
 
-    λ = calcΛsemiInfiniteBottom(prealloc, kz, kVectorSet.wavenumber)
+    λ = calcΛsemiInfiniteBottom(prealloc, kz, derivedParameters.kVectorSet.wavenumber)
+    # @show typeof(λ)
     # V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, W₀,λ)
     V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, prealloc.W₀,λ)
 
@@ -401,37 +439,39 @@ function calcABsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{Precisio
     # A, B = calcAB_SemiInfinite(prealloc, prealloc.W₀, prealloc.W₀, V, prealloc.V₀)
     return A, B
 end
-function calcABsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+function calcABsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, derivedParameters::DerivedParameters, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection) where {PrecisionType<:Real}
 
     # W₀ = calcW₀( numHarmonics(kVectorSet) )
     # V₀ = calcV₀( kVectorSet )
 
-    P, Q = calcPQmatrix(prealloc, layer, kVectorSet, matCol)
-
+    P, Q = calcPQmatrix(prealloc, layer, derivedParameters.kVectorSet, matCol)
     Ω² = calcΩ²(prealloc, P, Q)
+    # kz = Array(Diagonal( calckzTop(kVectorSet, layer, matCol, derivedParameters.kVectorSet.wavenumber) ) )
+    kz = Diagonal( derivedParameters.kzNormTop )
 
-    kz = Array(Diagonal( calckzTop(kVectorSet, layer, matCol, kVectorSet.wavenumber) ) )
-    λ = calcΛsemiInfiniteTop(prealloc, kz, kVectorSet.wavenumber)
-    V = calcMagneticEigenvectorsFromQWλ(prealloc, Q,prealloc.W₀,λ)
+    λ = calcΛsemiInfiniteTop(prealloc, kz, derivedParameters.kVectorSet.wavenumber)
+    V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, prealloc.W₀,λ)
 
     A, B = calcAB_SemiInfinite(prealloc, prealloc.W₀, prealloc.W₀, V, prealloc.V₀)
     return A, B
 end
 
 # Calculates scattering matrix for the reflective layer
-function calcScatteringMatrixBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+function calcScatteringMatrixBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, derivedParameters::DerivedParameters, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection) where {PrecisionType<:Real}
     # @show prealloc.W₀.matrix
     # A, B = calcABsemiInfiniteBottom(prealloc, layer, matCol, kVectorSet)
-    A, B = calcABsemiInfiniteBottom(prealloc, layer, matCol, kVectorSet)
+    # A, B = calcABsemiInfiniteBottom(prealloc, layer, matCol, kVectorSet)
+    A, B = calcABsemiInfiniteBottom(prealloc, derivedParameters, layer, matCol)
     S = calcScatteringMatrixBottom_AB(prealloc, A,B)
     return S
 end
 
 # Calculates scattering matrix for a transmissive layer
-function calcScatteringMatrixTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+# function calcScatteringMatrixTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection, kVectorSet::KVectorSet) where {PrecisionType<:Real}
+function calcScatteringMatrixTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, derivedParameters::DerivedParameters, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection) where {PrecisionType<:Real}
 
     # A, B = calcABsemiInfiniteTop(prealloc, layer, matCol, kVectorSet)
-    A, B = calcABsemiInfiniteTop(prealloc, layer, matCol, kVectorSet)
+    A, B = calcABsemiInfiniteTop(prealloc, derivedParameters, layer, matCol)
     S = calcScatteringMatrixTop_AB(prealloc, A,B)
     return S
 end
@@ -469,15 +509,34 @@ function propagateModeCoeff(Sglobal::Array{ComplexF64,2}, sourceCoeff::Array{Com
 end
 
 
-function calcΛsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::Array{T,2}, wavenumber::Wavenumber) where {T<:Number, PrecisionType<:Real}
-    return vcat( hcat(-1im*kz, zeros(Complex{PrecisionType},size(kz)) ),
-               hcat(zeros(Complex{PrecisionType},size(kz)), -1im*kz) )  # Compatible with Lecture 7
+# function calcΛsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::Array{T,2}, wavenumber::Wavenumber) where {T<:Number, PrecisionType<:Real}
+function calcΛsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::AbstractArray{<:Complex,2}, wavenumber::Wavenumber) where {PrecisionType<:Real}
+    # return vcat( hcat(-1im*kz, zeros(Complex{PrecisionType},size(kz)) ),
+    #            hcat(zeros(Complex{PrecisionType},size(kz)), -1im*kz) )  # Compatible with Lecture 7
+
+    # @show typeof(kz)
+    # @test Diagonal(diag(kz)) == kz
+    # @show typeof( cat(-1im*diag(kz),-1im*diag(kz); dims=1) )
+    prealloc.λᵢ = Diagonal( cat(-1im*diag(kz),-1im*diag(kz),dims=1)  )
+    # prealloc.λᵢ[prealloc._1,prealloc._1] = -1im*kz
+    # prealloc.λᵢ[prealloc._1,prealloc._2] = zeros(Complex{PrecisionType},size(kz))
+    # prealloc.λᵢ[prealloc._2,prealloc._1] = zeros(Complex{PrecisionType},size(kz))
+    # prealloc.λᵢ[prealloc._2,prealloc._2] = -1im*kz
+
+    return prealloc.λᵢ
+
 end
-function calcΛsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::Array{T,2}, wavenumber::Wavenumber) where {T<:Number, PrecisionType<:Real}
-    return vcat( hcat(1im*kz, zeros(Complex{PrecisionType},size(kz)) ),
-               hcat(zeros(Complex{PrecisionType},size(kz)), 1im*kz) )  # compatible with Lecture 7
+
+
+# function calcΛsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::Array{T,2}, wavenumber::Wavenumber) where {T<:Number, PrecisionType<:Real}
+function calcΛsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, kz::AbstractArray{<:Complex,2}, wavenumber::Wavenumber) where {PrecisionType<:Real}
+    # @show kz
+    # return vcat( hcat(1im*kz, zeros(Complex{PrecisionType},size(kz)) ),
+    #            hcat(zeros(Complex{PrecisionType},size(kz)), 1im*kz) )  # compatible with Lecture 7
+    prealloc.λᵢ = Diagonal( cat(1im*diag(kz),1im*diag(kz),dims=1)  )
+    return prealloc.λᵢ
 end
-calcΛsemiInfinite(kz::LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}, wavenumber::Wavenumber) = calcΛsemiInfinite(Array(kz), wavenumber)
+# calcΛsemiInfinite(kz::LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}, wavenumber::Wavenumber) = calcΛsemiInfinite(Array(kz), wavenumber)
 
 
 function calcV₀(prealloc::ScatteringMatrixAllocations{PrecisionType}, Q::Array{ComplexF64,2}, Λ::Array{ComplexF64,2}) where {PrecisionType<:Real}

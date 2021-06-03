@@ -67,7 +67,9 @@ function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, 
     prealloc.W₀ = calcW₀( numHarmonics(kVectorSet) )
     prealloc.V₀ = calcV₀( kVectorSet )
     # @show prealloc.W₀.matrix
-    Sassembled = calcScatteringMatrixBottom( prealloc, first(layerStack), simulationDefinition.materialCollection, kVectorSet)
+    # Sassembled = calcScatteringMatrixBottom( prealloc, first(layerStack), simulationDefinition.materialCollection, kVectorSet)
+    Sassembled = calcScatteringMatrixBottom( prealloc, derivedParameters, first(layerStack), simulationDefinition.materialCollection)
+
 
 
     for iLayer = 2:(length(layerStack)-1)
@@ -77,7 +79,9 @@ function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, 
         RedhefferStarProduct!( Sassembled, SnewLayer )
 
     end
-    Stop = calcScatteringMatrixTop( prealloc, last(layerStack), simulationDefinition.materialCollection, kVectorSet)
+
+    # TODO: SEND THROUGH DERIVEDPARAMETERS SO IT CAN ACCESS KZNORMBOTTOM
+    Stop = calcScatteringMatrixTop( prealloc, derivedParameters, last(layerStack), simulationDefinition.materialCollection)
 
     RedhefferStarProduct!( Sassembled, Stop )
 

@@ -516,7 +516,8 @@ Sᵦ = calcScatteringMatrixBottom_AB(prealloc, Aᵦ,Bᵦ)
 @test isapprox(Sᵦ.matrix[_2,_2], SR₂₂benchmark, rtol=1e-3)
 
 @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-Sᵦ = calcScatteringMatrixBottom(prealloc, bottomLayer, matCol, kVectorSet)
+# Sᵦ = calcScatteringMatrixBottom(prealloc, bottomLayer, matCol, kVectorSet)
+Sᵦ = calcScatteringMatrixBottom(prealloc, derivedParameters, bottomLayer, matCol)
 @test isapprox(Sᵦ.matrix[_1,_1], SR₁₁benchmark, rtol=1e-3)
 @test isapprox(Sᵦ.matrix[_1,_2], SR₁₂benchmark, rtol=1e-3)
 @test isapprox(Sᵦ.matrix[_2,_1], SR₂₁benchmark, rtol=1e-3)
@@ -548,7 +549,7 @@ Sₜ = calcScatteringMatrixTop_AB(prealloc, Aₜ,Bₜ)
 @test isapprox(Sₜ.matrix[_2,_2], ST₂₂benchmark, rtol=1e-3)
 
 
-Sₜ = calcScatteringMatrixTop(prealloc, topLayer, matCol, kVectorSet)
+Sₜ = calcScatteringMatrixTop(prealloc, derivedParameters, topLayer, matCol)
 @test isapprox(Sₜ.matrix[_1,_1], ST₁₁benchmark, rtol=1e-3)
 @test isapprox(Sₜ.matrix[_1,_2], ST₁₂benchmark, rtol=1e-3)
 @test isapprox(Sₜ.matrix[_2,_1], ST₂₁benchmark, rtol=1e-3)
