@@ -68,7 +68,8 @@ function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, 
     prealloc.V₀ = calcV₀( kVectorSet )
     # @show prealloc.W₀.matrix
     # Sassembled = calcScatteringMatrixBottom( prealloc, first(layerStack), simulationDefinition.materialCollection, kVectorSet)
-    Sassembled = calcScatteringMatrixBottom( prealloc, derivedParameters, first(layerStack), simulationDefinition.materialCollection)
+    # prealloc.Sassembled.matrix[:,:] = calcScatteringMatrixBottom( prealloc, derivedParameters, first(layerStack), simulationDefinition.materialCollection)
+    prealloc.Sassembled.matrix = copy(calcScatteringMatrixBottom( prealloc, derivedParameters, first(layerStack), simulationDefinition.materialCollection).matrix)
 
 
 
@@ -76,16 +77,15 @@ function calcGlobalScatteringMatrix(simulationDefinition::SimulationDefinition, 
         # SnewLayer = calcScatteringMatrix(prealloc, layerStack[iLayer], matCol, derivedParameters, lattice)
         SnewLayer = calcScatteringMatrix(prealloc, layerStack[iLayer], simulationDefinition, derivedParameters )
         # @show SnewLayer.matrix
-        RedhefferStarProduct!( Sassembled, SnewLayer )
+        RedhefferStarProduct!( prealloc.Sassembled, SnewLayer )
 
     end
 
-    # TODO: SEND THROUGH DERIVEDPARAMETERS SO IT CAN ACCESS KZNORMBOTTOM
     Stop = calcScatteringMatrixTop( prealloc, derivedParameters, last(layerStack), simulationDefinition.materialCollection)
 
-    RedhefferStarProduct!( Sassembled, Stop )
+    RedhefferStarProduct!( prealloc.Sassembled, Stop )
 
-    return GlobalScatteringMatrix(Sassembled)
+    return GlobalScatteringMatrix(prealloc.Sassembled)
 end
 
 

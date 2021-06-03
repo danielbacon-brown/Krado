@@ -29,6 +29,7 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
 
     # S::Array{Complex{PrecisionType},2} # (nHarmonics*4, nHarmonics*4)
     S::LayerScatteringMatrix{PrecisionType} # (nHarmonics*4, nHarmonics*4)
+    Sassembled::LayerScatteringMatrix{PrecisionType} # (nHarmonics*4, nHarmonics*4)
 
     _1::UnitRange{Int64}
     _2::UnitRange{Int64}
@@ -61,11 +62,12 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
 
         # S = Array{Complex{PrecisionType},2}(undef, (4*nHarmonics, 4*nHarmonics) )
         S = LayerScatteringMatrix( Array{Complex{PrecisionType},2}(undef, (4*nHarmonics, 4*nHarmonics) ) )
+        Sassembled = LayerScatteringMatrix( Array{Complex{PrecisionType},2}(undef, (4*nHarmonics, 4*nHarmonics) ) )
 
         _1, _2 = getQuadrantSlices(P)
         _1Big, _2Big = getQuadrantSlices(S)
 
-        return new(W₀, V₀, Cϵᵢⱼ, Cμᵢⱼ, Cϵᵢⱼ⁻¹, Cμᵢⱼ⁻¹, P, Q, Ω², Wᵢ, λ, Vᵢ, A, B, X, S, _1, _2, _1Big, _2Big)
+        return new(W₀, V₀, Cϵᵢⱼ, Cμᵢⱼ, Cϵᵢⱼ⁻¹, Cμᵢⱼ⁻¹, P, Q, Ω², Wᵢ, λ, Vᵢ, A, B, X, S, Sassembled, _1, _2, _1Big, _2Big)
     end
 end
 
@@ -351,25 +353,25 @@ end
 # S₂₂ = -Aᵢ₀⁻¹Bᵢ₀
 function calcScatteringMatrixTop_AB(prealloc::ScatteringMatrixAllocations{PrecisionType}, Aᵢ₀::Array{<:Complex,2}, Bᵢ₀::Array{<:Complex,2}) where {PrecisionType<:Real}
 
-    nHarmonics = half( size(Aᵢ₀)[1] )
-    _1, _2 = getQuadrantSlices(nHarmonics)
+    # nHarmonics = half( size(Aᵢ₀)[1] )
+    # _1, _2 = getQuadrantSlices(nHarmonics)
 
     Aᵢ₀⁻¹ = inv(Aᵢ₀)
     Bᵢ₀Aᵢ₀⁻¹ =  Bᵢ₀*Aᵢ₀⁻¹
 
-    S = Array{ComplexF64,2}(undef,(4*nHarmonics,4*nHarmonics))
+    # S = Array{ComplexF64,2}(undef,(4*nHarmonics,4*nHarmonics))
 
-    S[_1,_1] = Bᵢ₀Aᵢ₀⁻¹
-    S[_1,_2] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
-    S[_2,_1] = 2*Aᵢ₀⁻¹
-    S[_2,_2] = -Aᵢ₀⁻¹*Bᵢ₀
-    # prealloc.S.matrix[prealloc._1Big,prealloc._1Big] = Bᵢ₀Aᵢ₀⁻¹
-    # prealloc.S.matrix[prealloc._1Big,prealloc._2Big] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
-    # prealloc.S.matrix[prealloc._2Big,prealloc._1Big] = 2*Aᵢ₀⁻¹
-    # prealloc.S.matrix[prealloc._2Big,prealloc._2Big] = -Aᵢ₀⁻¹*Bᵢ₀
+    # S[_1,_1] = Bᵢ₀Aᵢ₀⁻¹
+    # S[_1,_2] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
+    # S[_2,_1] = 2*Aᵢ₀⁻¹
+    # S[_2,_2] = -Aᵢ₀⁻¹*Bᵢ₀
+    prealloc.S.matrix[prealloc._1Big,prealloc._1Big] = Bᵢ₀Aᵢ₀⁻¹
+    prealloc.S.matrix[prealloc._1Big,prealloc._2Big] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
+    prealloc.S.matrix[prealloc._2Big,prealloc._1Big] = 2*Aᵢ₀⁻¹
+    prealloc.S.matrix[prealloc._2Big,prealloc._2Big] = -Aᵢ₀⁻¹*Bᵢ₀
 
-    return LayerScatteringMatrix(S)
-    # return prealloc.S
+    # return LayerScatteringMatrix(S)
+    return prealloc.S
 end
 
 

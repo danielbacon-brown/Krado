@@ -472,7 +472,7 @@ S₂ = calcScatteringMatrix(prealloc, layer2, matCol, kVectorSet)
 @test isapprox(S₂.matrix[_2,_1], S2₂₁benchmark, rtol=1e-3)
 @test isapprox(S₂.matrix[_2,_2], S2₂₂benchmark, rtol=1e-3)
 
-
+Sdevice = S₁⊗S₂
 
 # STEP 8: Reflection side scattering matrix
 Pᵦ, Qᵦ = calcPQmatrix(prealloc, bottomLayer, kVectorSet, matCol)
@@ -526,6 +526,7 @@ Sᵦ = calcScatteringMatrixBottom(prealloc, derivedParameters, bottomLayer, matC
 @test isapprox(Sᵦ.matrix[_2,_2], SR₂₂benchmark, rtol=1e-3)
 
 
+Sglobal = Sᵦ⊗Sdevice
 
 # STEP 9: Transmission side scattering matrix
 Pₜ, Qₜ = calcPQmatrix(prealloc, topLayer, kVectorSet, matCol)
@@ -564,8 +565,9 @@ Sₜ = calcScatteringMatrixTop(prealloc, derivedParameters, topLayer, matCol)
 
 
 # STEP 10: Global scattering matrix:
-Sdevice = S₁⊗S₂
-Sglobal = GlobalScatteringMatrix(Sᵦ⊗Sdevice⊗Sₜ)
+# Sdevice = S₁⊗S₂
+# Sglobal = GlobalScatteringMatrix(Sᵦ⊗Sdevice⊗Sₜ)
+Sglobal = Sglobal⊗Sₜ
 @test isapprox(Sglobal.matrix[_1,_1], SG₁₁benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_1,_2], SG₁₂benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_2,_1], SG₂₁benchmark,rtol=1e-3)
