@@ -486,7 +486,9 @@ Pᵦ, Qᵦ = calcPQmatrix(prealloc, bottomLayer, kVectorSet, matCol)
 Λᵦ = Array(vcat( hcat(-1im*kzᵦ, zeros(ComplexF64,size(kzᵦ)) ),
            hcat(zeros(ComplexF64,size(kzᵦ )), -1im*kzᵦ) ) )   # Lecture 7B
 @test isapprox(Λᵦ, Λᵦbenchmark, rtol=1e-3)
-Λᵦ = calcΛsemiInfiniteBottom(prealloc, Array(kzᵦ), kVectorSet.wavenumber)
+# Λᵦ = calcΛsemiInfiniteBottom(prealloc, Array(kzᵦ), kVectorSet.wavenumber)
+# Λᵦ = calcΛsemiInfiniteBottom(prealloc, kzᵦ)
+Λᵦ = calcΛsemiInfiniteBottom(prealloc, calckzBottom(kVectorSet, bottomLayer, matCol, wavenumber))
 @test isapprox(Λᵦ, Λᵦbenchmark, rtol=1e-3)
 Wᵦ = deepcopy(derivedParameters.freeSpaceParameters.W₀)
 # Wᵦeigenmodes = Wᵦ
@@ -530,7 +532,9 @@ Pₜ, Qₜ = calcPQmatrix(prealloc, topLayer, kVectorSet, matCol)
 Ω²ₜ = calcΩ²(prealloc, Pₜ,Qₜ)
 
 @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-Λₜ = calcΛsemiInfiniteTop(prealloc, Array(kzₜ), kVectorSet.wavenumber)
+# Λₜ = calcΛsemiInfiniteTop(prealloc, Array(kzₜ), kVectorSet.wavenumber)
+# Λₜ = calcΛsemiInfiniteTop(prealloc, kzₜ)
+Λₜ = calcΛsemiInfiniteTop(prealloc, calckzTop(kVectorSet, topLayer, matCol, wavenumber))
 @test isapprox(Λₜ,Λₜbenchmark,rtol=1e-3)
 Wₜ = deepcopy(derivedParameters.freeSpaceParameters.W₀)
 # Wₜeigenmodes = Wₜ
