@@ -501,13 +501,13 @@ Vᵦ = calcMagneticEigenvectorsFromQWλ(prealloc, Qᵦ,Wᵦ,Λᵦ)
 @test isapprox(Vᵦ.matrix,Vᵦbenchmark,rtol=1e-3)
 
 
-Aᵦ = calcA_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
-@test isapprox(Aᵦ, Aᵦbenchmark, rtol=1e-3)
-Bᵦ = calcB_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
-@test isapprox(Bᵦ, Bᵦbenchmark, rtol=1e-3)
+# Aᵦ = calcA_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
+# @test isapprox(Aᵦ, Aᵦbenchmark, rtol=1e-3)
+# Bᵦ = calcB_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
+# @test isapprox(Bᵦ, Bᵦbenchmark, rtol=1e-3)
 
-# #sugary
-Aᵦ, Bᵦ = calcAB_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
+# Aᵦ, Bᵦ = calcABfromWV_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
+Aᵦ, Bᵦ = calcABfromWV_SemiInfinite(prealloc, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
 @test isapprox(Aᵦ, Aᵦbenchmark, rtol=1e-3)
 @test isapprox(Bᵦ, Bᵦbenchmark, rtol=1e-3)
 
@@ -543,8 +543,10 @@ Vₜ = calcMagneticEigenvectorsFromQWλ(prealloc, Qₜ,Wₜ,Λₜ)
 @test isapprox(Vₜ.matrix,Vₜbenchmark,rtol=1e-3)
 
 
-Aₜ = calcA_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
-Bₜ = calcB_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
+# Aₜ = calcA_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
+# Bₜ = calcB_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
+# Aₜ, Bₜ = calcABfromWV_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
+Aₜ, Bₜ = calcABfromWV_SemiInfinite(prealloc, Vₜ, derivedParameters.freeSpaceParameters.V₀)
 
 Sₜ = calcScatteringMatrixTop_AB(prealloc, Aₜ,Bₜ)
 @test isapprox(Sₜ.matrix[_1,_1], ST₁₁benchmark, rtol=1e-3)

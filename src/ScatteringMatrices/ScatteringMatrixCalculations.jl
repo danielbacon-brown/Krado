@@ -27,7 +27,8 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
     B::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
     X::Array{Complex{PrecisionType},2} # (nHarmonics*2, nHarmonics*2)
 
-    S::Array{Complex{PrecisionType},2} # (nHarmonics*4, nHarmonics*4)
+    # S::Array{Complex{PrecisionType},2} # (nHarmonics*4, nHarmonics*4)
+    S::LayerScatteringMatrix{PrecisionType} # (nHarmonics*4, nHarmonics*4)
 
     _1::UnitRange{Int64}
     _2::UnitRange{Int64}
@@ -58,7 +59,8 @@ mutable struct ScatteringMatrixAllocations{PrecisionType}
         B = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
         X = Array{Complex{PrecisionType},2}(undef, (2*nHarmonics, 2*nHarmonics) )
 
-        S = Array{Complex{PrecisionType},2}(undef, (4*nHarmonics, 4*nHarmonics) )
+        # S = Array{Complex{PrecisionType},2}(undef, (4*nHarmonics, 4*nHarmonics) )
+        S = LayerScatteringMatrix( Array{Complex{PrecisionType},2}(undef, (4*nHarmonics, 4*nHarmonics) ) )
 
         _1, _2 = getQuadrantSlices(P)
         _1Big, _2Big = getQuadrantSlices(S)
@@ -202,8 +204,10 @@ function calcPQmatrix(prealloc::ScatteringMatrixAllocations{PrecisionType}, laye
 end
 
 function calcAB(prealloc::ScatteringMatrixAllocations{PrecisionType}, Wᵢ::ElectricEigenvectors, W₀::ElectricEigenvectors, Vᵢ::MagneticEigenvectors, V₀::MagneticEigenvectors) where {PrecisionType<:Real}
-    Wᵢ⁻¹W₀ = inv(Wᵢ.matrix)*W₀.matrix
-    Vᵢ⁻¹V₀ = inv(Vᵢ.matrix)*V₀.matrix
+    # Wᵢ⁻¹W₀ = inv(Wᵢ.matrix)*W₀.matrix
+    Wᵢ⁻¹W₀ = Wᵢ.matrix \ W₀.matrix
+    # Vᵢ⁻¹V₀ = inv(Vᵢ.matrix)*V₀.matrix
+    Vᵢ⁻¹V₀ = Vᵢ.matrix\V₀.matrix
     return Wᵢ⁻¹W₀ + Vᵢ⁻¹V₀,
         Wᵢ⁻¹W₀ - Vᵢ⁻¹V₀
 end
@@ -217,18 +221,13 @@ end
 
 
 # A = W₀⁻¹Wref + V₀⁻¹Vref
-function calcA_SemiInfinite(prealloc::ScatteringMatrixAllocations{PrecisionType}, W::ElectricEigenvectors, W₀::ElectricEigenvectors, V::MagneticEigenvectors, V₀::MagneticEigenvectors) where {PrecisionType<:Real}
-    return inv(W₀.matrix)*W.matrix + inv(V₀.matrix)*V.matrix
-end
-
 # B = W₀⁻¹Wref - V₀⁻¹Vref
-function calcB_SemiInfinite(prealloc::ScatteringMatrixAllocations{PrecisionType}, W::ElectricEigenvectors, W₀::ElectricEigenvectors, V::MagneticEigenvectors, V₀::MagneticEigenvectors) where {PrecisionType<:Real}
-    return inv(W₀.matrix)*W.matrix - inv(V₀.matrix)*V.matrix
-end
-
-
-function calcAB_SemiInfinite(prealloc::ScatteringMatrixAllocations{PrecisionType}, W::ElectricEigenvectors, W₀::ElectricEigenvectors, V::MagneticEigenvectors, V₀::MagneticEigenvectors) where {PrecisionType<:Real}
-    return calcA_SemiInfinite(prealloc, W, W₀, V, V₀), calcB_SemiInfinite(prealloc, W, W₀, V, V₀)
+# For Semi-infinite: W == W₀
+function calcABfromWV_SemiInfinite(prealloc::ScatteringMatrixAllocations{PrecisionType}, V::MagneticEigenvectors, V₀::MagneticEigenvectors) where {PrecisionType<:Real}
+    V₀⁻¹V = inv(V₀.matrix)*V.matrix
+    A = I + V₀⁻¹V
+    B = I - V₀⁻¹V
+    return A, B
 end
 
 
@@ -324,23 +323,23 @@ end
 # S₁₂ = 2*Aᵢ₀⁻¹
 # S₂₁ = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹Bᵢ₀)
 # S₂₂ = Bᵢ₀Aᵢ₀⁻¹
-function calcScatteringMatrixBottom_AB(prealloc::ScatteringMatrixAllocations{PrecisionType1}, Aᵢ₀::Array{Complex{PrecisionType2},2}, Bᵢ₀::Array{Complex{PrecisionType3},2}) where {PrecisionType1<:Real, PrecisionType2<:Real, PrecisionType3<:Real}
-    PrecisionTypeNew = promote_type(PrecisionType1, PrecisionType2, PrecisionType3)
+function calcScatteringMatrixBottom_AB(prealloc::ScatteringMatrixAllocations{PrecisionType}, Aᵢ₀::AbstractArray{<:Complex,2}, Bᵢ₀::Array{<:Complex,2}) where {PrecisionType<:Real}
+    # PrecisionTypeNew = promote_type(PrecisionType1, PrecisionType2, PrecisionType3)
 
     nHarmonics = half( size(Aᵢ₀)[1] )
-    _1, _2 = getQuadrantSlices(nHarmonics)
+    # _1, _2 = getQuadrantSlices(nHarmonics)
 
     Aᵢ₀⁻¹ = inv(Aᵢ₀)
     Bᵢ₀Aᵢ₀⁻¹ =  Bᵢ₀*Aᵢ₀⁻¹
+    # Bᵢ₀Aᵢ₀⁻¹ =  Bᵢ₀/Aᵢ₀
+    # S = Array{Complex{PrecisionType},2}(undef,(4*nHarmonics,4*nHarmonics))
 
-    S = Array{Complex{PrecisionTypeNew},2}(undef,(4*nHarmonics,4*nHarmonics))
+    prealloc.S.matrix[prealloc._1Big,prealloc._1Big] = -Aᵢ₀⁻¹*Bᵢ₀
+    prealloc.S.matrix[prealloc._1Big,prealloc._2Big] = 2*Aᵢ₀⁻¹
+    prealloc.S.matrix[prealloc._2Big,prealloc._1Big] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
+    prealloc.S.matrix[prealloc._2Big,prealloc._2Big] = Bᵢ₀Aᵢ₀⁻¹
 
-    S[_1,_1] = -Aᵢ₀⁻¹*Bᵢ₀
-    S[_1,_2] = 2*Aᵢ₀⁻¹
-    S[_2,_1] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
-    S[_2,_2] = Bᵢ₀Aᵢ₀⁻¹
-
-    return LayerScatteringMatrix{PrecisionTypeNew}(S)
+    return prealloc.S
 end
 
 # Calculates the transmission layer scattering matrix based on the given A, B values
@@ -364,8 +363,13 @@ function calcScatteringMatrixTop_AB(prealloc::ScatteringMatrixAllocations{Precis
     S[_1,_2] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
     S[_2,_1] = 2*Aᵢ₀⁻¹
     S[_2,_2] = -Aᵢ₀⁻¹*Bᵢ₀
+    # prealloc.S.matrix[prealloc._1Big,prealloc._1Big] = Bᵢ₀Aᵢ₀⁻¹
+    # prealloc.S.matrix[prealloc._1Big,prealloc._2Big] = 0.5*(Aᵢ₀ - Bᵢ₀Aᵢ₀⁻¹*Bᵢ₀)
+    # prealloc.S.matrix[prealloc._2Big,prealloc._1Big] = 2*Aᵢ₀⁻¹
+    # prealloc.S.matrix[prealloc._2Big,prealloc._2Big] = -Aᵢ₀⁻¹*Bᵢ₀
 
     return LayerScatteringMatrix(S)
+    # return prealloc.S
 end
 
 
@@ -379,7 +383,7 @@ function calcABsemiInfiniteBottom(prealloc::ScatteringMatrixAllocations{Precisio
 
     V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, prealloc.W₀,λ)
 
-    A, B = calcAB_SemiInfinite(prealloc, prealloc.W₀, prealloc.W₀, V, prealloc.V₀)
+    A, B = calcABfromWV_SemiInfinite(prealloc, V, prealloc.V₀)
     return A, B
 end
 function calcABsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionType}, derivedParameters::DerivedParameters, layer::SemiInfiniteLayerDefinition, matCol::MaterialCollection) where {PrecisionType<:Real}
@@ -390,7 +394,7 @@ function calcABsemiInfiniteTop(prealloc::ScatteringMatrixAllocations{PrecisionTy
     λ = calcΛsemiInfiniteTop(prealloc, derivedParameters.kzNormTop)
     V = calcMagneticEigenvectorsFromQWλ(prealloc, Q, prealloc.W₀,λ)
 
-    A, B = calcAB_SemiInfinite(prealloc, prealloc.W₀, prealloc.W₀, V, prealloc.V₀)
+    A, B = calcABfromWV_SemiInfinite(prealloc, V, prealloc.V₀)
     return A, B
 end
 
