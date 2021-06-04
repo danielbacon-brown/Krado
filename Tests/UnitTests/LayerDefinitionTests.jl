@@ -59,7 +59,9 @@
     harmonicsSet = calcHarmonicsSet( HarmonicsTruncationByRectangle(1,0) )
     Gvectors = GvectorSet(harmonicsSet, lattice1D)
     ∫ϵexpΔ𝐆𝐫 = calc∫xexpΔ𝐆𝐫Dict(ϵGrid1D,grid1D,Gvectors, harmonicsSet)
-    Cϵᵢⱼ = assembleConvolutionMatrix( ∫ϵexpΔ𝐆𝐫, harmonicsSet )
+    preallocCϵᵢⱼ = Array{ComplexF64,2}(undef, (numHarmonics(harmonicsSet), numHarmonics(harmonicsSet)) )
+    # Cϵᵢⱼ = assembleConvolutionMatrix( ∫ϵexpΔ𝐆𝐫, harmonicsSet )
+    Cϵᵢⱼ = assembleConvolutionMatrix( preallocCϵᵢⱼ, ∫ϵexpΔ𝐆𝐫, harmonicsSet )
     @test Cϵᵢⱼ ≈ Complex{Float64}[1.25 -0.25im -0.25;
         0.25im 1.25 -0.25im;
         -0.25 0.25im 1.25]
@@ -87,7 +89,11 @@
     # simulationDefinition = SimulationDefinition(lattice1D, lattice1D,layerStack,harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition, Float64 )
     simulationDefinition = SimulationDefinition(lattice1D,layerStack,harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
     derivedParameters = DerivedParameters(simulationDefinition)
-    Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layerDefinition, simulationDefinition, derivedParameters )
+    # Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layerDefinition, simulationDefinition, derivedParameters )
+    preallocCϵᵢⱼ = Array{ComplexF64,2}(undef, (numHarmonics(harmonicsSet), numHarmonics(harmonicsSet)) )
+    preallocCμᵢⱼ = Array{ComplexF64,2}(undef, (numHarmonics(harmonicsSet), numHarmonics(harmonicsSet)) )
+    # Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( layerDefinition, simulationDefinition, derivedParameters )
+    Cϵᵢⱼ, Cμᵢⱼ = calcConvolutionMatrices( preallocCϵᵢⱼ, preallocCμᵢⱼ, layerDefinition, simulationDefinition, derivedParameters )
     @test Cϵᵢⱼ ≈ Complex{Float64}[1.25 -0.25im -0.25;
         0.25im 1.25 -0.25im;
         -0.25 0.25im 1.25]

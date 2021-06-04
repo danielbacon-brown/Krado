@@ -352,7 +352,10 @@ inputFields = calcInputFields(boundaryConditions, harmonicsSet, kVectorSet, laye
 
 ##### CALCULATE CONVOLUTION MATRICES OF INTERMEDIATE LAYERS
 # Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, lattice, Gvectors, harmonicsSet, matCol, wavenumber )
-Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, simulationDefinition, derivedParameters )
+nHarmonics = numHarmonics(kVectorSet)
+preallocCϵᵢⱼ1 = Array{ComplexF64,2}(undef, (nHarmonics,nHarmonics))
+preallocCμᵢⱼ1 = Array{ComplexF64,2}(undef, (nHarmonics,nHarmonics))
+Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( preallocCϵᵢⱼ1, preallocCμᵢⱼ1, layer1, simulationDefinition, derivedParameters )
 @test Cμᵢⱼ1 ≈ Array{ComplexF64,2}(I,(9,9))
 @test isapprox(Cϵᵢⱼ1, Cϵᵢⱼ1benchmark, rtol=1e-1)
 
@@ -434,7 +437,7 @@ S₁ = calcScatteringMatrix(prealloc, layer1, simulationDefinition, derivedParam
 @test isapprox(S₁.matrix[_2,_2], S1₂₂benchmark, rtol=1e-3)
 
 # @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-
+Sdevice = deepcopy(S₁)
 
 # Layer 2: Unpatterned
 mat₂str = layer2.backgroundMaterialName
@@ -472,7 +475,8 @@ S₂ = calcScatteringMatrix(prealloc, layer2, matCol, kVectorSet)
 @test isapprox(S₂.matrix[_2,_1], S2₂₁benchmark, rtol=1e-3)
 @test isapprox(S₂.matrix[_2,_2], S2₂₂benchmark, rtol=1e-3)
 
-Sdevice = S₁⊗S₂
+# Sdevice = S₁⊗S₂
+Sdevice = Sdevice⊗S₂
 
 # STEP 8: Reflection side scattering matrix
 Pᵦ, Qᵦ = calcPQmatrix(prealloc, bottomLayer, kVectorSet, matCol)
