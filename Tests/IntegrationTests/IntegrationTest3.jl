@@ -457,7 +457,7 @@ P₂, Q₂ = calcPQmatrix(prealloc, layer2, kVectorSet, matCol)
 W₂, λ₂ = calcWᵢλᵢ(prealloc, Ω²₂)
 V₂ = calcMagneticEigenvectorsFromQWλ(prealloc, Q₂,W₂,λ₂)
 # sugary:
-V₂ = calcEigenmodesForUniformLayer(prealloc, kVectorSet, layer2, matCol)
+# V₂ = calcEigenmodesForUniformLayer(prealloc, kVectorSet, layer2, matCol)
 
 # Common components of scattering matrix
 A₂, B₂ = calcAB(prealloc, W₂, derivedParameters.freeSpaceParameters.W₀, V₂, derivedParameters.freeSpaceParameters.V₀)

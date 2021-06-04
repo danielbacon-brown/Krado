@@ -74,6 +74,7 @@ include("Simulation\\DerivedParameters.jl")
 
 include("ScatteringMatrices\\ConvolutionMatrices.jl")
 include("ScatteringMatrices\\GlobalScatteringMatrix.jl")
+include("ScatteringMatrices\\ScatteringMatrixAllocations.jl")
 include("ScatteringMatrices\\ScatteringMatrixCalculations.jl")
 
 include("Analysis\\AnalysisFunctions.jl")
