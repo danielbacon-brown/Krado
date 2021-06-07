@@ -17,7 +17,7 @@ end
 mutable struct ZeroOrderModesAnalysisDefinition <: AnalysisDefinition
     direction::Bool
     function ZeroOrderModesAnalysisDefinition( direction::Bool)
-        new(direction)
+        return new(direction)
     end
 end
 
@@ -58,6 +58,75 @@ function runSimulation(analysisDefinition::ZeroOrderModesAnalysisDefinition, sim
 
      return data
 end
+
+# Assumed to be zero order only
+mutable struct JonesMatrixAnalysisDefinition <: AnalysisDefinition
+    direction::Bool
+    function JonesMatrixAnalysisDefinition( direction::Bool)
+        return new(direction)
+    end
+end
+
+function runSimulation(analysisDefinition::JonesMatrixAnalysisDefinition, simulationDefinition::SimulationDefinition)
+# Switches the polarization of the modes
+
+    Spol = [1, 0]
+    Ppol = [0, 1]
+
+    # assuming InputByOrderBoundaryDefinition
+    # Set polarization to S:
+    if analysisDefinition.direction==FORWARD
+        simulationDefinition.boundaryDefinition.Abyϖbottom = Dict{_2VectorInt, _2VectorComplex}( simulationDefinition.boundaryDefinition.mainHarmonicOrder => Spol)
+        simulationDefinition.boundaryDefinition.Abyϖtop = Dict{_2VectorInt, _2VectorComplex}()
+    else
+        simulationDefinition.boundaryDefinition.Abyϖtop = Dict{_2VectorInt, _2VectorComplex}( simulationDefinition.boundaryDefinition.mainHarmonicOrder => Spol)
+        simulationDefinition.boundaryDefinition.Abyϖbottom = Dict{_2VectorInt, _2VectorComplex}()
+    end
+
+    dataS = runSimulation(ZeroOrderModesAnalysisDefinition(analysisDefinition.direction), simulationDefinition)
+
+
+    # Set polarization to P:
+    if analysisDefinition.direction==FORWARD
+        simulationDefinition.boundaryDefinition.Abyϖbottom = Dict{_2VectorInt, _2VectorComplex}( simulationDefinition.boundaryDefinition.mainHarmonicOrder => Ppol)
+        simulationDefinition.boundaryDefinition.Abyϖtop = Dict{_2VectorInt, _2VectorComplex}()
+    else
+        simulationDefinition.boundaryDefinition.Abyϖtop = Dict{_2VectorInt, _2VectorComplex}( simulationDefinition.boundaryDefinition.mainHarmonicOrder => Ppol)
+        simulationDefinition.boundaryDefinition.Abyϖbottom = Dict{_2VectorInt, _2VectorComplex}()
+    end
+    dataP = runSimulation(ZeroOrderModesAnalysisDefinition(analysisDefinition.direction), simulationDefinition::SimulationDefinition)
+
+    # Convert to Jones matrix
+    # [Eₛ]  = [Mₛₛ, Mₛₚ] * [Eₛ]
+    #  Eₚ      Mₚₛ, Mₚₚ     Ep
+
+    Sinput = 1
+    Pinput = 1
+
+    # Es2 = Mss*Es1 + Msp*Ep1
+    # For Spol, Ep1==0
+    # Mss = Es2/Es1
+
+    Mss = dataS.Tsp[S] / Sinput
+    Msp = dataP.Tsp[S] / Pinput
+    Mps = dataS.Tsp[P] / Sinput
+    Mpp = dataP.Tsp[P] / Pinput
+
+    Mtransmission = [ Mss Msp; Mps Mpp]
+
+    # Reflection:
+    Mss = dataS.Rsp[S] / Sinput
+    Msp = dataP.Rsp[S] / Pinput
+    Mps = dataS.Rsp[P] / Sinput
+    Mpp = dataP.Rsp[P] / Pinput
+
+    Mreflection = [ Mss Msp; Mps Mpp]
+
+    data = ( reflection = Mreflection, transmission = Mtransmission )
+    return data
+end
+
+
 
 #  Calculates the modes in both input and output, on both sides
 mutable struct AllModesAnalysisDefinition <: AnalysisDefinition

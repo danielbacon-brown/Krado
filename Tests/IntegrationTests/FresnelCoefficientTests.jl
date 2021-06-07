@@ -215,6 +215,21 @@ tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoeffici
 @test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 end;
 
+@testset "Jones matrix - reflection and transmission" begin
+analysisDefinitionJones = JonesMatrixAnalysisDefinition(FORWARD)
+simulationDefinition = SimulationDefinition(lattice, layerStackSiO2Thin, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinitionJones)
+data = runSimulation(simulationDefinition)
+tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSiO2_564nm, 30*degrees)
+@test isapprox( abs(data.reflection[S,S]), abs(rₛBenchmark), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.reflection[P,P]), abs(rₚBenchmark), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.reflection[S,P]), abs(0), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.reflection[P,S]), abs(0), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.transmission[S,S]), abs(tₛBenchmark), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.transmission[P,P]), abs(tₚBenchmark), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.transmission[S,P]), abs(0), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.transmission[P,S]), abs(0), rtol=1e-3, atol=1e-5)
+
+end;
 
 
 
@@ -252,14 +267,11 @@ tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoeffici
 @test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 end;
 
-
-@testset " Very thick Si uniform - UV - angled incidence" begin
 semiInfAir = SemiInfiniteLayerDefinition("Air")
 uniformAirThick = UniformLayerDefinition(1 * mm, "Air")
 uniformSiThick = UniformLayerDefinition(1 * mm, "Si302nm")
 layerStackSiUniformThick = LayerStack([semiInfAir, uniformAirThick, uniformSiThick, semiInfAir])
-
-
+@testset "Very thick Si uniform - UV - angled incidence" begin
 simulationDefinition = SimulationDefinition(lattice, layerStackSiUniformThick, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 30*degrees)
@@ -268,14 +280,28 @@ tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoeffici
 end;
 
 
-@testset " Very thick Si uniform - UV - normal incidence" begin
-simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
+@testset "Very thick Si uniform - UV - normal incidence" begin
+# simulationDefinition = SimulationDefinition(lattice, layerStackSiUniformThick, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
+simulationDefinition = SimulationDefinition(lattice, layerStackSiUniformThick, harmonicsTruncation, boundaryDefinitionNormal, matCol, analysisDefinition)
 data = runSimulation(simulationDefinition)
 tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 0*degrees)
 @test isapprox(abs(data.Rsp[P])^2, abs(rₚBenchmark)^2, rtol=1e-3)
 @test isapprox(abs(data.Rsp[S])^2, abs(rₛBenchmark)^2, rtol=1e-3)
 end;
 
+
+
+@testset "Jones matrix - reflection" begin
+analysisDefinitionJones = JonesMatrixAnalysisDefinition(FORWARD)
+simulationDefinition = SimulationDefinition(lattice, layerStackSi, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinitionJones)
+data = runSimulation(simulationDefinition)
+tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 30*degrees)
+@test isapprox( abs(data.reflection[S,S]), abs(rₛBenchmark), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.reflection[P,P]), abs(rₚBenchmark), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.reflection[S,P]), abs(0), rtol=1e-3, atol=1e-5)
+@test isapprox( abs(data.reflection[P,S]), abs(0), rtol=1e-3, atol=1e-5)
+
+end;
 
 
 
