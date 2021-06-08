@@ -2,7 +2,7 @@ TODO LIST:
 
 TODO: Do the UserMaterial Parameters but for the plotting parameters
 
-
+TODO: plotting of superEllipse
 
 TODO: Structure structure that combines Lattice and LayerStack? -nah, don't do this
 

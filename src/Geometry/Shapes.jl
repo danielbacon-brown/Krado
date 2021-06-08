@@ -40,6 +40,26 @@ function containsXY(circ::Circle, testPoint)::Bool
 end
 
 
+
+mutable struct SuperEllipse <: Shape
+    center::_2VectorFloat
+    limits::_2VectorFloat
+    γ::_2VectorFloat
+
+    function SuperEllipse(center, limits, γ)
+        @assert all(limits .> 0)
+        @assert all(γ .> 0)
+        return new( _2VectorFloat(center), _2VectorFloat(limits), _2VectorFloat(γ) )
+    end
+end
+
+
+function containsXY(ell::SuperEllipse, testPoint)::Bool
+    # ((testPoint[X] - ell.center[X])/ell.limits[X])^γ[X] + ((testPoint[Y] - ell.center[Y])/ell.limits[Y])^γ[Y] < 1
+    return (abs(testPoint[X]-ell.center[X])/ell.limits[X])^ell.γ[X] + (abs(testPoint[Y]-ell.center[Y])/ell.limits[Y])^ell.γ[Y] < 1
+end
+
+
 mutable struct Polygon <: Shape
     # vertices is a list of x,y pairs
     vertices::Vector{_2VectorFloat}

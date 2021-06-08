@@ -28,6 +28,21 @@ end;
     @test containsXY( circ2, [1,1]) == false
 end;
 
+
+@testset "SuperEllipse" begin
+    # Test containsXY of circle
+    superEllipse1 = SuperEllipse([0,0], [1,2], [0.5,0.5] )
+    @test containsXY( superEllipse1, [0,0])
+    @test containsXY( superEllipse1, [1.5,0]) == false
+    @test containsXY( superEllipse1, [0,1.5])
+    @test containsXY( superEllipse1, [0.5,1]) == false
+    superEllipse2 = SuperEllipse([0,0], [1,2], [3,3] )
+    @test containsXY( superEllipse2, [0,0])
+    @test containsXY( superEllipse2, [1.5,0]) == false
+    @test containsXY( superEllipse2, [0,1.5])
+    @test containsXY( superEllipse2, [0.5,1])
+end;
+
 @testset "Line segments" begin
     # Test segment intersection. Positive slope.
     vert1 = [0.0, 0.0]
