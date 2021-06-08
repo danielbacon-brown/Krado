@@ -6,15 +6,14 @@ mutable struct DerivedParameters
     harmonicsSet::HarmonicsSet
     gVectorSet::GvectorSet
     kVectorSet::KVectorSet
-    freeSpaceParameters::FreeSpaceParameters
 
     # The z-components of k-vectors in the top and bottom layers
     kzNormBottom::Vector{ComplexF64}
     kzNormTop::Vector{ComplexF64}
     kzNormGap::Vector{ComplexF64}
 
-    function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, freeSpaceParameters::FreeSpaceParameters, kzNormBottom::Vector{<:Number}, kzNormTop::Vector{<:Number}, kzNormGap::Vector{<:Number} )
-        return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzNormBottom, kzNormTop, kzNormGap )
+    function DerivedParameters(boundaryConditions::BoundaryConditions, harmonicsSet::HarmonicsSet, gVectorSet::GvectorSet, kVectorSet::KVectorSet, kzNormBottom::Vector{<:Number}, kzNormTop::Vector{<:Number}, kzNormGap::Vector{<:Number} )
+        return new(boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, kzNormBottom, kzNormTop, kzNormGap )
     end
 end
 
@@ -28,10 +27,7 @@ function DerivedParameters(simulationDefinition::SimulationDefinition)
     kzNormBottom = calckzBottom(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,BOTTOM), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
     kzNormTop = calckzTop(kVectorSet, getBoundaryLayer(simulationDefinition.layerStack,TOP), simulationDefinition.materialCollection, simulationDefinition.boundaryDefinition.wavenumber)
     kzNormGap = diag( conj(sqrt(I - kVectorSet.KxNorm.^2 - kVectorSet.KyNorm.^2)) )
-
-    freeSpaceParameters = FreeSpaceParameters(kVectorSet)
-
-    return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, freeSpaceParameters, kzNormBottom, kzNormTop, kzNormGap )
+    return DerivedParameters( boundaryConditions, harmonicsSet, gVectorSet, kVectorSet, kzNormBottom, kzNormTop, kzNormGap )
 end
 
 

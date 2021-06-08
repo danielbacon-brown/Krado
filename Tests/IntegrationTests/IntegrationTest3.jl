@@ -147,54 +147,25 @@ derivedParameters = DerivedParameters(simulationDefinition)
 @test isapprox(derivedParameters.boundaryConditions.kXY₀/getk₀(getWavenumber(simulationDefinition)), kBenchmark[X:Y], rtol=1e-3)
 
 # 0-order kXY-vector
-#old:
-# @test isapprox(derivedParameters.kVectorSet.kᵢ[5]/getk₀(simulationDefinition), kBenchmark[X:Y], rtol=1e-3)
-# KNORM
 @test isapprox(derivedParameters.kVectorSet.kᵢNorm[5], kBenchmark[X:Y], rtol=1e-3)
 
 # kz components at top and bottom layers
-#old:
-# kzᵦ = Diagonal( derivedParameters.kzBottom )
-# @test isapprox(kzᵦ/getk₀(simulationDefinition), -1*kzᵦbenchmark, rtol=1e-3)
-# kzₜ = Diagonal( derivedParameters.kzTop )
-# @test isapprox(kzₜ/getk₀(simulationDefinition), kzₜbenchmark, rtol=1e-3)
-# Norm
 kzᵦNorm = Diagonal( derivedParameters.kzNormBottom )
 @test isapprox(kzᵦNorm, kzᵦbenchmark, rtol=1e-3)
 # @test isapprox(kzᵦNorm, -1*kzᵦbenchmark, rtol=1e-3)
 kzₜNorm = Diagonal( derivedParameters.kzNormTop )
 @test isapprox(kzₜNorm, kzₜbenchmark, rtol=1e-3)
 
-# Free space parameters
-@test isapprox(derivedParameters.freeSpaceParameters.KzNorm, KzNormBenchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.Q, Qbenchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.W₀.matrix, Array{ComplexF64,2}(I,(9*2,9*2)), rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.Λ, λeigenvaluesBenchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.V₀.matrix, V₀benchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.V₀.matrix, V₀benchmark, rtol=1e-3)
 @test isapprox(derivedParameters.boundaryConditions.kXY₀/getk₀(boundaryDefinition.wavenumber), kBenchmark[X:Y], rtol=1e-3)
 
 # K-vector set
-# old
-# @test isapprox(derivedParameters.kVectorSet.kᵢ[5]/getk₀(derivedParameters.kVectorSet.wavenumber), kBenchmark[X:Y], rtol=1e-3)
-# KNORM
 @test isapprox(derivedParameters.kVectorSet.kᵢNorm[5], kBenchmark[X:Y], rtol=1e-3)
 
-# Free space parameters.
-@test isapprox(derivedParameters.freeSpaceParameters.KzNorm, KzNormBenchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.Q, Qbenchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.W₀.matrix, Array{ComplexF64,2}(I,(9*2,9*2)), rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.Λ, λeigenvaluesBenchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.V₀.matrix, V₀benchmark, rtol=1e-3)
-@test isapprox(derivedParameters.freeSpaceParameters.V₀.matrix, V₀benchmark, rtol=1e-3)
 
 
 ######## CALC INPUT FIELDS #########################################################################
 
-# inputFields = calcInputFields(simulationDefinition, derivedParameters)
 inputFields = calcInputFields(derivedParameters.boundaryConditions, derivedParameters.harmonicsSet, derivedParameters.kVectorSet, simulationDefinition.layerStack, simulationDefinition.materialCollection, getWavenumber(simulationDefinition) )
-# @test isapprox(inputFields.bottom.modeFields, sourceFields1benchmark, rtol=1e-3)
-# @test isapprox(inputFields.top.modeFields, sourceFields2benchmark, rtol=1e-3)
 
 
 ######## CALCULATE GLOBAL SCATTERING MATRIX ########################################################
@@ -202,20 +173,10 @@ inputFields = calcInputFields(derivedParameters.boundaryConditions, derivedParam
 Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
 
 _1, _2 = getQuadrantSlices(numHarmonics(derivedParameters.kVectorSet))
-# @test isapprox(Sglobal.matrix[_1,_1], SG₁₁benchmark,rtol=1e-3)
-# @test isapprox(Sglobal.matrix[_1,_2], SG₁₂benchmark,rtol=1e-3)
-# @test isapprox(Sglobal.matrix[_2,_1], SG₂₁benchmark,rtol=1e-3)
-# @test isapprox(Sglobal.matrix[_2,_2], SG₂₂benchmark,rtol=1e-3)
 
 ######## CALCULATE OUTPUT FIELDS ###############################################################
 
-# inputFields = calcInputFields(simulationDefinition, derivedParameters)
-# @test isapprox(inputFields.bottom.modeFields, sourceFields1benchmark,rtol=1e-3 )
-
 outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
-# @test isapprox(outputFields.bottom.modeFields, EᵦxyBenchmark, rtol=1e-2)
-# @test isapprox(outputFields.top.modeFields, EₜxyBenchmark, rtol=1e-2)
-
 
 ######## CALCULATE DIFFRACTION EFFICIENCIES #######################################################
 
@@ -235,9 +196,6 @@ totalReflectance = sum(real(outputBottomRelativeFlux))
 @test isapprox(totalTransmittance, 0.91123, rtol=1e-2)
 
 
-
-# Short version:
-# inputBottomPowerFlux, inputTopPowerFlux, outputBottomPowerFlux, outputTopPowerFlux = calculateReflectedTransmittedOrders(simulationDefinition)
 
 
 ######## END OF SHORTENED INTEGRATION TEST ########################################################
@@ -286,7 +244,6 @@ kXYZ = kXYtokXYZ(boundaryConditions.kXY₀[X:Y], nᵦ, wavenumber, kzPositive )
 
 kzPositive = true
 kXYZ = getkXYZ₀(boundaryConditions, layerStack, matCol, kzPositive)
-# kXYZ = getkXYZ₀(boundaryDefinition, boundaryConditions, layerStack, matCol)
 @test isapprox(kXYZ/getk₀(wavenumber), kBenchmark, rtol=1e-3)
 
 
@@ -299,59 +256,23 @@ kVectorSet = createKVectorSet(boundaryDefinition, boundaryConditions, Gvectors, 
 
 
 # Calculate kx and ky diagonal arrays.  Not used anywhere else.
-# old:
-# kxArr = Diagonal([kᵢ[X] for kᵢ in kVectorSet.kᵢ])
-# kyArr = Diagonal([kᵢ[Y] for kᵢ in kVectorSet.kᵢ])
-# @test isapprox(kxArr/getk₀(wavenumber), kxbenchmark, rtol=1e-3)
-# @test isapprox(kyArr/getk₀(wavenumber), kybenchmark, rtol=1e-3)
-# KNORM
 kxArr = Diagonal([kᵢNorm[X] for kᵢNorm in kVectorSet.kᵢNorm])
 kyArr = Diagonal([kᵢNorm[Y] for kᵢNorm in kVectorSet.kᵢNorm])
 @test isapprox(kxArr, kxbenchmark, rtol=1e-3)
 @test isapprox(kyArr, kybenchmark, rtol=1e-3)
 
-
-# CALCULATE Z-COMPONENTS OF THE K-VECTORS IN THE TOP AND BOTTOM LAYERS
-# old:
-# kzᵦ = Diagonal( ComplexF64[ conj(sqrt((getk₀(kVectorSet)*nᵦ)^2 - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ] )
-# @test isapprox(kzᵦ/getk₀(kVectorSet), -1*kzᵦbenchmark, rtol=1e-3)
-# kzₜ = Diagonal( ComplexF64[ conj(sqrt((getk₀(kVectorSet)*nₜ)^2 - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢ] )
-# @test isapprox(kzₜ/getk₀(kVectorSet), kzₜbenchmark, rtol=1e-3)
-# KNORM
-# kzᵦ = Diagonal( ComplexF64[ conj(sqrt( nᵦ^2 - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢNorm] )
-# @test isapprox(kzᵦ, kzᵦbenchmark, rtol=1e-3)
-# kzₜ = Diagonal( ComplexF64[ conj(sqrt( nₜ^2 - kᵢ[X]^2 - kᵢ[Y]^2))  for kᵢ in kVectorSet.kᵢNorm] )
-# @test isapprox(kzₜ, kzₜbenchmark, rtol=1e-3)
-
-# old
-# kzᵦ = Diagonal( calckz(kVectorSet, bottomLayer, matCol, wavenumber) )
-# @test isapprox(kzᵦ/getk₀(kVectorSet), -1*kzᵦbenchmark, rtol=1e-3)
-# kzₜ = Diagonal( calckz(kVectorSet, topLayer, matCol, wavenumber) )
-# @test isapprox(kzₜ/getk₀(kVectorSet), kzₜbenchmark, rtol=1e-3)
-# KNORM
 kzᵦ = Diagonal( calckzBottom(kVectorSet, bottomLayer, matCol, wavenumber) )
 @test isapprox(kzᵦ, kzᵦbenchmark, rtol=1e-3)
 kzₜ = Diagonal( calckzTop(kVectorSet, topLayer, matCol, wavenumber) )
 @test isapprox(kzₜ, kzₜbenchmark, rtol=1e-3)
 
 
-freeSpaceParameters = FreeSpaceParameters(derivedParameters.kVectorSet)
-@test isapprox(freeSpaceParameters.KzNorm, KzNormBenchmark, rtol=1e-3)
-@test isapprox(freeSpaceParameters.Q, Qbenchmark, rtol=1e-3)
-@test isapprox(freeSpaceParameters.W₀.matrix, Array{ComplexF64,2}(I,(9*2,9*2)), rtol=1e-3)
-@test isapprox(freeSpaceParameters.Λ, λeigenvaluesBenchmark, rtol=1e-3)
-@test isapprox(freeSpaceParameters.V₀.matrix, V₀benchmark, rtol=1e-3)
-@test isapprox(freeSpaceParameters.V₀.matrix, V₀benchmark, rtol=1e-3)
-
-
 inputFields = calcInputFields(boundaryConditions, harmonicsSet, kVectorSet, layerStack, matCol, wavenumber)
-# inputFields = calcInputFields(boundaryConditions, harmonicsSet, kVectorSet, bottomLayer, topLayer, matCol, wavenumber)
 @test isapprox(inputFields.bottom.modeFields, sourceFields1benchmark, rtol=1e-3)
 @test isapprox(inputFields.top.modeFields, sourceFields2benchmark, rtol=1e-3)
 
 
 ##### CALCULATE CONVOLUTION MATRICES OF INTERMEDIATE LAYERS
-# Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( layer1, lattice, Gvectors, harmonicsSet, matCol, wavenumber )
 nHarmonics = numHarmonics(kVectorSet)
 preallocCϵᵢⱼ1 = Array{ComplexF64,2}(undef, (nHarmonics,nHarmonics))
 preallocCμᵢⱼ1 = Array{ComplexF64,2}(undef, (nHarmonics,nHarmonics))
@@ -359,24 +280,13 @@ Cϵᵢⱼ1, Cμᵢⱼ1 = calcConvolutionMatrices( preallocCϵᵢⱼ1, preallocC�
 @test Cμᵢⱼ1 ≈ Array{ComplexF64,2}(I,(9,9))
 @test isapprox(Cϵᵢⱼ1, Cϵᵢⱼ1benchmark, rtol=1e-1)
 
-# No need to calculate convolution matricese for uniform layer:
-# Cϵᵢⱼ2, Cμᵢⱼ2 = calcConvolutionMatrices( layer2, lattice, Gvectors, harmonicsSet, matCol, wavenumber )
-# @test Cϵᵢⱼ2[1,1] ≈ Complex(6,0)
-# @test Cμᵢⱼ2[1,1] ≈ Complex(1,0)
-# @test Cϵᵢⱼ2 ≈ 6*Array{ComplexF64,2}(I,(9,9))
-# @test Cμᵢⱼ2 ≈ Array{ComplexF64,2}(I,(9,9))
 
 # #Calculate inverse convolution matrices for each layer
 Cϵᵢⱼ⁻¹1 = inv(Cϵᵢⱼ1)
 Cμᵢⱼ⁻¹1 = inv(Cμᵢⱼ1)
-# Cϵᵢⱼ⁻¹2 = inv(Cϵᵢⱼ2)
-# Cμᵢⱼ⁻¹2 = inv(Cμᵢⱼ2)
-
 
 
 # Initialize global scattering matrix
-# Sglobal = initializeGlobalS(numHarmonics(harmonicsSet))
-# Don't need to do this separately
 Sglobal = initializeGlobalScatteringMatrix( Float64, numHarmonics(harmonicsSet) )
 SglobalBenchmark11 = zeros(ComplexF64,(9*2,9*2))
 SglobalBenchmark12 = Array{ComplexF64,2}(I,(9*2,9*2))
@@ -385,8 +295,6 @@ SglobalBenchmark22 = zeros(ComplexF64,(9*2,9*2))
 SglobalBenchmark = vcat( hcat(SglobalBenchmark11, SglobalBenchmark12),
                         hcat(SglobalBenchmark21, SglobalBenchmark22) )
 @test Sglobal.matrix ≈ SglobalBenchmark
-
-# @test prealloc.W₀.matrix == derivedParameters.freeSpaceParameters.W₀.matrix
 
 
 
@@ -407,8 +315,6 @@ Q₁ = calcQmatrixPatterned(prealloc, kVectorSet, Cϵᵢⱼ1, Cϵᵢⱼ⁻¹1, C
 Ω²₁ = calcΩ²(prealloc, P₁,Q₁)
 @test isapprox(Ω²₁, Ω²₁benchmark, rtol=1e-3)
 
-# @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-
 
 # NOTE: The eigenvalue decomposition is not unique, so values relying on it will not be identical to benchmark, before calculation of the full scattering matrix.
 W₁, λ₁ = calcWᵢλᵢ(prealloc, Ω²₁)
@@ -418,7 +324,7 @@ W₁, λ₁ = calcWᵢλᵢ(prealloc, Ω²₁)
 
 V₁ = calcMagneticEigenvectorsFromQWλ(prealloc, Q₁, W₁, λ₁)
 
-A₁, B₁ = calcAB(prealloc, W₁, derivedParameters.freeSpaceParameters.W₀,V₁, derivedParameters.freeSpaceParameters.V₀)
+A₁, B₁ = calcAB(prealloc, W₁, prealloc.W₀,V₁, prealloc.V₀)
 X₁ = calcX(prealloc, λ₁, kVectorSet.wavenumber, layer1.thickness)
 
 _1, _2 = getQuadrantSlices(numHarmonics(kVectorSet))
@@ -429,14 +335,12 @@ S₁ = calcScatteringMatrix_ABX(prealloc, A₁,B₁,X₁)
 @test isapprox(S₁.matrix[_2,_1], S1₂₁benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_2,_2], S1₂₂benchmark, rtol=1e-3)
 # sugary:
-# S₁ = calcScatteringMatrix(prealloc, layer1, matCol, kVectorSet, Gvectors, lattice )
 S₁ = calcScatteringMatrix(prealloc, layer1, simulationDefinition, derivedParameters )
 @test isapprox(S₁.matrix[_1,_1], S1₁₁benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_1,_2], S1₁₂benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_2,_1], S1₂₁benchmark, rtol=1e-3)
 @test isapprox(S₁.matrix[_2,_2], S1₂₂benchmark, rtol=1e-3)
 
-# @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
 Sdevice = deepcopy(S₁)
 
 # Layer 2: Unpatterned
@@ -456,11 +360,9 @@ P₂, Q₂ = calcPQmatrix(prealloc, layer2, kVectorSet, matCol)
 @test isapprox(Ω²₂, Ω²₂benchmark, rtol=1e-3)
 W₂, λ₂ = calcWᵢλᵢ(prealloc, Ω²₂)
 V₂ = calcMagneticEigenvectorsFromQWλ(prealloc, Q₂,W₂,λ₂)
-# sugary:
-# V₂ = calcEigenmodesForUniformLayer(prealloc, kVectorSet, layer2, matCol)
 
 # Common components of scattering matrix
-A₂, B₂ = calcAB(prealloc, W₂, derivedParameters.freeSpaceParameters.W₀, V₂, derivedParameters.freeSpaceParameters.V₀)
+A₂, B₂ = calcAB(prealloc, W₂, prealloc.W₀, V₂, prealloc.V₀)
 X₂ = calcX(prealloc, λ₂, kVectorSet.wavenumber, layer2.thickness)
 
 S₂ = calcScatteringMatrix_ABX(prealloc, A₂, B₂, X₂)
@@ -483,35 +385,19 @@ Pᵦ, Qᵦ = calcPQmatrix(prealloc, bottomLayer, kVectorSet, matCol)
 @test isapprox(Qᵦ, Qᵦbenchmark, rtol=1e-3)
 Ω²ᵦ = calcΩ²(prealloc, Pᵦ,Qᵦ)
 
-# old
-# Λᵦ = Array(vcat( hcat(1im*kzᵦ, zeros(ComplexF64,size(kzᵦ)) ),
-#            hcat(zeros(ComplexF64,size(kzᵦ )), 1im*kzᵦ) ) / getk₀(kVectorSet))
-# KNORM
+
 Λᵦ = Array(vcat( hcat(-1im*kzᵦ, zeros(ComplexF64,size(kzᵦ)) ),
            hcat(zeros(ComplexF64,size(kzᵦ )), -1im*kzᵦ) ) )   # Lecture 7B
 @test isapprox(Λᵦ, Λᵦbenchmark, rtol=1e-3)
-# Λᵦ = calcΛsemiInfiniteBottom(prealloc, Array(kzᵦ), kVectorSet.wavenumber)
-# Λᵦ = calcΛsemiInfiniteBottom(prealloc, kzᵦ)
 Λᵦ = calcΛsemiInfiniteBottom(prealloc, calckzBottom(kVectorSet, bottomLayer, matCol, wavenumber))
 @test isapprox(Λᵦ, Λᵦbenchmark, rtol=1e-3)
-Wᵦ = deepcopy(derivedParameters.freeSpaceParameters.W₀)
-# Wᵦeigenmodes = Wᵦ
+Wᵦ = deepcopy(prealloc.W₀)
 
-# @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-
-
-# Vᵦ = calcEigenmodesFromQλ(Qᵦ,λᵦ)
 Vᵦ = calcMagneticEigenvectorsFromQWλ(prealloc, Qᵦ,Wᵦ,Λᵦ)
 @test isapprox(Vᵦ.matrix,Vᵦbenchmark,rtol=1e-3)
 
 
-# Aᵦ = calcA_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
-# @test isapprox(Aᵦ, Aᵦbenchmark, rtol=1e-3)
-# Bᵦ = calcB_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
-# @test isapprox(Bᵦ, Bᵦbenchmark, rtol=1e-3)
-
-# Aᵦ, Bᵦ = calcABfromWV_SemiInfinite(prealloc, Wᵦ, derivedParameters.freeSpaceParameters.W₀, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
-Aᵦ, Bᵦ = calcABfromWV_SemiInfinite(prealloc, Vᵦ, derivedParameters.freeSpaceParameters.V₀)
+Aᵦ, Bᵦ = calcABfromWV_SemiInfinite(prealloc, Vᵦ, prealloc.V₀)
 @test isapprox(Aᵦ, Aᵦbenchmark, rtol=1e-3)
 @test isapprox(Bᵦ, Bᵦbenchmark, rtol=1e-3)
 
@@ -522,7 +408,6 @@ Sᵦ = calcScatteringMatrixBottom_AB(prealloc, Aᵦ,Bᵦ)
 @test isapprox(Sᵦ.matrix[_2,_2], SR₂₂benchmark, rtol=1e-3)
 
 @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-# Sᵦ = calcScatteringMatrixBottom(prealloc, bottomLayer, matCol, kVectorSet)
 Sᵦ = calcScatteringMatrixBottom(prealloc, derivedParameters, bottomLayer, matCol)
 @test isapprox(Sᵦ.matrix[_1,_1], SR₁₁benchmark, rtol=1e-3)
 @test isapprox(Sᵦ.matrix[_1,_2], SR₁₂benchmark, rtol=1e-3)
@@ -537,21 +422,15 @@ Pₜ, Qₜ = calcPQmatrix(prealloc, topLayer, kVectorSet, matCol)
 Ω²ₜ = calcΩ²(prealloc, Pₜ,Qₜ)
 
 @test prealloc.W₀.matrix == calcW₀( numHarmonics(kVectorSet) ).matrix
-# Λₜ = calcΛsemiInfiniteTop(prealloc, Array(kzₜ), kVectorSet.wavenumber)
-# Λₜ = calcΛsemiInfiniteTop(prealloc, kzₜ)
 Λₜ = calcΛsemiInfiniteTop(prealloc, calckzTop(kVectorSet, topLayer, matCol, wavenumber))
 @test isapprox(Λₜ,Λₜbenchmark,rtol=1e-3)
-Wₜ = deepcopy(derivedParameters.freeSpaceParameters.W₀)
-# Wₜeigenmodes = Wₜ
+Wₜ = deepcopy(prealloc.W₀)
 
 Vₜ = calcMagneticEigenvectorsFromQWλ(prealloc, Qₜ,Wₜ,Λₜ)
 @test isapprox(Vₜ.matrix,Vₜbenchmark,rtol=1e-3)
 
 
-# Aₜ = calcA_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
-# Bₜ = calcB_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
-# Aₜ, Bₜ = calcABfromWV_SemiInfinite(prealloc, Wₜ, derivedParameters.freeSpaceParameters.W₀, Vₜ, derivedParameters.freeSpaceParameters.V₀)
-Aₜ, Bₜ = calcABfromWV_SemiInfinite(prealloc, Vₜ, derivedParameters.freeSpaceParameters.V₀)
+Aₜ, Bₜ = calcABfromWV_SemiInfinite(prealloc, Vₜ, prealloc.V₀)
 
 Sₜ = calcScatteringMatrixTop_AB(prealloc, Aₜ,Bₜ)
 @test isapprox(Sₜ.matrix[_1,_1], ST₁₁benchmark, rtol=1e-3)
@@ -569,8 +448,6 @@ Sₜ = calcScatteringMatrixTop(prealloc, derivedParameters, topLayer, matCol)
 
 
 # STEP 10: Global scattering matrix:
-# Sdevice = S₁⊗S₂
-# Sglobal = GlobalScatteringMatrix(Sᵦ⊗Sdevice⊗Sₜ)
 Sglobal = Sglobal⊗Sₜ
 @test isapprox(Sglobal.matrix[_1,_1], SG₁₁benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_1,_2], SG₁₂benchmark,rtol=1e-3)
@@ -580,7 +457,6 @@ Sglobal = Sglobal⊗Sₜ
 
 # Put it in terms of a device stack:
 Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
-# Sglobal = calcGlobalScatteringMatrix(layerStack, matCol, kVectorSet, Gvectors, lattice, PrecisionType)
 @test isapprox(Sglobal.matrix[_1,_1], SG₁₁benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_1,_2], SG₁₂benchmark,rtol=1e-3)
 @test isapprox(Sglobal.matrix[_2,_1], SG₂₁benchmark,rtol=1e-3)
@@ -589,14 +465,6 @@ Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
 
 
 # STEP 11: FIELDS
-
-# Not used anywhere else.
-# realkXYZInput = kXYtokXYZ(inputMode, nᵦ)
-# @test isapprox(realkXYZInput, k, rtol=1e-3)
-# @test isapprox(inputMode.kXY, k[X:Y], rtol=1e-3) #works
-# # @test isapprox(getk₀(inputMode.wavenumber), getk₀(input), rtol=1e-3)
-# realkXYZInput = kXYtokXYZ(inputMode.kXY, nᵦ, wavenumber, inputMode.kzPositive )
-# @test isapprox(realkXYZInput, k, rtol=1e-3)
 
 # Not used anywhere else
 nₜ = getn(getBoundaryLayer( layerStack, BOTTOM ), matCol, boundaryDefinition.wavenumber)
@@ -630,27 +498,12 @@ outputModeCoeff = propagateModeCoeff(Sglobal, inputModeCoeff)
 @test isapprox(outputModeCoeff.top.modeCoefficients, topModeCoeffBenchmark, rtol=1e-2)
 
 
-# Not used anywhere else.
-# get mode for the [0,0] mode.
-# inputMode = getInput
-
-# inputMode = Mode(kXYZ, simulationDefinition.wavenumber, A)
-# polarizationVector =
-
-# P = fieldSPtoFieldXYZ(inputMode, nᵦ)
-# @test isapprox(P,[0.35355-0.30619im,-0.61237-0.17678im,0+0.61237im], rtol=1e-3 )
-
-
-
-
-
 # Compute bottomected and transmitted fields ("eref" in benchmark)
 Eᵦxy = Wᵦ.matrix*outputModeCoeff.bottom.modeCoefficients
 Eₜxy = Wₜ.matrix*outputModeCoeff.top.modeCoefficients
 @test isapprox(Eᵦxy,EᵦxyBenchmark, rtol=1e-2)
 @test isapprox(Eₜxy,EₜxyBenchmark, rtol=1e-2)
 # simpler
-# outputFields = outputCoefficients2OutputFields(outputModeCoeff, Wᵦ, Wₜ)
 outputFields = outputCoefficients2OutputFields(outputModeCoeff, Wₜ)
 @test isapprox(outputFields.bottom.modeFields,EᵦxyBenchmark, rtol=1e-2)
 @test isapprox(outputFields.top.modeFields,EₜxyBenchmark, rtol=1e-2)
@@ -658,18 +511,11 @@ outputFields = outputCoefficients2OutputFields(outputModeCoeff, Wₜ)
 
 Eᵦx = outputFields.bottom.modeFields[1:numHarmonics(kVectorSet)]
 Eᵦy = outputFields.bottom.modeFields[ (numHarmonics(kVectorSet)+1):(2*numHarmonics(kVectorSet))]
-# old
-# Eᵦz = inv(kzᵦ)*(kVectorSet.Kx*Eᵦx + kVectorSet.Ky*Eᵦy)
-# KNORM
 Eᵦz = -inv(kzᵦ)*(kVectorSet.KxNorm*Eᵦx + kVectorSet.KyNorm*Eᵦy)
-#new:
-# Eᵦz = -conj( inv(-abs.(kzᵦ))*(kVectorSet.KxNorm*Eᵦx + kVectorSet.KyNorm*Eᵦy) )
+
 
 Eₜx = outputFields.top.modeFields[1:numHarmonics(kVectorSet)]
 Eₜy = outputFields.top.modeFields[ (numHarmonics(kVectorSet)+1):(2*numHarmonics(kVectorSet))]
-# old:
-# Eₜz = -inv(kzₜ)*(kVectorSet.Kx*Eₜx + kVectorSet.Ky*Eₜy)
-# KNORM
 Eₜz = -inv(kzₜ)*(kVectorSet.KxNorm*Eₜx + kVectorSet.KyNorm*Eₜy)
 @test isapprox(Eᵦx, Eᵦxbenchmark, rtol=1e-2)
 @test isapprox(Eᵦy, Eᵦybenchmark, rtol=1e-2)
@@ -678,28 +524,18 @@ Eₜz = -inv(kzₜ)*(kVectorSet.KxNorm*Eₜx + kVectorSet.KyNorm*Eₜy)
 @test isapprox(Eₜy, Eₜybenchmark, rtol=1e-2)
 @test isapprox(Eₜz, Eₜzbenchmark, rtol=1e-2)
 
-# old
-# bottomFieldsOutput = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzBottom)
-# topFieldsOutput = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParameters.kzTop)
-# bottomFieldsInput = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzBottom)
-# topFieldsInput = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParameters.kzTop)
-# KNORM
 bottomFieldsOutput = convertFieldSetStackToXYZ(outputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
 topFieldsOutput = convertFieldSetStackToXYZ(outputFields.top, kVectorSet, derivedParameters.kzNormTop)
 bottomFieldsInput = convertFieldSetStackToXYZ(inputFields.bottom, kVectorSet, derivedParameters.kzNormBottom)
 topFieldsInput = convertFieldSetStackToXYZ(inputFields.top, kVectorSet, derivedParameters.kzNormTop)
 @test isapprox(bottomFieldsOutput.fields[:,X], Eᵦxbenchmark, rtol=1e-2)
 @test isapprox(bottomFieldsOutput.fields[:,Y], Eᵦybenchmark, rtol=1e-2)
-# UNSURE:
 @test isapprox(bottomFieldsOutput.fields[:,Z], Eᵦzbenchmark, rtol=1e-2)
-# @test isapprox(bottomFieldsOutput.fields[:,Z], conj(Eᵦzbenchmark), rtol=1e-2)
 
 # Checking dot product:
 iOrder = 5
 field = bottomFieldsOutput.fields[iOrder,:]
-# @show field
 k = [kVectorSet.kᵢNorm[iOrder][X], kVectorSet.kᵢNorm[iOrder][Y], derivedParameters.kzNormBottom[iOrder]]
-# @show k
 @test isapprox( field ⋅ k, 0, rtol=1e-3, atol=1e-4 )
 
 kbBenchmark = [kxbenchmark[iOrder,iOrder], kybenchmark[iOrder,iOrder], kzᵦbenchmark[iOrder,iOrder] ]
@@ -709,16 +545,12 @@ fieldBenchmark = [Eᵦxbenchmark[iOrder], Eᵦybenchmark[iOrder], Eᵦzbenchmark
 
 @test isapprox(topFieldsOutput.fields[:,X], Eₜxbenchmark, rtol=1e-2)
 @test isapprox(topFieldsOutput.fields[:,Y], Eₜybenchmark, rtol=1e-2)
-# UNSURE:
+
 @test isapprox(topFieldsOutput.fields[:,Z], Eₜzbenchmark, rtol=1e-2)
-# @test isapprox(topFieldsOutput.fields[:,Z], conj(Eₜzbenchmark), rtol=1e-2)
+
 
 # Step 12: Diffraction efficiencies
 
-# old
-# kzₜᵢ = calckz(kVectorSet, topLayer, matCol, wavenumber)
-# kzᵦᵢ = calckz(kVectorSet, bottomLayer, matCol, wavenumber)
-# KNORM
 kzₜᵢ = calckzTop(kVectorSet, topLayer, matCol, wavenumber)
 kzᵦᵢ = calckzBottom(kVectorSet, bottomLayer, matCol, wavenumber)
 
@@ -731,7 +563,6 @@ transmittances = real(transmittedPowerFlux) / totalInputPowerFlux
 reflectances = real(reflectedPowerFlux) / totalInputPowerFlux
 totalTransmittance = abs(sum(real(transmittances)))
 totalReflectance = abs(sum(real(reflectances)))
-# @show totalInputPowerFlux
 @test isapprox(abs.(reflectances), Rbenchmark, rtol=1e-2)
 @test isapprox(totalReflectance, 0.088768, rtol=1e-2)
 @test isapprox(transmittances, Tbenchmark, rtol=1e-2)
@@ -741,7 +572,6 @@ totalReflectance = abs(sum(real(reflectances)))
 
 end;  # End of test set
 
-# println("Completed test set.")
 
 
 

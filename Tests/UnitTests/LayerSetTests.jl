@@ -62,9 +62,4 @@ end;
     @test getMaterialAtPosition( middleLayer.layerPattern, [0, 1.5]) == "Si"
     @test getMaterialAtPosition( middleLayer.layerPattern, [0.5, 1]) == "Si"
 
-    # superEllipse2 = SuperEllipse([0,0], [1,2], [3,3] )
-    # @test containsXY( superEllipse2, [0,0])
-    # @test containsXY( superEllipse2, [1.5,0]) == false
-    # @test containsXY( superEllipse2, [0,1.5])
-    # @test containsXY( superEllipse2, [0.5,1])
 end;

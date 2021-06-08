@@ -66,7 +66,6 @@ end
 mutable struct SuperEllipsoidLayerSet <: LayerSet
 
     numLayers::Int64
-    # numSlices::Int32
 
     # Define the ellipsoid itself
     center::_3VectorFloat # center in XYZ
@@ -133,14 +132,10 @@ function getLayers(superEllipsoidLayerSet::SuperEllipsoidLayerSet)
         layerLimitY = superEllipsoidLayerSet.ellipsoidLimits[Y]*zLim^(1/superEllipsoidLayerSet.γ[Y])
         layerLimits = [layerLimitX, layerLimitY]
         center = superEllipsoidLayerSet.center[X:Y]
-        # layerγ = [superEllipsoidLayerSet.γ[X], superEllipsoidLayerSet.γ[Y]]
         layerγ = superEllipsoidLayerSet.γ[X:Y]
 
         superEllipse = SuperEllipse(center, layerLimits, layerγ)
         layers[iLayer] = PatternedLayerDefinition(superEllipsoidLayerSet.numDivisions, layerThickness, LayerPattern(Solid(superEllipse, superEllipsoidLayerSet.innerMaterialName), superEllipsoidLayerSet.outerMaterialName) )
-        # layerWidths = zPositions[iLayer]/trapezoidLayerSet.thickness * (trapezoidLayerSet.topLengths .- trapezoidLayerSet.bottomLengths) .+ trapezoidLayerSet.bottomLengths
-        # layerCenter = zPositions[iLayer]/trapezoidLayerSet.thickness * (trapezoidLayerSet.topCenter .- trapezoidLayerSet.bottomCenter) .+ trapezoidLayerSet.bottomCenter
-        # layers[iLayer] = PatternedLayerDefinition(numDivisions, layerThickness, LayerPattern(Solid(Rectangle(layerCenter, layerWidths),innerMaterialName), outerMaterialName))
     end
 
     return layers
