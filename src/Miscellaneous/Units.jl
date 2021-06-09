@@ -2,7 +2,7 @@
 
 export _2VectorFloat
 export TU2VectorReal
-
+export μm
 
 # Dimensions used in arrays
 const global XDIM = 1
