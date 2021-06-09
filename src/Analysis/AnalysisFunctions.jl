@@ -56,3 +56,22 @@ function analyzeInputFields( inputFields::InputFields, derivedParameters::Derive
 
     return inputFieldSetXYZbottom, inputFieldSetXYZtop, inputFieldSetSPbottom, inputFieldSetSPtop
 end
+
+# function KroneckerProduct(A::AbstractArray{<:Number,2}, B::AbstractArray{<:Number,2})
+#
+# end
+
+function JonesToMuellerMatrix(J::AbstractArray{<:Number,2})
+    # M = A*(J X J*)*A⁻¹ where X is the Kronecker product
+    A = [1 0 0 1;
+        1 0 0 -1;
+        0 1 1 0;
+        0 -1im 1im 0]
+    # A⁻¹ = inv(A)
+
+    M = A*kron(J,conj.(J))*inv(A)
+    # M = A*kron(J,conj(J))*inv(A)
+    # M = A*kron(J,conj(J'))*inv(A)
+
+    return M
+end

@@ -163,3 +163,52 @@ end;
     @test ϕ ≈ 0
 
 end;
+
+@testset "Miscellaneous: Jones to Mueller Matrix" begin
+    # horizontal polarizer
+    J1 = [1 0;
+        0 0]
+    M1 = 0.5*[ 1 1 0 0 ;
+        1 1 0 0;
+        0 0 0 0;
+        0 0 0 0]
+    @test JonesToMuellerMatrix(J1) == M1
+
+    # vertical polarizer
+    J2 = [0 0;
+        0 1]
+    M2 = 0.5*[ 1 -1 0 0 ;
+        -1 1 0 0;
+        0 0 0 0;
+        0 0 0 0]
+    @test JonesToMuellerMatrix(J2) == M2
+
+    # 45 degree polarizer
+    J3 = 0.5*[1 1;
+        1 1]
+    M3 = 0.5*[ 1 0 1 0 ;
+        0 0 0 0;
+        1 0 1 0;
+        0 0 0 0]
+    @test JonesToMuellerMatrix(J3) == M3
+
+    # -45 degree polarizer
+    J4 = 0.5*[1 -1;
+        -1 1]
+    M4 = 0.5*[ 1 0 -1 0 ;
+        0 0 0 0;
+        -1 0 1 0;
+        0 0 0 0]
+    @test JonesToMuellerMatrix(J4) == M4
+
+    # RCP - right circular polarizer
+    J5 = 1/2*[1 1im;
+        -1im 1]
+    M5 = 0.5*[ 1 0 0 1 ;
+        0 0 0 0;
+        0 0 0 0;
+        1 0 0 1]
+    @test JonesToMuellerMatrix(J5) == M5
+
+
+end;
