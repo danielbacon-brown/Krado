@@ -89,3 +89,5 @@ DONE: Forget the InputByBoundaryDefinition from mode altogether?
 DONE: Calculate the W₀ and V₀ only once.
 DONE: Use the preallocated matrix data in scattering matrix calculation
 DONE: Use in-place operations in scattering matrix calculation
+
+# TESTING COMMITMENT OF NEW GIT BRANCH
