@@ -1,6 +1,6 @@
 # Definition of lattice/period
 
-export Lattice
+export AbstractLattice, Lattice
 
 
 abstract type AbstractLattice end

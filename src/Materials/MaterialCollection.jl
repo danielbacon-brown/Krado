@@ -1,5 +1,7 @@
 # MaterialCollection stores the pairing of materials with materials names.  Essentially just a dict, but easier to understand as it's own type.
 
+export MaterialCollection, addMaterial!, getMaterial
+
 mutable struct MaterialCollection
     dict::Dict{String,AbstractMaterial}
 

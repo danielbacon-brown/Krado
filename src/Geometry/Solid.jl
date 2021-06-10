@@ -1,4 +1,6 @@
-import Base.isless
+# import Base.isless
+
+export Solid
 
 # Connects a shape with the material that should be there
 mutable struct Solid
@@ -17,6 +19,7 @@ function containsXY( solid::Solid, point)::Bool
 end
 
 # Establish sorting by priorty:
-function isless(solid1::Solid, solid2::Solid)::Bool
+# function isless(solid1::Solid, solid2::Solid)::Bool
+function Base.isless(solid1::Solid, solid2::Solid)::Bool
     return solid1.priority < solid2.priority
 end

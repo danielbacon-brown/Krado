@@ -1,3 +1,4 @@
+export KVectorSet, createKVectorSet
 
 # Describe the kvectors (direction for each mode/harmonic of light)
 # Only one of these for a given experiment

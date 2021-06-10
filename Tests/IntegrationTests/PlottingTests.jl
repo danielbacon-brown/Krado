@@ -130,6 +130,8 @@ include("../../src/IncludeKrado.jl")
     simulationDefinition = SimulationDefinition( lattice, layerStack, harmonicsTruncation, boundaryDefinition, matCol, analysisDefinition )
 
 
+
+
     # Define what materials correspond to what color
     materialPlottingParameters = Dict{String,PlottingParameters}([
         (
@@ -164,6 +166,38 @@ include("../../src/IncludeKrado.jl")
         ),
     ])
 
+    function getUserPlottingParameters()
+        # plottingParameters = Dict{Any,PlottingParameters}()
+        plottingParameters = PlottingParameterCollection()
+        addPlottingParameter!( plottingParameters, "Air", PlottingParameters(;
+                color = [0.95, 0.95, 0.95],
+                alpha = 0,
+                shade = false,
+                lineWidth = 0,
+                lineStyle = "None",
+            ) )
+        addPlottingParameter!( plottingParameters, "Ag", PlottingParameters(;
+                color = [0.4, 0.4, 0.4],
+                alpha = 0.25,
+                shade = true,
+                lineStyle = "-",
+                lineColor = "r",
+            ) )
+        addPlottingParameter!( plottingParameters, "Al2O3", PlottingParameters(;
+                color = [0.2, 0.2, 0.7],
+                alpha = 0.25,
+                shade = true,
+                lineStyle = "-",
+                lineColor = [0.2, 0.7, 0.2],
+            ) )
+        # plottingParameters["Ag"] = PlottingParameters(; color = [0.4, 0.4, 0.4]; alpha=0.25, shade=true, lineStyle = "-", lineColor = "r")
+        # plottingParameters["Al2O3"] = PlottingParameters(; color = [0.2, 0.2, 0.7]; alpha=0.25, shade=true, lineStyle = "-", lineColor = [0.2, 0.7, 0.2])
+        # plottingParameters["Si Endura"] = PlottingParameters(; color = [0.5, 0.5, 0.1]; )
+
+        return plottingParameters
+    end
+    materialPlottingParameters = getUserPlottingParameters()
+    # importUserMaterial!(materialCollection,  userMaterialImportFunctions, getMaterialsUsed(layerStack))
 
     # Plot HarmonicsSet:
     fig, ax = plotHarmonicsSet(simulationDefinition)

@@ -1,4 +1,4 @@
-
+export PositionGridXY, PositionGridZ
 
 # start represents analytical x,y coordinates of grid start.
 # StopU represents analytical x,y coordinates of end of U coordinate

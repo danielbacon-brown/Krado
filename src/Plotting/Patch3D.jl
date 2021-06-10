@@ -1,6 +1,7 @@
 
 
-function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::PlottingParameterCollection; scale=1)
     # Plot substrate:
     plot3Dsubstrate(ax, lattice, layerStack, materialParams; scale=scale)
     plot3Dsuperstrate(ax, lattice, layerStack, materialParams; scale=scale)
@@ -13,11 +14,12 @@ function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, mat
 
 end
 
-function plot3Dstructure(lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plot3Dstructure(lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dstructure(lattice::Lattice, layerStack::LayerStack, materialParams::PlottingParameterCollection; scale=1)
 
     fig, ax = plot3Dlattice(lattice, layerStack; scale=scale, title="3D Materials Distribution")
 
-    addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=scale)
+    addToPlot3Dstructure( ax, lattice, layerStack, materialParams; scale=scale)
 
     set3DplotLimits(ax, lattice, layerStack; scale=scale)
 
@@ -63,7 +65,8 @@ end
 
 
 # 2D cross-section showing material names
-function plotCrossSection(simulationDefinition::SimulationDefinition, positionLine::PositionGridXY, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotCrossSection(simulationDefinition::SimulationDefinition, positionLine::PositionGridXY, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotCrossSection(simulationDefinition::SimulationDefinition, positionLine::PositionGridXY, materialParams::PlottingParameterCollection; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
@@ -89,13 +92,14 @@ function plotCrossSection(simulationDefinition::SimulationDefinition, positionLi
         plotCrossSectionLayer(ax, simulationDefinition.layerStack[iLayer], positionLine, layerZpositions[iLayer], simulationDefinition, materialParams; scale=scale)
     end
 
-    addMaterialLegend(ax, materialParams::Dict{String,PlottingParameters})
+    addMaterialLegend(ax, materialParams)
     return fig, ax
 end
 
 
 # Sugar for plotting 1D cross-section.
-function plotCrossSection(simulationDefinition::SimulationDefinition, numDivisions::Integer, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotCrossSection(simulationDefinition::SimulationDefinition, numDivisions::Integer, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotCrossSection(simulationDefinition::SimulationDefinition, numDivisions::Integer, materialParams::PlottingParameterCollection; scale=1)
     if ~is1D(simulationDefinition.lattice)
         error("Expected 1-dimensional lattice.  Start and stop positions must be defined for plotting cross-section of 2D structure.")
     end
@@ -113,7 +117,8 @@ end
 
 
 
-function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xLimits::Vector{<:Real}, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xLimits::Vector{<:Real}, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xLimits::Vector{<:Real}, simulationDefinition::SimulationDefinition, materialParams::PlottingParameterCollection; scale=1)
 
     zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     zOuter = zLimits[BOTTOMINDEX]
@@ -128,7 +133,8 @@ function plotCrossSectionSubstrate(ax, layer::SemiInfiniteLayerDefinition, xLimi
     ax.add_patch(rect)
 end
 
-function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xLimits::Vector{<:Real}, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xLimits::Vector{<:Real}, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xLimits::Vector{<:Real}, simulationDefinition::SimulationDefinition, materialParams::PlottingParameterCollection; scale=1)
 
     zLimits = getLayerStackPlotLimits(simulationDefinition.layerStack)
     zOuter = zLimits[TOPINDEX]
@@ -145,7 +151,8 @@ function plotCrossSectionSuperstrate(ax, layer::SemiInfiniteLayerDefinition, xLi
 end
 
 # Uniform layer
-function plotCrossSectionLayer(ax, layer::UniformLayerDefinition, positionLine::PositionGridXY, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotCrossSectionLayer(ax, layer::UniformLayerDefinition, positionLine::PositionGridXY, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotCrossSectionLayer(ax, layer::UniformLayerDefinition, positionLine::PositionGridXY, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::PlottingParameterCollection; scale=1)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -162,7 +169,8 @@ end
 
 
 # Patterned layer
-function plotCrossSectionLayer(ax, layer::PatternedLayerDefinition, positionLine::PositionGridXY, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotCrossSectionLayer(ax, layer::PatternedLayerDefinition, positionLine::PositionGridXY, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotCrossSectionLayer(ax, layer::PatternedLayerDefinition, positionLine::PositionGridXY, zPosition::Real, simulationDefinition::SimulationDefinition, materialParams::PlottingParameterCollection; scale=1)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)

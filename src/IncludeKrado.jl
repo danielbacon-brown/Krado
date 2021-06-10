@@ -81,6 +81,7 @@ include("Analysis\\AnalysisFunctions.jl")
 include("Analysis\\SimulationSweep.jl")
 
 include("Plotting\\Plotting.jl")
+include("Materials\\MaterialPlottingParameters.jl")
 include("Plotting\\CoordinateData.jl")
 include("Plotting\\FigureSettings.jl")
 include("Plotting\\HarmonicsPlotting.jl")

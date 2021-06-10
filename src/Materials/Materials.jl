@@ -1,5 +1,9 @@
 # Define materials
 
+export AbstractMaterial, PermittivityModel, PermeabilityModel
+export ConstantPermittivity, ConstantPermeability, SpatialFunctionPermittivity
+export Material
+
 # Any kind of material.  Returns (ϵ,μ) based on wavelength and material and (x,y)
 abstract type AbstractMaterial end
 

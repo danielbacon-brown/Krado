@@ -1,6 +1,8 @@
 # A layer definition is a structure that describes how the convolution matrix should be calculated
 # All have a thickness and a background material
 
+export LayerDefinition, SemiInfiniteLayerDefinition, UniformLayerDefinition, PatternedLayerDefinition, getBoundaryLayer
+
 abstract type LayerDefinition end
 
 # # Used to determine how the points are positioned in the unit cell.

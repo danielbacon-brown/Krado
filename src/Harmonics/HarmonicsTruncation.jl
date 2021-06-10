@@ -1,3 +1,4 @@
+export HarmonicsTruncation, SuperellipseHarmonicsTruncation, γSUPERELLIPSE, calcHarmonics, HarmonicsTruncationByRectangle
 # Defines how the set of harmonics to use is calculated.
 abstract type HarmonicsTruncation end
 

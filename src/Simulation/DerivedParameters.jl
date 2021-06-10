@@ -1,3 +1,4 @@
+export DerivedParameters
 # Contains data that can be derived from the Simulation, but does not require calculation of scattering matrices.
 
 mutable struct DerivedParameters

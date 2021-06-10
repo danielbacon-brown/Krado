@@ -1,6 +1,9 @@
 # include("RayCastings.jl")
 # import RayCastings
 
+export Shape, Rectangle, Circle, SuperEllipse, Polygon
+export BooleanShape, UnionShape, IntersectionShape, SubstractionShape, DifferenceShape
+
 # Shape just includes raw geometry data.  Enough to see if something is inside or not.  Shape can contain other shapes (array or rotation matrix)
 # containsXY(shape, coordinates)
 abstract type Shape end

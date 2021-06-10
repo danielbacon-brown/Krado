@@ -1,3 +1,5 @@
+export AnalysisDefinition, SimulationDefinition
+
 # Need to define the abstract type before simulationDefinition.  But the particulars need to be defined after Simulation definition
 abstract type AnalysisDefinition end
 

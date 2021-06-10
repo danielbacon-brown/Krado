@@ -22,7 +22,8 @@ function plotLayerPositionGrid(layerDef::PatternedLayerDefinition, lattice::Latt
 end
 
 
-function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, lattice::Lattice, materialParams::Dict{String,PlottingParameters}; scale=1)
+# function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, lattice::Lattice, materialParams::Dict{String,PlottingParameters}; scale=1)
+function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, lattice::Lattice, materialParams::PlottingParameterCollection; scale=1)
 
     scaleLabel = LENGTHLABEL[scale]
 
@@ -40,13 +41,15 @@ function plotLayerMaterialsDistribution(layerDef::PatternedLayerDefinition, latt
     materialNameGrid = getMaterialAtPosition( layerDef.layerPattern, posGrid )
     linearMaterialNames = linearizeMaterialNameGrid(materialNameGrid)
 
+    # colorGrid = map(materialName -> materialParams[materialName].color, linearMaterialNames)
     colorGrid = map(materialName -> materialParams[materialName].color, linearMaterialNames)
 
     ax.scatter(xCoords, yCoords, s=1, c=colorGrid, marker="," )
 
     setPlotLimitsAroundLattice(ax, lattice; scale=scale)
 
-    addMaterialLegend(ax, materialParams::Dict{String,PlottingParameters})
+    # addMaterialLegend(ax, materialParams::Dict{String,PlottingParameters})
+    addMaterialLegend(ax, materialParams)
 
     return fig, ax
 end

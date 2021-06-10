@@ -1,3 +1,4 @@
+export HarmonicsSet, numHarmonics, getOrderIndex
 
 # Create a set that contains (mnᵢ - mnⱼ) for all i,j in input
 function createDifferenceVectors(mnᵢ)

@@ -2,6 +2,8 @@
 # These can be nested, forming a "pipeline" for calculating (x,y)
 # For example, can do a boolean union/intersection of two solids
 
+export AbstractLayerPattern, LayerPattern
+
 abstract type AbstractLayerPattern end
 
 # Calculates the permittivity for a set of solids according to the priorty of each solid.

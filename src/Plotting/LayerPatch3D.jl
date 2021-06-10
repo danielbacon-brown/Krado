@@ -9,7 +9,8 @@ function plot3VectorGrid(ax, grid::Array{_3VectorFloat,2}, params::PlottingParam
 end
 
 
-function plot3Dsubstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plot3Dsubstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dsubstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::PlottingParameterCollection; scale=1)
 
     layer = first(layerStack)
 
@@ -58,7 +59,8 @@ function plot3Dsubstrate(ax, lattice::Lattice, layerStack::LayerStack, materialP
 
 end
 
-function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::LayerStack, materialParams::PlottingParameterCollection; scale=1)
 
     layer = last(layerStack)
 
@@ -108,7 +110,8 @@ function plot3Dsuperstrate(ax, lattice::Lattice, layerStack::LayerStack, materia
 end
 
 
-function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosition::Real, materialParams::PlottingParameterCollection; scale=1)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -156,7 +159,8 @@ function plot3Dlayer(ax, lattice::Lattice, layer::UniformLayerDefinition, zPosit
 
 end
 
-function plot3Dlayer(ax, lattice::Lattice, layer::PatternedLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plot3Dlayer(ax, lattice::Lattice, layer::PatternedLayerDefinition, zPosition::Real, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3Dlayer(ax, lattice::Lattice, layer::PatternedLayerDefinition, zPosition::Real, materialParams::PlottingParameterCollection; scale=1)
 
     zLower = zPosition
     zUpper = (zPosition+layer.thickness)
@@ -210,14 +214,16 @@ function plot3Dlayer(ax, lattice::Lattice, layer::PatternedLayerDefinition, zPos
 end
 
 
-function plot3DlayerPattern(ax, pattern::LayerPattern, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plot3DlayerPattern(ax, pattern::LayerPattern, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plot3DlayerPattern(ax, pattern::LayerPattern, zRange::TU2VectorReal, materialParams::PlottingParameterCollection; scale=1)
 
     for solid in pattern.solids
         plotPatch3D(ax, solid, zRange, materialParams; scale=scale)
     end
 end
 
-function plotPatch3D(ax, solid::Solid, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=1)
+# function plotPatch3D(ax, solid::Solid, zRange::TU2VectorReal, materialParams::Dict{String, PlottingParameters}; scale=1)
+function plotPatch3D(ax, solid::Solid, zRange::TU2VectorReal, materialParams::PlottingParameterCollection; scale=1)
 
     patches = getPlotPatches3D(solid.shape, zRange; scale=scale)
 

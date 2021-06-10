@@ -1,4 +1,6 @@
 
+export importUserMaterial!, getMaterialsUsed
+
 # Import a single material from favorites
 function importUserMaterial!(matCol::MaterialCollection, materialImporters::Dict{<:Any,<:Any}, name::String)
     if name in keys(materialImporters)

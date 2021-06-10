@@ -1,3 +1,6 @@
+export Wavenumber, WavenumberByk₀, WavenumberByλ₀, WavenumberByf, WavenumberByω, WavenumberByT, WavenumberByE
+export getk₀, getλ₀, getf, getω, getT, getE
+
 # Represents the vacuum wavenumber/wavelength/photon energy
 # Uses SI units
 # f*λ₀ = c

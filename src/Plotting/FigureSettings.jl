@@ -27,7 +27,7 @@ function setLabels(ax, xLabel, yLabel)
     ax.set_ylabel(yLabel)
 end
 
-function addMaterialLegend(ax, materialParams)
+function addMaterialLegend(ax, materialParams::PlottingParameterCollection)
     legendPatches = []
     for (matName, matParam) in materialParams
         push!(legendPatches, PATCHES.Patch(color=matParam.color, label=matName))

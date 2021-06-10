@@ -115,7 +115,7 @@ function getLayers(superEllipsoidLayerSet::SuperEllipsoidLayerSet)
     layers = Vector{LayerDefinition}(undef, superEllipsoidLayerSet.numLayers)
 
     zPositions = PositionGridZ(superEllipsoidLayerSet.alignment, superEllipsoidLayerSet.verticalRegionLimits[1], superEllipsoidLayerSet.verticalRegionLimits[2], superEllipsoidLayerSet.numLayers)
-    @show layerThickness = (superEllipsoidLayerSet.verticalRegionLimits[2]-superEllipsoidLayerSet.verticalRegionLimits[1])/superEllipsoidLayerSet.numLayers
+    layerThickness = (superEllipsoidLayerSet.verticalRegionLimits[2]-superEllipsoidLayerSet.verticalRegionLimits[1])/superEllipsoidLayerSet.numLayers
 
     # Superellipsoid:
     # (x/X)^M + (y/Y)^N + (z/Z)^O = 1

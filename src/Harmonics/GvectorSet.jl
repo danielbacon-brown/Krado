@@ -1,3 +1,5 @@
+export GvectorSet
+
 # Defines the G-vectors = dot product of harmonic order and inverse lattice vector
 mutable struct GvectorSet
     Gᵢ::Vector{_2VectorFloat}
