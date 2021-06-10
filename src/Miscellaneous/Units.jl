@@ -69,7 +69,9 @@ const global h = 6.62607015e-34 * J*s # Planck's constant
 const global ħ = 1.054571817e-34 * J*s # Planck's constant
 
 # Plotting
-const global PATCHES = pyimport("matplotlib.patches")
+# const global PATCHES = pyimport("matplotlib.patches")
+@show PATCHES
+@show PATCHES
 const global LATTICECOLOR = [0.6, 0.6, 0.6]
 const global PLOTTINGOFFSET = 0.01
 const global KVECTORCOLOR = [0.0, 0.0, 0.0]

@@ -1,4 +1,5 @@
 
+export create2Dfigure, create3Dfigure, set2Dlimits, setLabels, addMaterialLegend, setCubicAxes, set3DplotLimits, setCrossSectionAxes
 
 function create2Dfigure(;title::String = "")
 
@@ -29,9 +30,16 @@ end
 
 function addMaterialLegend(ax, materialParams::PlottingParameterCollection)
     legendPatches = []
+    println("Starting loop")
     for (matName, matParam) in materialParams
+        @show matName
+        @show matParam.color
+        @show PATCHES
+        @show PATCHES.Patch(color=matParam.color, label=matName)
         push!(legendPatches, PATCHES.Patch(color=matParam.color, label=matName))
+        println("done")
     end
+    println("finished loop")
     ax.legend(handles=legendPatches, bbox_to_anchor=(1, 1), loc="best")
 end
 

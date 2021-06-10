@@ -1,3 +1,4 @@
+export plotLayerPositionGrid, plotLayerMaterialsDistribution
 # Plotting related to layer geometry
 
 

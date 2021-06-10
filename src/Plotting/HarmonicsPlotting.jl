@@ -1,4 +1,4 @@
-
+export plotHarmonicsSet, plotGvectorSet, plotkXYVectors
 
 # Scatterplot showing the (m,n) harmonic orders
 function plotHarmonicsSet(simulation::SimulationDefinition)

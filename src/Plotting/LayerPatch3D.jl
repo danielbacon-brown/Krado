@@ -1,4 +1,4 @@
-
+export plot3VectorGrid, plot3Dsubstrate, plot3Dsuperstrate, plot3Dlayer, plot3DlayerPattern, plotPatch3D, getPlotPatches3D
 # TODO: change r### and calcLatticeBoundaryLine, so that it is easier to understand which index corresponds to where in the lattice.  Maybe a dictionary.
 
 function plot3VectorGrid(ax, grid::Array{_3VectorFloat,2}, params::PlottingParameters)

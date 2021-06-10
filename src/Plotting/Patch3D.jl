@@ -1,4 +1,4 @@
-
+export addToPlot3Dstructure, plot3Dstructure, calcLayerZpositions, calcTotalThickness, getLayerStackPlotLimits, plotCrossSection, plotCrossSectionNbyArray, plotCrossSectionϵbyArray
 
 # function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::Dict{String, PlottingParameters}; scale=1)
 function addToPlot3Dstructure( ax, lattice::Lattice, layerStack::LayerStack, materialParams::PlottingParameterCollection; scale=1)

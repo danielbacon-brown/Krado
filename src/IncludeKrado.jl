@@ -8,8 +8,15 @@ using Interpolations
 using YAML
 # using TimerOutputs
 
-# const global DIR = @__DIR__
+const PATCHES = PyNULL()
+function __init__()
+    copy!(PATCHES, pyimport("matplotlib.patches") )
+end
+__init__()
 
+
+# const global DIR = @__DIR__
+# TODO: Move these:
 export simulationDefinition
 export funcA
 export getWavenumber

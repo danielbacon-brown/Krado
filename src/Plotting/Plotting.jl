@@ -1,3 +1,4 @@
+export PlottingParameters
 
 mutable struct PlottingParameters
     # faces:

@@ -1,4 +1,8 @@
 
+export add3DkVectorToPlot, add3DpolarizationVectorToPlot, add2DkVectorToPlot, add2DpolarizationVectorToPlot, addZeroOrderKVectorToPlot, plot2DZeroOrderKVector
+export scaleKVectorToWavelength, add3DKandPVectorToPlot, getInjectedOrderIndices, add2DKandPVectorsToPlot, add3DinjectedKandPVectorsToPlot, add3DlistedKandPVectorsToPlot
+export plot3DinjectedKandPVectors, add2DKandPVectorToPlot, add2DinjectedKandPVectorsToPlot, plot2DinjectedKandPVectors
+
 function add3DkVectorToPlot(ax, kVectorOrigin::TU3VectorComplex, scaledKvector::TU3VectorComplex; scale=1)
     scaledKvectorReal = real(scaledKvector)
     scaledKvectorImag = imag(scaledKvector)
