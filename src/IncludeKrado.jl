@@ -11,6 +11,7 @@ using YAML
 const PATCHES = PyNULL()
 function __init__()
     copy!(PATCHES, pyimport("matplotlib.patches") )
+    pygui(true)
 end
 __init__()
 

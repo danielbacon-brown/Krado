@@ -177,7 +177,7 @@ include("../../src/IncludeKrado.jl")
     # fig, ax = plotLayerPositionGrid(layer2, lattice; scale=μm)
 
     # Plot the material distribution by color.
-    fig, ax = plotLayerMaterialsDistribution(layer2, lattice, materialPlottingParameters; scale=μm)
+    # fig, ax = plotLayerMaterialsDistribution(layer2, lattice, materialPlottingParameters; scale=μm)
     # fig, ax = plotLayerMaterialsDistribution(layer3, lattice, materialPlottingParameters; scale=μm)
     # fig, ax = plotLayerMaterialsDistribution(layer4, lattice, materialPlottingParameters; scale=μm)
     # fig, ax = plotLayerMaterialsDistribution(layer5, lattice, materialPlottingParameters; scale=μm)
@@ -219,15 +219,15 @@ include("../../src/IncludeKrado.jl")
 
 
     # Plot structure with 1D
-    # UVstart = [0, 0]
-    # UVstop = [1, 1]
-    # numDivisions = 20
-    # XYstart = convertUVtoXY(lattice, UVstart)
-    # XYstop = convertUVtoXY(lattice, UVstop)
-    # positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisions)
-    # fig, ax = plotCrossSection(simulationDefinition, positionLineXY, materialPlottingParameters; scale=μm)
-    # numDivisionsZ = 30
-    # fig, ax1, ax2 = plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
+    UVstart = [0, 0]
+    UVstop = [1, 1]
+    numDivisions = 20
+    XYstart = convertUVtoXY(lattice, UVstart)
+    XYstop = convertUVtoXY(lattice, UVstop)
+    positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisions)
+    fig, ax = plotCrossSection(simulationDefinition, positionLineXY, materialPlottingParameters; scale=μm)
+    numDivisionsZ = 30
+    fig, ax1, ax2 = plotCrossSectionNbyArray(simulationDefinition, positionLineXY, numDivisionsZ; scale = μm)
 
 
 end

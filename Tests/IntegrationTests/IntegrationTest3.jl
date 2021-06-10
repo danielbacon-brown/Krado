@@ -2,20 +2,9 @@ module IntegrationTest3
 # Using RCWA-Benchmark-Data-3x3 by Raymond Rumpf from empossible.net
 
 using Test
-# using LinearAlgebra
-# using StaticArrays
-# using Printf
-
-
-# println()
-# println()
-# println("Start:")
 
 @testset "IntegrationTest3" begin
 include("IntegrationTest3BenchmarkData.jl")
-
-# println()
-# println("Beginning IntegrationTest3")
 
 include("../../src/IncludeKrado.jl")
 

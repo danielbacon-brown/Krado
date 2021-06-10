@@ -93,6 +93,9 @@ function plotCrossSection(simulationDefinition::SimulationDefinition, positionLi
     end
 
     addMaterialLegend(ax, materialParams)
+
+    setLabels(ax, "Lateral distance (x & y) ($scaleLabel)", "z ($scaleLabel)")
+
     return fig, ax
 end
 
@@ -107,11 +110,11 @@ function plotCrossSection(simulationDefinition::SimulationDefinition, numDivisio
     UVstart = [0, 0]
     UVstop = [1, 0]
     numDivisions = 20
-    XYstart = convertUVtoXY(lattice, UVstart)
-    XYstop = convertUVtoXY(lattice, UVstop)
+    XYstart = convertUVtoXY(simulationDefinition.lattice, UVstart)
+    XYstop = convertUVtoXY(simulationDefinition.lattice, UVstop)
     positionLineXY = PositionGridXY( CENTERALIGNMENT, XYstart, XYstop, numDivisions)
 
-    fig, ax = plotCrossSection(simulationDefinition, positionLineXY, materialPlottingParameters; scale=scale)
+    fig, ax = plotCrossSection(simulationDefinition, positionLineXY, materialParams; scale=scale)
     return fig, ax
 end
 
