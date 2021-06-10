@@ -1,5 +1,5 @@
 
-export runSimulation
+export runSimulation, ZeroOrderModesAnalysisDefinition, JonesMatrixAnalysisDefinition, AllModesAnalysisDefinition, RelativeReflectedTransmittedOrdersAnalysisDefinitionTransmittanceReflectanceAnalysisDefinition, PerformanceAnalysisDefinition
 
 # Runs the simulation and returns results.  Resullts is a namedTuple.
 

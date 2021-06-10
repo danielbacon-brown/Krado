@@ -3,7 +3,7 @@
 # All are assumed to have permeability = 1
 # If there is one data-section of the YML, and it is for type "formula 1", then parseFormula1 function will be used, and k is set to 0.  If there are two dataType, and the first is for type "formula 1", then parseFormula1 will be used for the value of n, and different function will be used for k.
 
-
+export importλnkTextMaterial, importYAMLmaterial, getWavelengthEnds
 
 function importλnkTextMaterial(path::String; scale=μm, skipRows=0, delimiter="\t")
 

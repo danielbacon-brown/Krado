@@ -1,5 +1,7 @@
 ## Helper functions analyzing data
 
+export calcPowerFluxes, calcRelativeFluxes, analyzeOutputFields, analyzeInputFields, JonesToMuellerMatrix
+
 function calcPowerFluxes(inputFields::InputFields, outputFields::OutputFields, derivedParameters::DerivedParameters)
 
     bottomFieldsOutput = convertFieldSetStackToXYZ(outputFields.bottom, derivedParameters.kVectorSet, derivedParameters.kzNormBottom)
@@ -67,11 +69,8 @@ function JonesToMuellerMatrix(J::AbstractArray{<:Number,2})
         1 0 0 -1;
         0 1 1 0;
         0 -1im 1im 0]
-    # A⁻¹ = inv(A)
 
     M = A*kron(J,conj.(J))*inv(A)
-    # M = A*kron(J,conj(J))*inv(A)
-    # M = A*kron(J,conj(J'))*inv(A)
 
     return M
 end

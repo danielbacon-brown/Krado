@@ -1,3 +1,5 @@
+export InputFields, OutputFields, InputCoefficients, OutputCoefficients, getStackedModeCoefficients, inputFields2InputCoefficients, inputCoefficients2InputFieldss, outputFields2OutputCoefficients, outputCoefficients2OutputFields, calcE²
+
 # Container for data describing the fields entering the device.
 mutable struct InputFields
 

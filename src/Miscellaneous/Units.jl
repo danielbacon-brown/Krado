@@ -1,8 +1,11 @@
 # Define Units and constants
 
-export _2VectorFloat
+export _2VectorInt, _2VectorFloat, _2VectorComplex, _3VectorInt, _3VectorFloat, _3VectorComplex,
 export TU2VectorReal
-export μm
+export m, μm, cm, mm, μm, nm, Å, s, A, kg, degrees, radians
+export FORWARD, BACKWARD, BOTTOMINDEX, TOPINDEX
+export c, ϵ, ϵ₀, h, ħ
+
 
 # Dimensions used in arrays
 const global XDIM = 1

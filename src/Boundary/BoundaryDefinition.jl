@@ -1,4 +1,6 @@
 
+export BoundaryDefinition, InputByOrderBoundaryDefinition, getWavenumber
+
 abstract type BoundaryDefinition end
 
 mutable struct InputByOrderBoundaryDefinition <:BoundaryDefinition

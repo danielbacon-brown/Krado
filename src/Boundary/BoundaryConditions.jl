@@ -1,4 +1,7 @@
 # Describes the light conditions of light entering and leaving the stack
+
+export BoundaryConditions, InputByOrderBoundaryConditions, createKVectorSet, getkXYZ₀, getWavenumber, calcSPinputFields, convertSPinputFieldsToXYZ, calcInputFields
+
 abstract type BoundaryConditions end
 
 # Input is defined by a single k-vector defining the 0-order mode, and a dictionary of pairs of vectors and amplitudes
