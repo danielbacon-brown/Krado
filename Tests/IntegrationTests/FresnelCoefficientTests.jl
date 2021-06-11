@@ -309,4 +309,64 @@ end;
 
 end;
 
+
+
+@testset "WavelengthSweep" begin
+# wavelengths = LinRange(start=0.4, stop=0.7, range=5)
+nAir = 1
+
+M,N = 0,0
+harmonicsTruncation = HarmonicsTruncationByRectangle(M,N)
+
+wavelengths = LinRange(0.4*μm, 0.7*μm, 5)
+wavenumbers = [ WavenumberByλ₀(wavelength) for wavelength in wavelengths]
+
+    θ = 0*degrees
+    ϕ = 30*degrees
+    Eₚ = 1
+    Eₛ = 1
+    inputAmplitudes = _2VectorComplex(Eₚ, Eₛ)
+    boundaryDefinitionAngled = InputByOrderBoundaryDefinition(wavenumbers[1], θ, ϕ, BOTTOM, inputAmplitudes)
+
+matCol = MaterialCollection()
+addMaterial!(matCol, "Air", Material(ConstantPermittivity(1)))
+addMaterial!(matCol, "Al2O3", importYAMLmaterial("Tests/MaterialImport/MaterialDatabasePiece/data/main/Al2O3/Boidin.yml"))
+
+# Get n,k:
+nAl2O3byλ₀ = [ calc_n( getMaterial(matCol,"Al2O3"), wavenumber ) for wavenumber in wavenumbers ]
+# tₛBenchmark, tₚBenchmark, rₛBenchmark, rₚBenchmark = calcFresnelCoefficients(nAir, nSi302nm, 30*degrees)
+resultsBenchmark = [ calcFresnelCoefficients(nAir, n, ϕ ) for n in nAl2O3byλ₀]
+
+analysisDefinitionJones = JonesMatrixAnalysisDefinition(FORWARD)
+
+U̅ = [100*nm, 100*nm]
+lattice = Lattice(U̅)
+
+semiInfAir = SemiInfiniteLayerDefinition("Air")
+# uniformAirThin = UniformLayerDefinition(1 * nm, "Air")
+# uniformSiO2Thin = UniformLayerDefinition(1 * nm, "SiO2_564nm")
+# uniformAir = UniformLayerDefinition(10 * μm, "Air")
+# uniformSiO2Thick = UniformLayerDefinition(10 * μm, "SiO2_564nm")
+semiInfAl2O3 = SemiInfiniteLayerDefinition("Al2O3")
+# layerStackSiO2Thin = LayerStack([semiInfAir, uniformAirThin, uniformSiO2Thin, semiInfSiO2])
+layerStack = LayerStack([semiInfAir, semiInfAl2O3])
+
+simulationDefinition = SimulationDefinition(lattice, layerStack, harmonicsTruncation, boundaryDefinitionAngled, matCol, analysisDefinitionJones)
+
+wavenumberSweep = WavenumberSweep(wavenumbers, simulationDefinition)
+
+results = runSweep(wavenumberSweep)
+
+for i_wavenumber in 1:length(wavenumbers)
+    @test isapprox( results[i_wavenumber].transmission[S,S], resultsBenchmark[i_wavenumber][1], rtol=1e-3, atol=1e-4 )
+    @test isapprox( results[i_wavenumber].transmission[P,P], resultsBenchmark[i_wavenumber][2], rtol=1e-3, atol=1e-4 )
+    @test isapprox( results[i_wavenumber].reflection[S,S], resultsBenchmark[i_wavenumber][3], rtol=1e-3, atol=1e-4 )
+    @test isapprox( results[i_wavenumber].reflection[P,P], resultsBenchmark[i_wavenumber][4], rtol=1e-3, atol=1e-4 )
+end
+
+end
+
+
+
+
 end

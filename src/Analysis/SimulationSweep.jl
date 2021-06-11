@@ -15,8 +15,8 @@ mutable struct WavenumberSweep <: SimulationSweep
     # The simulation definition that will be modified with the given wavenumber.
     simulationBase::SimulationDefinition
 
-    function WavenumberSweep(wavenumber, simulationBase::SimulationDefinition)
-        return new(wavenumber, deepcopy(simulationBase) )
+    function WavenumberSweep(wavenumbers, simulationBase::SimulationDefinition)
+        return new(wavenumbers, deepcopy(simulationBase) )
     end
 
 end
@@ -24,19 +24,16 @@ end
 
 function runSweep(sweep::WavenumberSweep)
 
-    sweepResults = Vector{::Any}()
-    # for wavenumber in sweep.wavenumbers
-    #     sweep.simulationDefinition.wavenumber = wavenumber
-    #     simResults = runSimulation(simulationDefinition)
-    # end
+    sweepResults = Vector(undef, (length(sweep.wavenumbers)))
 
     function doIndividualSimulation(simulationDefinition, wavenumber)
-        simulationDefinition.wavenumber = wavenumber
+        simulationDefinition.boundaryDefinition.wavenumber = wavenumber
         return runSimulation(simulationDefinition)
     end
-
-    for index in range(sweep.wavenumbers)
-        sweepResults[index] = doIndividualSimulation(sweep.simulationBase)
+    # @show sweep.wavenumbers
+    for index in 1:length(sweep.wavenumbers)
+        # @show sweep.wavenumbers[index]
+        sweepResults[index] = doIndividualSimulation(sweep.simulationBase, sweep.wavenumbers[index])
     end
     return sweepResults
 end
