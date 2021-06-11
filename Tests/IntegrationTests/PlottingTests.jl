@@ -11,7 +11,7 @@ include("../../src/IncludeKrado.jl")
     println()
     println("Plotting tests:")
 
-    @show PATCHES
+    # @show PATCHES
 
     # Incident wavevector
     wavenumber = WavenumberByλ₀(500 * nm)
