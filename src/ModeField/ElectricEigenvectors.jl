@@ -16,9 +16,9 @@ end
 
 
 # Convert mode fields to mode coefficients
-function FieldSetStack2CoefficientSet(FieldSetStack::FieldSetStack, W::ElectricEigenvectors)::ModeCoefficientSet
-    coefficients = inv(W.matrix) * FieldSetStack.modeFields
-    return ModeCoefficientSet(coefficients, FieldSetStack.isForward) 
+function FieldSetStack2CoefficientSet(fieldSetStack::FieldSetStack, W::ElectricEigenvectors)::ModeCoefficientSet
+    coefficients = inv(W.matrix) * fieldSetStack.modeFields
+    return ModeCoefficientSet(coefficients, fieldSetStack.isForward) 
 end
 
 # Convert mode coefficients to mode fields

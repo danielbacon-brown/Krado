@@ -23,6 +23,6 @@ function contains(plottingParameters::PlottingParameterCollection, name::String)
     return name in keys(plottingParameters.dict)
 end
 
-Base.getindex(plottingParamCol::PlottingParameterCollection, s::String) = Base.getindex(plottingParamCol.dict, s)
-Base.iterate(plottingParamCol::PlottingParameterCollection) = Base.iterate(plottingParamCol.dict)
-Base.iterate(plottingParamCol::PlottingParameterCollection, i::Integer) = Base.iterate(plottingParamCol.dict, i)
+Base.getindex(plottingParamCol::PlottingParameterCollection, s::String) = getindex(plottingParamCol.dict, s)
+Base.iterate(plottingParamCol::PlottingParameterCollection) = iterate(plottingParamCol.dict)
+Base.iterate(plottingParamCol::PlottingParameterCollection, i::Integer) = iterate(plottingParamCol.dict, i)

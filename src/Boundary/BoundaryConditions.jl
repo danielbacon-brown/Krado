@@ -45,8 +45,8 @@ function InputByOrderBoundaryConditions( boundaryDef::InputByOrderBoundaryDefini
 end
 
 
-function createKVectorSet(boundaryDefinition::InputByOrderBoundaryDefinition, boundaryConditions::InputByOrderBoundaryConditions, GvectorSet::GvectorSet, harmonicsSet::HarmonicsSet)
-    return createKVectorSet(boundaryDefinition.wavenumber, boundaryConditions.kXY₀, boundaryDefinition.mainHarmonicOrder, GvectorSet, harmonicsSet)
+function createKVectorSet(boundaryDefinition::InputByOrderBoundaryDefinition, boundaryConditions::InputByOrderBoundaryConditions, gVectorSet::GvectorSet, harmonicsSet::HarmonicsSet)
+    return createKVectorSet(boundaryDefinition.wavenumber, boundaryConditions.kXY₀, boundaryDefinition.mainHarmonicOrder, gVectorSet, harmonicsSet)
 end
 
 # Returns the 3-vector of the zero-order k-vector

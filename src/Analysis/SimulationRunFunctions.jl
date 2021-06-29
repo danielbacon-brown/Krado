@@ -240,39 +240,39 @@ function runSimulation(analysisDefinition::TransmittanceReflectanceAnalysisDefin
 
  function runSimulation(analysisDefinition::PerformanceAnalysisDefinition, simulationDefinition::SimulationDefinition)
 
-     # timerOutput = TimerOutput()
+    # timerOutput = TimerOutput()
 
-      # Calc common parameters
-      derivedParameters = DerivedParameters(simulationDefinition)
-      # @timeit timerOutput "derivedParameters" derivedParameters = DerivedParameters(simulationDefinition)
+    # Calc common parameters
+    derivedParameters = DerivedParameters(simulationDefinition)
+    # @timeit timerOutput "derivedParameters" derivedParameters = DerivedParameters(simulationDefinition)
 
-      # Calc input fields
-      inputFields = calcInputFields(simulationDefinition, derivedParameters)
+    # Calc input fields
+    inputFields = calcInputFields(simulationDefinition, derivedParameters)
 
-      # Calc global scattering matrix
-      # Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
-      # Sglobal = calcGlobalScatteringMatrixTimed(simulationDefinition.layerStack, simulationDefinition.materialCollection, derivedParameters.kVectorSet, derivedParameters.gVectorSet, simulationDefinition.lattice)
-      Sglobal = calcGlobalScatteringMatrix(simulationDefinition.layerStack, simulationDefinition.materialCollection, derivedParameters.kVectorSet, derivedParameters.gVectorSet, simulationDefinition.lattice)
+    # Calc global scattering matrix
+    Sglobal = calcGlobalScatteringMatrix(simulationDefinition, derivedParameters)
+    # Sglobal = calcGlobalScatteringMatrixTimed(simulationDefinition.layerStack, simulationDefinition.materialCollection, derivedParameters.kVectorSet, derivedParameters.gVectorSet, simulationDefinition.lattice)
+    # Sglobal = calcGlobalScatteringMatrix(simulationDefinition.layerStack, simulationDefinition.materialCollection, derivedParameters.kVectorSet, derivedParameters.gVectorSet, simulationDefinition.lattice)
 
 
 
-      # Propagate fields
-      # @timeit timerOutput "outputFields" outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
-      outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
+    # Propagate fields
+    # @timeit timerOutput "outputFields" outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
+    outputFields = propagateFields( Sglobal, inputFields, derivedParameters )
 
-      # Get absolute flux through top and bottom layers
-      inputBottomPowerFlux, inputTopPowerFlux, outputBottomPowerFlux, outputTopPowerFlux = calcPowerFluxes(inputFields::InputFields, outputFields::OutputFields, derivedParameters::DerivedParameters)
+    # Get absolute flux through top and bottom layers
+    inputBottomPowerFlux, inputTopPowerFlux, outputBottomPowerFlux, outputTopPowerFlux = calcPowerFluxes(inputFields::InputFields, outputFields::OutputFields, derivedParameters::DerivedParameters)
 
-      # Get flux relative to input power
-     inputBottomRelativeFlux, inputTopRelativeFlux, outputBottomRelativeFlux, outputTopRelativeFlux = calcRelativeFluxes(inputBottomPowerFlux, inputTopPowerFlux, outputBottomPowerFlux, outputTopPowerFlux)
+    # Get flux relative to input power
+    inputBottomRelativeFlux, inputTopRelativeFlux, outputBottomRelativeFlux, outputTopRelativeFlux = calcRelativeFluxes(inputBottomPowerFlux, inputTopPowerFlux, outputBottomPowerFlux, outputTopPowerFlux)
 
-     # For verification of results
-     totalTransmittance = sum(real(outputTopRelativeFlux))
-     totalReflectance = sum(real(outputBottomRelativeFlux))
-     totalAbsorbance = 1 - totalReflectance - totalTransmittance
+    # For verification of results
+    totalTransmittance = sum(real(outputTopRelativeFlux))
+    totalReflectance = sum(real(outputBottomRelativeFlux))
+    totalAbsorbance = 1 - totalReflectance - totalTransmittance
 
-     # Output data as a named tuple
-     data = (totalTransmittance = totalTransmittance, totalReflectance = totalReflectance, totalAbsorbance = totalAbsorbance)
+    # Output data as a named tuple
+    data = (totalTransmittance = totalTransmittance, totalReflectance = totalReflectance, totalAbsorbance = totalAbsorbance)
 
-     return data
-  end
+    return data
+end

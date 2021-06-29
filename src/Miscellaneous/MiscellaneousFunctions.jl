@@ -171,7 +171,7 @@ function spherical2CartesianCoordinates(ρ::Real, θ::Real, ϕ::Real)
     return _3VectorFloat(x, y, z)
 end
 # Uses degrees.
-spherical2CartesianCoordinatesDegrees(ρ::Real, θ::Real, ϕ::Real) = spherical2CartesianCoordinates( deg2rad(ρ), deg2rad(θ) )
+spherical2CartesianCoordinatesDegrees(ρ::Real, θ::Real, ϕ::Real) = spherical2CartesianCoordinates( deg2rad(ρ), deg2rad(θ), deg2rad(ϕ))
 
 
 
